@@ -1,0 +1,37 @@
+version: '3.6'
+
+services:
+    traefik:
+        image: traefik
+        ports:
+            - 8000:80
+            - 9000:8080
+        volumes:
+            - /var/run/docker.sock:/var/run/docker.sock
+            - ./traefik/traefik-dev.toml:/traefik.toml
+
+    api:
+        image: gradle
+        expose:
+            - 9000
+        volumes:
+            - ./vulptool:/backend
+        working_dir: /backend
+        entrypoint: gradle -t run
+        labels:
+            - traefik.priority=2
+            - traefik.port=9000
+            - traefik.frontend.rule=PathPrefixStrip:/api
+
+    react:
+        image: node
+        expose:
+            - 3000
+        volumes:
+            - ./frontend:/frontend
+        working_dir: /frontend
+        entrypoint: npm start
+        labels:
+            - traefik.priority=1
+            - traefik.port=3000
+            - traefik.frontend.rule=PathPrefix:/

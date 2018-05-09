@@ -15,7 +15,9 @@ services:
         expose:
             - 9000
         volumes:
-            - ./vulptool:/backend
+            - type: bind
+              source: ./vulptool
+              target: /backend
         working_dir: /backend
         entrypoint: gradle -t run
         labels:
@@ -28,7 +30,9 @@ services:
         expose:
             - 3000
         volumes:
-            - ./frontend:/frontend
+            - type: bind
+              source: ./frontend
+              target: /frontend
         working_dir: /frontend
         entrypoint: npm start
         labels:

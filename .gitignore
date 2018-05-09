@@ -15,3 +15,8 @@ server.pid
 .cache
 *.class
 *.log
+*.aux
+*.fdb_latexmk
+*.fls
+*.out
+*.gz

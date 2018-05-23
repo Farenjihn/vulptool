@@ -11,14 +11,12 @@ class RosterController @Inject()(cc: ControllerComponents) extends AbstractContr
 
   implicit val rosterToJson: Writes[Roster] = (
     (JsPath \ "rosterId").write[Int] and
-      (JsPath \ "rosterType").write[String] and
-      (JsPath \ "isDeleted").write[Boolean]
+      (JsPath \ "rosterType").write[String]
     )(unlift(Roster.unapply))
 
   implicit val jsonToRoster: Reads[Roster] = (
     (JsPath \ "rosterId").read[Int] and
-      (JsPath \ "rosterType").read[String] (minLength[String](2)) and
-      (JsPath \ "isDeleted").read[Boolean]
+      (JsPath \ "rosterType").read[String] (minLength[String](2))
     )(Roster.apply _)
 
   def validateJson[A : Roster] = parse.json.validate(

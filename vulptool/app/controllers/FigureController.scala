@@ -13,8 +13,7 @@ class FigureController @Inject()(cc: ControllerComponents) extends AbstractContr
     (JsPath \ "figureId").write[Int] and
       (JsPath \ "name").write[String] and
       (JsPath \ "classe").write[String] and
-      (JsPath \ "lvl").write[Int] and
-      (JsPath \ "isDeleted").write[Boolean]
+      (JsPath \ "lvl").write[Int]
 
     )(unlift(Figure.unapply))
 
@@ -22,8 +21,7 @@ class FigureController @Inject()(cc: ControllerComponents) extends AbstractContr
     (JsPath \ "figureId").read[Int] and
       (JsPath \ "name").read[String] (minLength[String](2))
       (JsPath \ "classe").read[String] (minLength[String](2))
-      (JsPath \ "lvl").read[Int] and
-      (JsPath \ "isDeleted").read[Boolean]
+      (JsPath \ "lvl").read[Int]
     )(Figure.apply _)
 
   def validateJson[A : Figure] = parse.json.validate(

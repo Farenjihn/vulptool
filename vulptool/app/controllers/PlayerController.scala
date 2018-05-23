@@ -16,8 +16,7 @@ class PlayerController @Inject()(cc: ControllerComponents) extends AbstractContr
 
   implicit val jsonToPlayer: Reads[Player] = (
     (JsPath \ "mainPseudo").read[String] (minLength[String](2)) and
-      (JsPath \ "token").read[String] and
-      (JsPath \ "isDeleted").read[Boolean]
+      (JsPath \ "token").read[String]
     )(Player.apply _)
 
   def validateJson[A : Player] = parse.json.validate(

@@ -12,15 +12,13 @@ class MeetingController @Inject()(cc: ControllerComponents) extends AbstractCont
   implicit val meetingToJson: Writes[Meeting] = (
     (JsPath \ "meetingId").write[Int] and
       (JsPath \ "date").write[String] and
-      (JsPath \ "time").write[String] and
-      (JsPath \ "isDeleted").write[Boolean]
+      (JsPath \ "time").write[String]
     )(unlift(Meeting.unapply))
 
   implicit val jsonToMeeting: Reads[Meeting] = (
     (JsPath \ "meetingId").read[Int] and
       (JsPath \ "date").read[String] (minLength[String](10) keepAnd maxLength[String](10)) and //date format accepted: jj.mm.yyyy
-      (JsPath \ "time").read[String] (minLength[String](5) keepAnd maxLength[String](5)) and //time format accepted: hh:mm
-      (JsPath \ "isDeleted").read[Boolean]
+      (JsPath \ "time").read[String] (minLength[String](5) keepAnd maxLength[String](5)) //time format accepted: hh:mm
     )(Meeting.apply _)
 
   def validateJson[A : Meeting] = parse.json.validate(

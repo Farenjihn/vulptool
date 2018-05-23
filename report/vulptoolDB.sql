@@ -62,14 +62,14 @@ CREATE TABLE event(
 );
 
 CREATE TABLE event_child(
-	parent_id INT NOT NULL AUTO_INCREMENT,
+	id INT NOT NULL AUTO_INCREMENT,
+    parent_id INT NOT NULL,
     rosterFK_id INT NOT NULL,
-    eventFK_id INT NOT NULL,
 	is_deleted BOOLEAN NOT NULL,
     
-    PRIMARY KEY (parent_id),
+    PRIMARY KEY (id),
     FOREIGN KEY (rosterFK_id) REFERENCES roster (id),
-    FOREIGN KEY (eventFK_id) REFERENCES event (id)
+    FOREIGN KEY (parent_id) REFERENCES event (id)
 );
 
 CREATE TABLE saved_template(

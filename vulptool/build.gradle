@@ -27,9 +27,12 @@ dependencies {
     play "com.typesafe.play:play-logback_$scalaVersion:$playVersion"
     play "com.typesafe.play:filters-helpers_$scalaVersion:$playVersion"
 
-    play "com.typesafe.slick:slick_$scalaVersion:$slickVersion"
-    play "org.slf4j:slf4j-nop:1.6.4"
-    play "com.typesafe.slick:slick-hikaricp_$scalaVersion:$slickVersion"
+    play "com.typesafe.play:play-slick_$scalaVersion:3.0.0"
+    play "mysql:mysql-connector-java:5.1.24"
+
+    //play "com.typesafe.slick:slick_$scalaVersion:$slickVersion"
+    //play "org.slf4j:slf4j-nop:1.6.4"
+    //play "com.typesafe.slick:slick-hikaricp_$scalaVersion:$slickVersion"
     
     playTest "org.scalatestplus.play:scalatestplus-play_$scalaVersion:3.1.2"
 }

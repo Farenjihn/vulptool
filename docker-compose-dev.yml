@@ -19,7 +19,7 @@ services:
               source: ./vulptool
               target: /backend
         working_dir: /backend
-        entrypoint: gradle -t run
+        entrypoint: gradle -t run --stacktrace
         labels:
             - traefik.priority=2
             - traefik.port=9000

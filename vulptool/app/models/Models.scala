@@ -1,3 +1,3 @@
 package models
 
-case class Location(id: Option[Long], name: String)
+case class Player(id: Option[Long], mainPseudo: String, token: String)

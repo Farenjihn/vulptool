@@ -10,14 +10,12 @@ import play.api.mvc.{AbstractController, ControllerComponents}
 class PlayerController @Inject()(cc: ControllerComponents) extends AbstractController(cc) {
 
   implicit val playerToJson: Writes[Player] = (
-    (JsPath \ "playerId").write[Int] and
-      (JsPath \ "mainPseudo").write[String] and
+    (JsPath \ "mainPseudo").write[String] and
       (JsPath \ "token").write[String]
     )(unlift(Player.unapply))
 
   implicit val jsonToPlayer: Reads[Player] = (
-    (JsPath \ "playerId").read[Int] and
-      (JsPath \ "mainPseudo").read[String] (minLength[String](2)) and
+    (JsPath \ "mainPseudo").read[String] (minLength[String](2)) and
       (JsPath \ "token").read[String] and
       (JsPath \ "isDeleted").read[Boolean]
     )(Player.apply _)

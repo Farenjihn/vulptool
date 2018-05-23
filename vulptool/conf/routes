@@ -8,3 +8,39 @@ GET     /                           controllers.HomeController.index
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.versioned(path="/public", file: Asset)
+
+# API REST ENDPOINTS
+
+# Meetings
+GET     /meeting                   controllers.MeetingController.getMeeting
+GET     /meeting/:id               controllers.MeetingController.getMeeting(id: Int)
+POST    /meeting                   controllers.MeetingController.postMeeting
+DELETE  /meeting/:id               controllers.MeetingController.deleteMeeting(id: Int)
+PUT     /meeting/:id               controllers.MeetingController.updateMeeting(id: Int)
+
+# Roster
+GET     /roster                    controllers.MeetingController.getRoster
+GET     /roster/:id                controllers.MeetingController.getRoster(id: Int)
+POST    /roster                    controllers.MeetingController.postRoster
+DELETE  /roster/:id                controllers.MeetingController.deleteRoster(id: Int)
+PUT     /roster/:id                controllers.MeetingController.updateRoster(id: Int)
+
+# Figure
+GET     /figure                    controllers.MeetingController.getFigure
+GET     /figure/:id                controllers.MeetingController.getFigure(id: Int)
+POST    /figure                    controllers.MeetingController.postFigure
+DELETE  /figure/:id                controllers.MeetingController.deleteFigure(id: Int)
+PUT     /figure/:id                controllers.MeetingController.updateFigure(id: Int)
+
+# Template
+GET     /template                  controllers.MeetingController.getTemplate
+GET     /template/:id              controllers.MeetingController.getTemplatee(id: Int)
+POST    /template                  controllers.MeetingController.postTemplate
+DELETE  /template/:id              controllers.MeetingController.deleteTemplate(id: Int)
+PUT     /template/:id              controllers.MeetingController.updateTemplate(id: Int)
+
+
+
+
+
+

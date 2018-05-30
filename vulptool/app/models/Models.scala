@@ -1,3 +1,3 @@
 package models
 
-case class Player(mainPseudo: String, token: String, isDeleted: Boolean)
+case class Player(mainPseudo: String, token: String)

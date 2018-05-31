@@ -12,4 +12,4 @@ entrypoint = "traefik"
 [docker]
 endpoint = "unix:///var/run/docker.sock"
 watch = true
-exposedByDefault = true
+exposedByDefault = false

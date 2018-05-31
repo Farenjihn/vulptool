@@ -5,6 +5,7 @@ import play.api.libs.functional.syntax._
 import play.api.libs.json.Reads._
 import play.api.libs.json._
 import play.api.mvc.{AbstractController, ControllerComponents}
+import models.Roster
 
 @Singleton
 class RosterController @Inject()(cc: ControllerComponents) extends AbstractController(cc) {

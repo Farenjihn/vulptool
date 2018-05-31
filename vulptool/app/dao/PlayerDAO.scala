@@ -7,6 +7,7 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
 
+
 trait PlayersComponent {
   self: HasDatabaseConfigProvider[JdbcProfile] =>
 
@@ -19,7 +20,7 @@ trait PlayersComponent {
 
     def isDeleted = column[Boolean]("is_deleted")
 
-    def * = (mainPseudo, token, isDeleted) <> (Player.tupled, Player.unapply)
+    def * = (mainPseudo, token) <> (Player.tupled, Player.unapply)
   }
 
 }

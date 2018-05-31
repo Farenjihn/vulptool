@@ -1,6 +1,7 @@
 package controllers
 
 import javax.inject.{Inject, Singleton}
+import models.Meeting
 import play.api.libs.functional.syntax._
 import play.api.libs.json.Reads._
 import play.api.libs.json._
@@ -33,11 +34,11 @@ class MeetingController @Inject()(cc: ControllerComponents) extends AbstractCont
   }
 
   //POST
-  def createMeeting = Action.async(validateJson[Meeting]) { request =>
+  def postMeeting = Action.async(validateJson[Meeting]) { request =>
     val meeting = request.body
     val createdMeeting = MeetingDAO.insert(meeting)
 
-    createdMeeting.map(s =>
+    postMeeting.map(s =>
       Ok(
         Json.obj(
           "status"  -> "OK",

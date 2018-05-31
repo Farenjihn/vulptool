@@ -1,6 +1,7 @@
 package controllers
 
 import javax.inject.{Inject, Singleton}
+import models.Roster
 import play.api.libs.functional.syntax._
 import play.api.libs.json.Reads._
 import play.api.libs.json._
@@ -31,11 +32,11 @@ class RosterController @Inject()(cc: ControllerComponents) extends AbstractContr
   }
 
   //POST
-  def createRoster = Action.async(validateJson[Roster]) { request =>
+  def postRoster = Action.async(validateJson[Roster]) { request =>
     val roster = request.body
     val createdRoster = RosterDAO.insert(roster)
 
-    createdRoster.map(s =>
+    postRoster.map(s =>
       Ok(
         Json.obj(
           "status"  -> "OK",

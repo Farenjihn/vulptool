@@ -1,6 +1,7 @@
 package controllers
 
 import javax.inject.{Inject, Singleton}
+import models.Figure
 import play.api.libs.functional.syntax._
 import play.api.libs.json.Reads._
 import play.api.libs.json._
@@ -14,7 +15,8 @@ class FigureController @Inject()(cc: ControllerComponents) extends AbstractContr
     (JsPath \ "figureId").write[Int] and
       (JsPath \ "name").write[String] and
       (JsPath \ "classe").write[String] and
-      (JsPath \ "lvl").write[Int]
+      (JsPath \ "lvl").write[Int] and
+      (JsPath \ "ilvl").write[Double]
 
     )(unlift(Figure.unapply))
 
@@ -36,11 +38,11 @@ class FigureController @Inject()(cc: ControllerComponents) extends AbstractContr
   }
 
   //POST
-  def createFigure = Action.async(validateJson[Figure]) { request =>
+  def postFigure = Action.async(validateJson[Figure]) { request =>
     val figure = request.body
     val createdFigure = FigureDAO.insert(figure)
 
-    createdFigure.map(s =>
+    postFigure.map(s =>
       Ok(
         Json.obj(
           "status"  -> "OK",
@@ -100,4 +102,5 @@ class FigureController @Inject()(cc: ControllerComponents) extends AbstractContr
       ))
     }
   }
+
 }

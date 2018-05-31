@@ -31,7 +31,7 @@ CREATE TABLE meeting(
 
 CREATE TABLE roster(
 	id INT NOT NULL AUTO_INCREMENT,
-	type_roster VARCHAR(255) NOT NULL,
+	name VARCHAR(255) NOT NULL,
 	is_deleted BOOLEAN NOT NULL,
     
     
@@ -90,6 +90,7 @@ CREATE TABLE figure( /* remplace character*/
     figure_name VARCHAR(255) NOT NULL,
     classe VARCHAR(255) NOT NULL,
     lvl INT NOT NULL,
+    ilvl FLOAT NOT NULL,
     playerFK_id VARCHAR(255) NOT NULL,
 	is_deleted BOOLEAN NOT NULL,
     

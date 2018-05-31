@@ -11,33 +11,40 @@ GET     /assets/*file               controllers.Assets.versioned(path="/public",
 
 # API REST ENDPOINTS
 
-## Meetings
-#GET     /meeting                   controllers.MeetingController.getMeeting
-#GET     /meeting/:id               controllers.MeetingController.getMeeting(id: Int)
-#POST    /meeting                   controllers.MeetingController.postMeeting
-#DELETE  /meeting/:id               controllers.MeetingController.deleteMeeting(id: Int)
-#PUT     /meeting/:id               controllers.MeetingController.updateMeeting(id: Int)
-#
-## Roster
-#GET     /roster                    controllers.MeetingController.getRoster
-#GET     /roster/:id                controllers.MeetingController.getRoster(id: Int)
-#POST    /roster                    controllers.MeetingController.postRoster
-#DELETE  /roster/:id                controllers.MeetingController.deleteRoster(id: Int)
-#PUT     /roster/:id                controllers.MeetingController.updateRoster(id: Int)
-#
-## Figure
-#GET     /figure                    controllers.MeetingController.getFigure
-#GET     /figure/:id                controllers.MeetingController.getFigure(id: Int)
-#POST    /figure                    controllers.MeetingController.postFigure
-#DELETE  /figure/:id                controllers.MeetingController.deleteFigure(id: Int)
-#PUT     /figure/:id                controllers.MeetingController.updateFigure(id: Int)
-#
-## Template
-#GET     /template                  controllers.MeetingController.getTemplate
-#GET     /template/:id              controllers.MeetingController.getTemplatee(id: Int)
-#POST    /template                  controllers.MeetingController.postTemplate
-#DELETE  /template/:id              controllers.MeetingController.deleteTemplate(id: Int)
-#PUT     /template/:id              controllers.MeetingController.updateTemplate(id: Int)
+# Figure
+GET     /figure                    controllers.FigureController.getFigure
+GET     /figure/:id                controllers.FigureController.getFigure(id: Int)
+POST    /figure                    controllers.FigureController.postFigure
+DELETE  /figure/:id                controllers.FigureController.deleteFigure(id: Int)
+PUT     /figure/:id                controllers.FigureController.updateFigure(id: Int)
+
+# Meetings
+GET     /meeting                   controllers.MeetingController.getMeeting
+GET     /meeting/:id               controllers.MeetingController.getMeeting(id: Int)
+POST    /meeting                   controllers.MeetingController.postMeeting
+DELETE  /meeting/:id               controllers.MeetingController.deleteMeeting(id: Int)
+PUT     /meeting/:id               controllers.MeetingController.updateMeeting(id: Int)
+
+# Player
+GET     /player                    controllers.PlayerController.getPlayer
+GET     /player/:id                controllers.PlayerController.getPlayer(id: String)
+POST    /player                    controllers.PlayerController.postPlayer
+DELETE  /player/:id                controllers.PlayerController.deletePlayer(id: String)
+PUT     /player/:id                controllers.PlayerController.updatePlayer(id: String)
+
+# Roster
+GET     /roster                    controllers.RosterController.getRoster
+GET     /roster/:id                controllers.RosterController.getRoster(id: Int)
+POST    /roster                    controllers.RosterController.postRoster
+DELETE  /roster/:id                controllers.RosterController.deleteRoster(id: Int)
+PUT     /roster/:id                controllers.RosterController.updateRoster(id: Int)
+
+# Template
+GET     /template                  controllers.TemplateController.getTemplate
+GET     /template/:id              controllers.TemplateController.getTemplatee(id: Int)
+POST    /template                  controllers.TemplateController.postTemplate
+DELETE  /template/:id              controllers.TemplateController.deleteTemplate(id: Int)
+PUT     /template/:id              controllers.TemplateController.updateTemplate(id: Int)
 
 
 

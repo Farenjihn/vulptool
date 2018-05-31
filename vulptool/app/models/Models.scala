@@ -18,7 +18,8 @@ object WoWClasses extends Enumeration {
 
 case class Player(mainPseudo: String, token: String)
 case class Meeting(id: Int, date: SimpleDateFormat, time: SimpleDateFormat)
-case class Event(id: Int, name: String, etype: String, meeting: Meeting, raid: Raid)
-case class Raid(id: Int, name: String, nb_boss: Int, difficulty: RaidDifficulty, event: Event)
+case class Event(id: Int, name: String, etype: String, meeting: Meeting, raid: Raid, rosters: List[Roster])
+case class Raid(id: Int, name: String, nb_boss: Int, difficulty: RaidDifficulty)
 case class Roster(id: Int, name: String, figures: List[Figure])
 case class Figure(id: Int, name: String, fclasse: WoWClasses, lvl: Int, ilvl: Double, player: Player) // class : code word in scala: not permited -> fclass
+case class Template(id: Int, event: Event, roster: Roster)

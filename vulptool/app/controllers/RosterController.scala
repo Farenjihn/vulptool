@@ -7,18 +7,23 @@ import play.api.libs.json.Reads._
 import play.api.libs.json._
 import play.api.mvc.{AbstractController, ControllerComponents}
 import models.Roster
+import models.Figure
 
 @Singleton
 class RosterController @Inject()(cc: ControllerComponents) extends AbstractController(cc) {
 
-  implicit val rosterToJson: Writes[Roster] = (
-    (JsPath \ "rosterId").write[Int] and
-      (JsPath \ "rosterType").write[String]
-    )(unlift(Roster.unapply))
+  implicit val rosterToJson: Writes[Roster] = { roster =>
+    Json.obj(
+      "id" -> roster.id,
+      "name" -> roster.name,
+      "figures" -> roster.figures
+    )
+  }
 
   implicit val jsonToRoster: Reads[Roster] = (
-    (JsPath \ "rosterId").read[Int] and
-      (JsPath \ "rosterType").read[String] (minLength[String](2))
+    (JsPath \ "id").read[Int] and
+      (JsPath \ "name").read[String] and
+      (JsPath \ "figures").read[List[Figure]]
     )(Roster.apply _)
 
   def validateJson[A : Roster] = parse.json.validate(

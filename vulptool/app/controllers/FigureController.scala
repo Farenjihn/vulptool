@@ -7,24 +7,29 @@ import play.api.libs.json.Reads._
 import play.api.libs.json._
 import play.api.mvc.{AbstractController, ControllerComponents}
 import models.Figure
+import models.Player
 
 @Singleton
 class FigureController @Inject()(cc: ControllerComponents) extends AbstractController(cc) {
 
-  implicit val figureToJson: Writes[Figure] = (
-    (JsPath \ "figureId").write[Int] and
-      (JsPath \ "name").write[String] and
-      (JsPath \ "classe").write[String] and
-      (JsPath \ "lvl").write[Int] and
-      (JsPath \ "ilvl").write[Double]
-
-    )(unlift(Figure.unapply))
+  implicit val figureToJson: Writes[Figure] = { figure =>
+    Json.obj(
+      "id" -> figure.id
+      "name" -> figure.name,
+      "classe" -> figure.fclass,
+      "lvl" -> figure.lvl,
+      "ilvl" -> figure.ilvl,
+      "player" -> figure.player
+    )
+  }
 
   implicit val jsonToFigure: Reads[Figure] = (
-    (JsPath \ "figureId").read[Int] and
-      (JsPath \ "name").read[String] (minLength[String](2))
-      (JsPath \ "classe").read[String] (minLength[String](2))
-      (JsPath \ "lvl").read[Int]
+    (JsPath \ "id").read[Int] and
+      (JsPath \ "name").read[String] (minLength[String](2)) and
+      (JsPath \ "classe").read[String] (minLength[String](2)) and
+      (JsPath \ "lvl").read[Int]and
+      (JsPath \ "ilvl").read[Int] and
+      (JsPath \ "player").read[Player]
     )(Figure.apply _)
 
   def validateJson[A : Figure] = parse.json.validate(

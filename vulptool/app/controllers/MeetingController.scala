@@ -11,14 +11,16 @@ import models.Meeting
 @Singleton
 class MeetingController @Inject()(cc: ControllerComponents) extends AbstractController(cc) {
 
-  implicit val meetingToJson: Writes[Meeting] = (
-    (JsPath \ "meetingId").write[Int] and
-      (JsPath \ "date").write[String] and
-      (JsPath \ "time").write[String]
-    )(unlift(Meeting.unapply))
+  implicit val meetingToJson: Writes[Meeting] = { meeting =>
+    Json.obj(
+      "id" -> meeting.id,
+      "date" -> meeting.date,
+      "time" -> meeting.time
+    )
+  }
 
   implicit val jsonToMeeting: Reads[Meeting] = (
-    (JsPath \ "meetingId").read[Int] and
+    (JsPath \ "id").read[Int] and
       (JsPath \ "date").read[String] (minLength[String](10) keepAnd maxLength[String](10)) and //date format accepted: jj.mm.yyyy
       (JsPath \ "time").read[String] (minLength[String](5) keepAnd maxLength[String](5)) //time format accepted: hh:mm
     )(Meeting.apply _)

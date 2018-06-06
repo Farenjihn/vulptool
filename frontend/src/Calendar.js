@@ -4,6 +4,12 @@ import './Calendar.css';
 import { Layout, Menu, Breadcrumb, Icon } from 'antd';
 import { List, Row, Col } from 'antd';
 import { Card, Avatar } from 'antd';
+import { DatePicker } from 'antd';
+import moment from 'moment';
+
+const RangePicker = DatePicker.RangePicker;
+const WeekPicker = DatePicker.WeekPicker;
+
 const { Meta } = Card;
 const { Header, Content, Footer, Sider } = Layout;
 const SubMenu = Menu.SubMenu;
@@ -13,6 +19,12 @@ const IconText = ({ type, text }) => (
         {text}
   </span>
 );
+
+moment.locale('en-wow-settings', {
+    week: {
+        dow: 3
+    }
+});
 
 const listData = [];
 for (let i = 0; i < 4; i++) {
@@ -25,9 +37,14 @@ for (let i = 0; i < 4; i++) {
     });
 }
 
+function onChange(date, dateString) {
+    console.log(date, dateString);
+}
+
 class Calendar extends React.Component {
     state = {
-        meetings : []
+        meetings : [],
+        firstDayOfWeek: 0
     };
 
     componentDidMount() {
@@ -41,48 +58,53 @@ class Calendar extends React.Component {
         return (
             <Content style={{ margin: '16px 16px' }}>
                 <div style={{ padding: 24, background: '#fff', minHeight: 360 }}>
-                    {/*<div className="gutter-example">*/}
-                        {/*<Row gutter={16}>*/}
-                            {/*<Col className="gutter-row" span={3}>*/}
-                                {/*<div className="gutter-box">Wednesday</div>*/}
+                    {/*<div className="gutter-example">
+                        <Row gutter={16}>
+                            <Col className="gutter-row" span={3}>
+                                <div className="gutter-box">Wednesday</div>
 
-                            {/*</Col>*/}
-                            {/*<Col className="gutter-row" span={3}>*/}
-                                {/*<div className="gutter-box">Thursday</div>*/}
-                                {/*<Card*/}
-                                    {/*//style={{ width: 300 }}*/}
-                                    {/*cover={<img alt="example" src="https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png" />}*/}
-                                    {/*actions={[<Icon type="setting" />, <Icon type="edit" />, <Icon type="ellipsis" />]}*/}
-                                {/*>*/}
-                                    {/*<Meta*/}
-                                        {/*avatar={<Avatar src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png" />}*/}
-                                        {/*title="RAID X"*/}
-                                        {/*description="This is the description"*/}
-                                    {/*/>*/}
-                                {/*</Card>*/}
-                            {/*</Col>*/}
-                            {/*<Col className="gutter-row" span={3}>*/}
-                                {/*<div className="gutter-box">Friday</div>*/}
-                            {/*</Col>*/}
-                            {/*<Col className="gutter-row" span={3}>*/}
-                                {/*<div className="gutter-box">Saturday</div>*/}
-                            {/*</Col>*/}
-                            {/*<Col className="gutter-row" span={3}>*/}
-                                {/*<div className="gutter-box">Sunday</div>*/}
-                            {/*</Col>*/}
-                            {/*<Col className="gutter-row" span={3}>*/}
-                                {/*<div className="gutter-box">Monday</div>*/}
-                            {/*</Col>*/}
-                            {/*<Col className="gutter-row" span={3}>*/}
-                                {/*<div className="gutter-box">Tuesday</div>*/}
-                            {/*</Col>*/}
-                            {/*<Col className="gutter-row" span={3}>*/}
-                                {/*<div className="gutter-box">Rosters</div>*/}
-                            {/*</Col>*/}
-                        {/*</Row>*/}
-                    {/*</div>*/}
+                            </Col>
+                            <Col className="gutter-row" span={3}>
+                                <div className="gutter-box">Thursday</div>
+                                <Card
+                                    //style={{ width: 300 }}
+                                    cover={<img alt="example" src="https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png" />}
+                                    actions={[<Icon type="setting" />, <Icon type="edit" />, <Icon type="ellipsis" />]}
+                                >
+                                    <Meta
+                                        avatar={<Avatar src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png" />}
+                                        title="RAID X"
+                                        description="This is the description"
+                                    />
+                                </Card>
+                            </Col>
+                            <Col className="gutter-row" span={3}>
+                                <div className="gutter-box">Friday</div>
+                            </Col>
+                            <Col className="gutter-row" span={3}>
+                                <div className="gutter-box">Saturday</div>
+                            </Col>
+                            <Col className="gutter-row" span={3}>
+                                <div className="gutter-box">Sunday</div>
+                            </Col>
+                            <Col className="gutter-row" span={3}>
+                                <div className="gutter-box">Monday</div>
+                            </Col>
+                            <Col className="gutter-row" span={3}>
+                                <div className="gutter-box">Tuesday</div>
+                            </Col>
+                            <Col className="gutter-row" span={3}>
+                                <div className="gutter-box">Rosters</div>
+                            </Col>
+                        </Row>
+                    </div>*/}
 
-                    <div>{JSON.stringify(this.state.meetings)}
+                    <div>
+                        <WeekPicker onChange={onChange} placeholder="Select week"/>
+                    </div>
+
+                    <div>
+                        {JSON.stringify(this.state.meetings)}
                     </div>
 
                     <List

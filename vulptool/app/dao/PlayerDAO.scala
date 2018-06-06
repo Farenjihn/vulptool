@@ -15,13 +15,17 @@ trait PlayersComponent {
 
   class PlayersTable(tag: Tag) extends Table[Player](tag, "PLAYERS") {
 
-    def mainPseudo = column[String]("main_pseudo")
+    def id = column[Int]("id", O.PrimaryKey)
 
-    def token = column[String]("token", O.PrimaryKey)
+    def pseudo = column[String]("main_pseudo")
+
+    def authCode = column[String]("auth_code")
+
+    def accessCode = column[String]("access_code")
 
     def isDeleted = column[Boolean]("is_deleted")
 
-    def * = (mainPseudo, token) <> (Player.tupled, Player.unapply)
+    def * = (id, pseudo) <> (Player.tupled, Player.unapply)
   }
 
 }
@@ -34,23 +38,23 @@ class PlayerDAO @Inject()(protected val dbConfigProvider: DatabaseConfigProvider
   val players = TableQuery[PlayersTable]
 
   def list(): Future[Seq[Player]] = {
-    val query = players.filter(!_.isDeleted).sortBy(s => s.mainPseudo)
+    val query = players.filter(!_.isDeleted).sortBy(s => s.pseudo)
     db.run(query.result)
   }
 
-  def findById(token: String): Future[Option[Player]] =
-    db.run(players.filter(_.token === token).result.headOption)
+  def findById(id: Int): Future[Option[Player]] =
+    db.run(players.filter(_.id === id).result.headOption)
 
   def insert(player: Player): Future[Player] = {
-    val insertQuery = players returning players.map(_.token) into ((player, token) => player.copy(token))
+    val insertQuery = players returning players.map(_.id) into ((player, token) => player.copy(token))
     db.run(insertQuery += player)
   }
 
-  def update(token: String, player: Player): Future[Int] = {
-    val playerToUpdate: Player = player.copy(token)
-    db.run(players.filter(_.token === token).update(playerToUpdate))
+  def update(id: Int, player: Player): Future[Int] = {
+    val playerToUpdate: Player = player.copy(id)
+    db.run(players.filter(_.id === id).update(playerToUpdate))
   }
 
-  def delete(token: String): Future[Int] =
-    db.run(players.filter(_.token === token).delete)
+  def delete(id: Int): Future[Int] =
+    db.run(players.filter(_.id === id).delete)
 }

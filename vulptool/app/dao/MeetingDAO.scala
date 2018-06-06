@@ -15,8 +15,7 @@ trait MeetingsComponent {
 
   import profile.api._
 
-  val dateFormat = new SimpleDateFormat("dd-MM-yyyy")
-  val timeFormat = new SimpleDateFormat("HH:mm")
+  val dateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss")
 
   class MeetingsTable(tag: Tag) extends Table[Meeting](tag, "MEETINGS") {
 
@@ -24,11 +23,9 @@ trait MeetingsComponent {
 
     def date = column[Date]("date")
 
-    def time = column[Time]("time")
-
     def isDeleted = column[Boolean]("is_deleted")
 
-    def * = (id, dateFormat.format(date), timeFormat.format(time)) <> (Meeting.tupled, Meeting.unapply)
+    def * = (id, dateFormat.format(date)) <> (Meeting.tupled, Meeting.unapply)
   }
 
 }

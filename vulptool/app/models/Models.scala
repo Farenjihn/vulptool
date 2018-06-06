@@ -19,9 +19,9 @@ case class Figure(id: Int, name: String, fclass: WoWClass, lvl: Int, ilvl: Doubl
 
 case class FigureRoster(figureId: Int, rosterId: Int)
 
-case class Meeting(id: Int, date: String, time: String)
+case class Meeting(id: Int, date: String)
 
-case class Player(mainPseudo: String, token: String)
+case class Player(id: Int, pseudo: String)
 
 case class Raid(id: Int, name: String, nb_boss: Int, difficulty: RaidDifficulty)
 

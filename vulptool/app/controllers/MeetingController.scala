@@ -16,15 +16,13 @@ class MeetingController @Inject()(cc: ControllerComponents, meetingDAO: MeetingD
   implicit val meetingToJson: Writes[Meeting] = { meeting =>
     Json.obj(
       "id" -> meeting.id,
-      "date" -> meeting.date,
-      "time" -> meeting.time
+      "date" -> meeting.date
     )
   }
 
   implicit val jsonToMeeting: Reads[Meeting] = (
     (JsPath \ "id").read[Int] and
-      (JsPath \ "date").read[String](minLength[String](10) keepAnd maxLength[String](10)) and //date format accepted: jj.mm.yyyy
-      (JsPath \ "time").read[String](minLength[String](5) keepAnd maxLength[String](5)) //time format accepted: hh:mm
+      (JsPath \ "date").read[String](minLength[String](10) keepAnd maxLength[String](10)) //date format accepted: jj.mm.yyyy HH:MM:ss
     ) (Meeting.apply _)
 
   def validateJson[A: Reads] = parse.json.validate(
@@ -47,7 +45,7 @@ class MeetingController @Inject()(cc: ControllerComponents, meetingDAO: MeetingD
         Json.obj(
           "status" -> "OK",
           "id" -> s.id,
-          "message" -> ("Meeting '" + s.id + " " + s.date + " " + s.time + "' saved.")
+          "message" -> ("Meeting '" + s.id + " " + s.date + "' saved.")
         )
       )
     )
@@ -77,7 +75,7 @@ class MeetingController @Inject()(cc: ControllerComponents, meetingDAO: MeetingD
       case 1 => Ok(
         Json.obj(
           "status" -> "OK",
-          "message" -> ("Meeting '" + newMeeting.id + " " + newMeeting.date + " " + newMeeting.time + "' updated.")
+          "message" -> ("Meeting '" + newMeeting.id + " " + newMeeting.date + "' updated.")
         )
       )
       case 0 => NotFound(Json.obj(

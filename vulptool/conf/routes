@@ -27,10 +27,10 @@ PUT     /meeting/:id               controllers.MeetingController.updateMeeting(i
 
 # Player
 GET     /player                    controllers.PlayerController.getPlayers
-GET     /player/:id                controllers.PlayerController.getPlayer(id: String)
+GET     /player/:id                controllers.PlayerController.getPlayer(id: Int)
 POST    /player                    controllers.PlayerController.postPlayer
-DELETE  /player/:id                controllers.PlayerController.deletePlayer(id: String)
-PUT     /player/:id                controllers.PlayerController.updatePlayer(id: String)
+DELETE  /player/:id                controllers.PlayerController.deletePlayer(id: Int)
+PUT     /player/:id                controllers.PlayerController.updatePlayer(id: Int)
 
 # Roster
 GET     /roster                    controllers.RosterController.getRosters

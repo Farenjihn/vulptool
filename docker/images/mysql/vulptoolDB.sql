@@ -23,15 +23,14 @@ CREATE TABLE raid(
 CREATE TABLE meeting(
 	id INT NOT NULL AUTO_INCREMENT,
 	meeting_date DATE NOT NULL,
-    meeting_time TIME NOT NULL,
-	is_deleted BOOLEAN NOT NULL,
+	is_deleted BOOLEAN NOT NULL DEFAULT false,
     
     PRIMARY KEY (id)
 );
 
 CREATE TABLE roster(
 	id INT NOT NULL AUTO_INCREMENT,
-	type_roster VARCHAR(255) NOT NULL,
+	name VARCHAR(255) NOT NULL,
 	is_deleted BOOLEAN NOT NULL,
     
     
@@ -39,11 +38,13 @@ CREATE TABLE roster(
 );
 
 CREATE TABLE player(
+   id INT NOT NULL AUTO_INCREMENT,
 	main_pseudo VARCHAR(255),
-    token VARCHAR(255) NOT NULL,
+   auth_code VARCHAR(255) NOT NULL,
+   access_code VARCHAR(255) NOT NULL,
 	is_deleted BOOLEAN NOT NULL,
     
-    PRIMARY KEY (token)
+    PRIMARY KEY (id)
 );
 
 CREATE TABLE event(
@@ -76,20 +77,19 @@ CREATE TABLE saved_template(
 	id INT NOT NULL AUTO_INCREMENT,
     saved_event_fkid INT NOT NULL,
     rosterFK_id INT NOT NULL,
-    raidFK_id INT NOT NULL,
 	is_deleted BOOLEAN NOT NULL,
     
     PRIMARY KEY (id),
     FOREIGN KEY (saved_event_fkid) REFERENCES event (id),
     FOREIGN KEY (rosterFK_id) REFERENCES roster (id),
-    FOREIGN KEY (raidFK_id) REFERENCES raid (id)
 );
 
 CREATE TABLE figure( /* remplace character*/
 	id INT NOT NULL AUTO_INCREMENT,
     figure_name VARCHAR(255) NOT NULL,
-    classe VARCHAR(255) NOT NULL,
+    fclass VARCHAR(255) NOT NULL,
     lvl INT NOT NULL,
+    ilvl FLOAT NOT NULL,
     playerFK_id VARCHAR(255) NOT NULL,
 	is_deleted BOOLEAN NOT NULL,
     
@@ -120,3 +120,9 @@ CREATE TABLE record( /*remplace logs*/
     FOREIGN KEY (rosterFK_id) REFERENCES roster (id),
     FOREIGN KEY (raidFK_id) REFERENCES raid (id)
 );
+
+
+INSERT INTO meeting (meeting_date, meeting_time) VALUES (NOW());
+INSERT INTO meeting (meeting_date, meeting_time) VALUES (NOW()); 
+INSERT INTO meeting (meeting_date, meeting_time) VALUES (NOW()); 
+

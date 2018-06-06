@@ -1,32 +1,24 @@
 version: '3.6'
 
 services:
-    mysql:
-        container_name: vulptool_mysql
+    database:
         restart: always
         build: docker/images/mysql
         environment:
-          - MYSQL_ALLOW_EMPTY_PASSWORD=true
+          - MYSQL_DATABASE=vulptool
+          - MYSQL_ROOT_PASSWORD=devpassword
         volumes:
           - vulptool-data:/var/lib/mysql
-        expose:
-          - "3306"
-        ports: 
-          - "3306:3306"
-        healthcheck:
-          test: ["CMD", "mysql", "--user=root", "--execute=SHOW DATABASES;"]
-          interval: 10s
-          retries: 10
+        ports:
+          - 3306:3306
 
     phpmyadmin:
-        container_name: vulptool_phpmyadmin
-        build: docker/images/phpmyadmin
+        image: phpmyadmin/phpmyadmin
         environment:
-          - MYSQL_ALLOW_EMPTY_PASSWORD=true
+          - PMA_HOST=database
+          - MYSQL_ROOT_PASSWORD=devpassword
         ports:
-          - "6060:80"
-        links:
-          - mysql:db
+          - 6060:80
 
     traefik:
         image: traefik
@@ -46,13 +38,14 @@ services:
               source: ./vulptool
               target: /backend
         working_dir: /backend
-        entrypoint: sbt ~run
+        entrypoint: "sbt ~run"
         labels:
+            - traefik.enable=true
             - traefik.priority=2
             - traefik.port=9000
             - traefik.frontend.rule=PathPrefixStrip:/api
 
-    react:
+    webui:
         image: node
         expose:
             - 3000
@@ -63,6 +56,7 @@ services:
         working_dir: /frontend
         entrypoint: npm start
         labels:
+            - traefik.enable=true
             - traefik.priority=1
             - traefik.port=3000
             - traefik.frontend.rule=PathPrefix:/

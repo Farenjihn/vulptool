@@ -35,6 +35,21 @@ class PlayerController @Inject()(cc: ControllerComponents) extends AbstractContr
     jsonPlayerList map (s => Ok(Json.toJson(s)))
   }
 
+  //GET with id
+  def getPlayer(playerId: String) = Action.async {
+    val optionalPlayer = PlayerDAO.findById(playerId)
+
+    optionalPlayer.map {
+      case Some(s) => Ok(Json.toJson(s))
+      case None =>
+        // Send back a 404 Not Found HTTP status to the client if the player does not exist.
+        NotFound(Json.obj(
+          "status" -> "Not Found",
+          "message" -> ("Player #" + playerId + " not found.")
+        ))
+    }
+  }
+
   //POST
   def postPlayer = Action.async(validateJson[Player]) { request =>
     val player = request.body
@@ -49,21 +64,6 @@ class PlayerController @Inject()(cc: ControllerComponents) extends AbstractContr
         )
       )
     )
-  }
-
-  //GET with id
-  def getPlayer(playerId: String) = Action.async {
-    val optionalPlayer = PlayerDAO.findById(playerId)
-
-    optionalPlayer.map {
-      case Some(s) => Ok(Json.toJson(s))
-      case None =>
-        // Send back a 404 Not Found HTTP status to the client if the player does not exist.
-        NotFound(Json.obj(
-          "status" -> "Not Found",
-          "message" -> ("Player #" + playerId + " not found.")
-        ))
-    }
   }
 
   //PUT

@@ -22,5 +22,5 @@ case class Event(id: Int, name: String, etype: String, meetingId: Int, raidId:In
 case class Raid(id: Int, name: String, nb_boss: Int, difficulty: RaidDifficulty)
 case class Roster(id: Int, name: String)
 case class Figure(id: Int, name: String, fclasse: WoWClasses, lvl: Int, ilvl: Double, playerId: Int) // class : code word in scala: not permited -> fclass
-case class Template(id: Int, event: Event, roster: Roster)
+case class Template(id: Int, event: Event, rosterId: Int)
 case class FigureRoster(figureId: Int, rosterId: Int)

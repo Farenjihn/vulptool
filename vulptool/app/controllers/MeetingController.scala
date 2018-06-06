@@ -16,13 +16,13 @@ class MeetingController @Inject()(cc: ControllerComponents, meetingDAO: MeetingD
   implicit val meetingToJson: Writes[Meeting] = { meeting =>
     Json.obj(
       "id" -> meeting.id,
-      "date" -> meeting.date
+      "time" -> meeting.time
     )
   }
 
   implicit val jsonToMeeting: Reads[Meeting] = (
     (JsPath \ "id").readNullable[Int] and
-      (JsPath \ "date").read[String](minLength[String](10) keepAnd maxLength[String](10)) //date format accepted: jj.mm.yyyy HH:MM:ss
+      (JsPath \ "time").read[String](minLength[String](10) keepAnd maxLength[String](10)) //date format accepted: jj.mm.yyyy HH:MM:ss
     ) (Meeting.apply _)
 
   def validateJson[A: Reads] = parse.json.validate(
@@ -32,23 +32,7 @@ class MeetingController @Inject()(cc: ControllerComponents, meetingDAO: MeetingD
   //GET
   def getMeetings = Action.async {
     val jsonMeetingList = meetingDAO.list()
-    jsonMeetingList map (s => Ok(Json.toJson(s)))
-  }
-
-  //POST
-  def postMeeting = Action.async(validateJson[Meeting]) { request =>
-    val meeting = request.body
-    val createdMeeting = meetingDAO.insert(meeting)
-
-    createdMeeting.map(s =>
-      Ok(
-        Json.obj(
-          "status" -> "OK",
-          "id" -> s.id,
-          "message" -> ("Meeting '" + s.id + " " + s.date + "' saved.")
-        )
-      )
-    )
+    jsonMeetingList.map(meeting => Ok(Json.toJson(meeting)))
   }
 
   //GET with id
@@ -56,7 +40,7 @@ class MeetingController @Inject()(cc: ControllerComponents, meetingDAO: MeetingD
     val optionalMeeting = meetingDAO.findById(meetingId)
 
     optionalMeeting.map {
-      case Some(s) => Ok(Json.toJson(s))
+      case Some(meeting) => Ok(Json.toJson(meeting))
       case None =>
         // Send back a 404 Not Found HTTP status to the client if the meeting does not exist.
         NotFound(Json.obj(
@@ -64,6 +48,22 @@ class MeetingController @Inject()(cc: ControllerComponents, meetingDAO: MeetingD
           "message" -> ("Meeting #" + meetingId + " not found.")
         ))
     }
+  }
+
+  //POST
+  def postMeeting = Action.async(validateJson[Meeting]) { request =>
+    val meeting = request.body
+    val createdMeeting = meetingDAO.insert(meeting)
+
+    createdMeeting.map(meeting =>
+      Ok(
+        Json.obj(
+          "status" -> "OK",
+          "id" -> meeting.id,
+          "message" -> ("Meeting '" + meeting.id + " " + meeting.time + "' saved.")
+        )
+      )
+    )
   }
 
   //PUT
@@ -75,7 +75,7 @@ class MeetingController @Inject()(cc: ControllerComponents, meetingDAO: MeetingD
       case 1 => Ok(
         Json.obj(
           "status" -> "OK",
-          "message" -> ("Meeting '" + newMeeting.id + " " + newMeeting.date + "' updated.")
+          "message" -> ("Meeting '" + newMeeting.id + " " + newMeeting.time + "' updated.")
         )
       )
       case 0 => NotFound(Json.obj(

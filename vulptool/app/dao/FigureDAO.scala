@@ -18,13 +18,13 @@ trait FiguresComponent {
     s => WoWClass.withName(s)
   )
 
-  class FiguresTable(tag: Tag) extends Table[Figure](tag, "FIGURES") {
+  class FiguresTable(tag: Tag) extends Table[Figure](tag, "figure") {
 
     def id = column[Int]("id", O.PrimaryKey)
 
-    def name = column[String]("figure_name")
+    def name = column[String]("name")
 
-    def fclasse = column[WoWClass]("classe")
+    def fclass = column[WoWClass]("fclass")
 
     def lvl = column[Int]("lvl")
 
@@ -34,7 +34,7 @@ trait FiguresComponent {
 
     def isDeleted = column[Boolean]("is_deleted")
 
-    def * = (id.?, name, fclasse, lvl, ilvl, playerId) <> (Figure.tupled, Figure.unapply)
+    def * = (id.?, name, fclass, lvl, ilvl, playerId) <> (Figure.tupled, Figure.unapply)
   }
 
 }
@@ -48,7 +48,7 @@ class FigureDAO @Inject()(protected val dbConfigProvider: DatabaseConfigProvider
   val figures = TableQuery[FiguresTable]
 
   def list(): Future[Seq[Figure]] = {
-    val query = figures.filter(!_.isDeleted).sortBy(s => s.name)
+    val query = figures.filter(!_.isDeleted).sortBy(_.name)
     db.run(query.result)
   }
 

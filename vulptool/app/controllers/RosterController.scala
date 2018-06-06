@@ -32,23 +32,7 @@ class RosterController @Inject()(cc: ControllerComponents, rosterDAO: RosterDAO)
   //GET
   def getRosters = Action.async {
     val jsonRosterList = rosterDAO.list()
-    jsonRosterList map (s => Ok(Json.toJson(s)))
-  }
-
-  //POST
-  def postRoster = Action.async(validateJson[Roster]) { request =>
-    val roster = request.body
-    val createdRoster = rosterDAO.insert(roster)
-
-    createdRoster.map(s =>
-      Ok(
-        Json.obj(
-          "status" -> "OK",
-          "id" -> s.id,
-          "message" -> ("Roster '" + s.id + " " + s.name + "' saved.")
-        )
-      )
-    )
+    jsonRosterList.map(roster => Ok(Json.toJson(roster)))
   }
 
   //GET with id
@@ -56,7 +40,7 @@ class RosterController @Inject()(cc: ControllerComponents, rosterDAO: RosterDAO)
     val optionalRoster = rosterDAO.findById(rosterId)
 
     optionalRoster.map {
-      case Some(s) => Ok(Json.toJson(s))
+      case Some(roster) => Ok(Json.toJson(roster))
       case None =>
         // Send back a 404 Not Found HTTP status to the client if the roster does not exist.
         NotFound(Json.obj(
@@ -64,6 +48,22 @@ class RosterController @Inject()(cc: ControllerComponents, rosterDAO: RosterDAO)
           "message" -> ("Roster #" + rosterId + " not found.")
         ))
     }
+  }
+
+  //POST
+  def postRoster = Action.async(validateJson[Roster]) { request =>
+    val roster = request.body
+    val createdRoster = rosterDAO.insert(roster)
+
+    createdRoster.map(roster =>
+      Ok(
+        Json.obj(
+          "status" -> "OK",
+          "id" -> roster.id,
+          "message" -> ("Roster '" + roster.id + " " + roster.name + "' saved.")
+        )
+      )
+    )
   }
 
   //PUT

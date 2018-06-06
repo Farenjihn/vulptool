@@ -15,13 +15,13 @@ class PlayerController @Inject()(cc: ControllerComponents, playerDAO: PlayerDAO)
   implicit val playerToJson: Writes[Player] = { player =>
     Json.obj(
       "id" -> player.id,
-      "pseudo" -> player.pseudo
+      "main_pseudo" -> player.pseudo
     )
   }
 
   implicit val jsonToPlayer: Reads[Player] = (
     (JsPath \ "id").readNullable[Int] and
-      (JsPath \ "pseudo").read[String]
+      (JsPath \ "main_pseudo").read[String]
     ) (Player.apply _)
 
   def validateJson[A: Reads] = parse.json.validate(
@@ -31,7 +31,7 @@ class PlayerController @Inject()(cc: ControllerComponents, playerDAO: PlayerDAO)
   //GET
   def getPlayers = Action.async {
     val jsonPlayerList = playerDAO.list()
-    jsonPlayerList map (s => Ok(Json.toJson(s)))
+    jsonPlayerList.map(player => Ok(Json.toJson(player)))
   }
 
   //GET with id
@@ -39,7 +39,7 @@ class PlayerController @Inject()(cc: ControllerComponents, playerDAO: PlayerDAO)
     val optionalPlayer = playerDAO.findById(playerId)
 
     optionalPlayer.map {
-      case Some(s) => Ok(Json.toJson(s))
+      case Some(player) => Ok(Json.toJson(player))
       case None =>
         // Send back a 404 Not Found HTTP status to the client if the player does not exist.
         NotFound(Json.obj(
@@ -54,12 +54,12 @@ class PlayerController @Inject()(cc: ControllerComponents, playerDAO: PlayerDAO)
     val player = request.body
     val createdPlayer = playerDAO.insert(player)
 
-    createdPlayer.map(s =>
+    createdPlayer.map(player =>
       Ok(
         Json.obj(
           "status" -> "OK",
-          "id" -> s.id,
-          "message" -> ("Player '" + s.id + " " + s.pseudo + "' saved.")
+          "id" -> player.id,
+          "message" -> ("Player '" + player.id + " " + player.pseudo + "' saved.")
         )
       )
     )
@@ -70,7 +70,7 @@ class PlayerController @Inject()(cc: ControllerComponents, playerDAO: PlayerDAO)
     val newPlayer = request.body
 
     // Try to edit the student, then return a 200 OK HTTP status to the client if everything worked.
-    playerDAO.update(playerId, newPlayer).map {
+    playerDAO.update(playerId, newPlayer).map({
       case 1 => Ok(
         Json.obj(
           "status" -> "OK",
@@ -81,12 +81,12 @@ class PlayerController @Inject()(cc: ControllerComponents, playerDAO: PlayerDAO)
         "status" -> "Not Found",
         "message" -> ("Player #" + playerId + " not found.")
       ))
-    }
+    })
   }
 
   //DELETE
   def deletePlayer(playerId: Int) = Action.async {
-    playerDAO.delete(playerId).map {
+    playerDAO.delete(playerId).map({
       case 1 => Ok(
         Json.obj(
           "status" -> "OK",
@@ -97,6 +97,6 @@ class PlayerController @Inject()(cc: ControllerComponents, playerDAO: PlayerDAO)
         "status" -> "Not Found",
         "message" -> ("Player #" + playerId + " not found.")
       ))
-    }
+    })
   }
 }

@@ -12,13 +12,13 @@ trait TemplatesComponent {
 
   import profile.api._
 
-  class TemplatesTable(tag: Tag) extends Table[Template](tag, "TEMPLATES") {
+  class TemplatesTable(tag: Tag) extends Table[Template](tag, "template") {
 
     def id = column[Int]("id", O.PrimaryKey)
 
-    def eventId = column[Int]("saved_event_fkid")
+    def eventId = column[Int]("saved_event_id")
 
-    def rosterId = column[Int]("rosterFK_id")
+    def rosterId = column[Int]("roster_id")
 
     def isDeleted = column[Boolean]("is_deleted")
 

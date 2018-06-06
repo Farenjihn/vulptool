@@ -13,7 +13,7 @@ trait PlayersComponent {
 
   import profile.api._
 
-  class PlayersTable(tag: Tag) extends Table[Player](tag, "PLAYERS") {
+  class PlayersTable(tag: Tag) extends Table[Player](tag, "player") {
 
     def id = column[Int]("id", O.PrimaryKey, O.AutoInc)
 
@@ -38,7 +38,7 @@ class PlayerDAO @Inject()(protected val dbConfigProvider: DatabaseConfigProvider
   val players = TableQuery[PlayersTable]
 
   def list(): Future[Seq[Player]] = {
-    val query = players.filter(!_.isDeleted).sortBy(s => s.pseudo)
+    val query = players.filter(!_.isDeleted).sortBy(_.pseudo)
     db.run(query.result)
   }
 

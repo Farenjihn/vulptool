@@ -40,31 +40,15 @@ class FigureController @Inject()(cc: ControllerComponents, figureDAO: FigureDAO)
   //GET
   def getFigures = Action.async {
     val jsonFigureList = figureDAO.list()
-    jsonFigureList map (s => Ok(Json.toJson(s)))
-  }
-
-  //POST
-  def postFigure = Action.async(validateJson[Figure]) { request =>
-    val figure = request.body
-    val createdFigure = figureDAO.insert(figure)
-
-    createdFigure.map(s =>
-      Ok(
-        Json.obj(
-          "status" -> "OK",
-          "id" -> s.id,
-          "message" -> ("Figure '" + s.id + " " + s.name + "' saved.")
-        )
-      )
-    )
+    jsonFigureList.map(figure => Ok(Json.toJson(figure)))
   }
 
   //GET with id
   def getFigure(figureId: Int) = Action.async {
     val optionalFigure = figureDAO.findById(figureId)
 
-    optionalFigure.map {
-      case Some(s) => Ok(Json.toJson(s))
+    optionalFigure map {
+      case Some(figure) => Ok(Json.toJson(figure))
       case None =>
         // Send back a 404 Not Found HTTP status to the client if the figure does not exist.
         NotFound(Json.obj(
@@ -74,12 +58,27 @@ class FigureController @Inject()(cc: ControllerComponents, figureDAO: FigureDAO)
     }
   }
 
+  //POST
+  def postFigure = Action.async(validateJson[Figure]) { request =>
+    val figure = request.body
+    val createdFigure = figureDAO.insert(figure)
+
+    createdFigure.map(figure =>
+      Ok(
+        Json.obj(
+          "status" -> "OK",
+          "id" -> figure.id,
+          "message" -> ("Figure '" + figure.id + " " + figure.name + "' saved.")
+        )
+      ))
+  }
+
   //PUT
   def updateFigure(figureId: Int) = Action.async(validateJson[Figure]) { request =>
     val newFigure = request.body
 
     // Try to edit the student, then return a 200 OK HTTP status to the client if everything worked.
-    figureDAO.update(figureId, newFigure).map {
+    figureDAO.update(figureId, newFigure).map({
       case 1 => Ok(
         Json.obj(
           "status" -> "OK",
@@ -90,12 +89,12 @@ class FigureController @Inject()(cc: ControllerComponents, figureDAO: FigureDAO)
         "status" -> "Not Found",
         "message" -> ("Figure #" + figureId + " not found.")
       ))
-    }
+    })
   }
 
   //DELETE
   def deleteFigure(figureId: Int) = Action.async {
-    figureDAO.delete(figureId).map {
+    figureDAO.delete(figureId).map({
       case 1 => Ok(
         Json.obj(
           "status" -> "OK",
@@ -106,7 +105,7 @@ class FigureController @Inject()(cc: ControllerComponents, figureDAO: FigureDAO)
         "status" -> "Not Found",
         "message" -> ("Figure #" + figureId + " not found.")
       ))
-    }
+    })
   }
 
 }

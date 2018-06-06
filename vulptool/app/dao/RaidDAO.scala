@@ -18,11 +18,11 @@ trait RaidsComponent {
     s => RaidDifficulty.withName(s)
   )
 
-  class RaidsTable(tag: Tag) extends Table[Raid](tag, "RAIDS") {
+  class RaidsTable(tag: Tag) extends Table[Raid](tag, "raid") {
 
     def id = column[Int]("id", O.PrimaryKey)
 
-    def name = column[String]("raid_name")
+    def name = column[String]("name")
 
     def nbBoss = column[Int]("nb_boss")
 
@@ -43,7 +43,7 @@ class RaidDAO @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)(
   val raids = TableQuery[RaidsTable]
 
   def list(): Future[Seq[Raid]] = {
-    val query = raids.filter(!_.isDeleted).sortBy(s => s.name)
+    val query = raids.filter(!_.isDeleted).sortBy(_.name)
     db.run(query.result)
   }
 

@@ -12,23 +12,23 @@ trait EventsComponent {
 
   import profile.api._
 
-  class EventsTable(tag: Tag) extends Table[Event](tag, "EVENTS") {
+  class EventsTable(tag: Tag) extends Table[Event](tag, "event") {
 
     def id = column[Int]("id", O.PrimaryKey, O.AutoInc)
 
-    def name = column[String]("event_name")
+    def name = column[String]("name")
 
-    def eType = column[String]("event_type")
+    def category = column[String]("category")
 
-    def meetingId = column[Int]("meetingFK_id")
+    def meetingId = column[Int]("meeting_id")
 
-    def raidId = column[Int]("raidFK_id")
+    def raidId = column[Int]("raid_id")
 
-    def rosterId = column[Int]("rosterFK_id")
+    def rosterId = column[Int]("roster_id")
 
     def isDeleted = column[Boolean]("is_deleted")
 
-    def * = (id.?, name, eType, meetingId, raidId, rosterId) <> (Event.tupled, Event.unapply)
+    def * = (id.?, name, category, meetingId, raidId, rosterId) <> (Event.tupled, Event.unapply)
   }
 
 }
@@ -41,7 +41,7 @@ class EventDAO @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)
   val events = TableQuery[EventsTable]
 
   def list(): Future[Seq[Event]] = {
-    val query = events.filter(!_.isDeleted).sortBy(s => s.eType)
+    val query = events.filter(!_.isDeleted).sortBy(_.category)
     db.run(query.result)
   }
 

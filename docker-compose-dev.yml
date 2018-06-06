@@ -38,7 +38,7 @@ services:
               source: ./vulptool
               target: /backend
         working_dir: /backend
-        entrypoint: "sbt ~run"
+        entrypoint: "sbt ~test ;run"
         labels:
             - traefik.enable=true
             - traefik.priority=2

@@ -1,6 +1,6 @@
 package dao
 
-import java.sql.{Date, Time}
+import java.sql.Date
 import java.text.SimpleDateFormat
 
 import javax.inject.{Inject, Singleton}
@@ -17,15 +17,15 @@ trait MeetingsComponent {
 
   val dateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss")
 
-  class MeetingsTable(tag: Tag) extends Table[Meeting](tag, "MEETINGS") {
+  class MeetingsTable(tag: Tag) extends Table[Meeting](tag, "meeting") {
 
     def id = column[Int]("id", O.PrimaryKey)
 
-    def date = column[Date]("date")
+    def time = column[Date]("time")
 
     def isDeleted = column[Boolean]("is_deleted")
 
-    def * = (id.?, dateFormat.format(date)) <> (Meeting.tupled, Meeting.unapply)
+    def * = (id.?, dateFormat.format(time)) <> (Meeting.tupled, Meeting.unapply)
   }
 
 }
@@ -38,7 +38,7 @@ class MeetingDAO @Inject()(protected val dbConfigProvider: DatabaseConfigProvide
   val meetings = TableQuery[MeetingsTable]
 
   def list(): Future[Seq[Meeting]] = {
-    val query = meetings.filter(!_.isDeleted).sortBy(s => s.date)
+    val query = meetings.filter(!_.isDeleted).sortBy(_.time)
     db.run(query.result)
   }
 

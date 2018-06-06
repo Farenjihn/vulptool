@@ -13,7 +13,7 @@ trait RostersComponent {
 
   import profile.api._
 
-  class RostersTable(tag: Tag) extends Table[Roster](tag, "ROSTERS") {
+  class RostersTable(tag: Tag) extends Table[Roster](tag, "roster") {
 
     def id = column[Int]("id", O.PrimaryKey)
 
@@ -34,7 +34,7 @@ class RosterDAO @Inject()(protected val dbConfigProvider: DatabaseConfigProvider
   val rosters = TableQuery[RostersTable]
 
   def list(): Future[Seq[Roster]] = {
-    val query = rosters.filter(!_.isDeleted).sortBy(s => s.name)
+    val query = rosters.filter(!_.isDeleted).sortBy(_.name)
     db.run(query.result)
   }
 

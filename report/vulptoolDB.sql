@@ -23,8 +23,7 @@ CREATE TABLE raid(
 CREATE TABLE meeting(
 	id INT NOT NULL AUTO_INCREMENT,
 	meeting_date DATE NOT NULL,
-    meeting_time TIME NOT NULL,
-	is_deleted BOOLEAN NOT NULL,
+	is_deleted BOOLEAN NOT NULL DEFAULT false,
     
     PRIMARY KEY (id)
 );
@@ -119,3 +118,9 @@ CREATE TABLE record( /*remplace logs*/
     FOREIGN KEY (rosterFK_id) REFERENCES roster (id),
     FOREIGN KEY (raidFK_id) REFERENCES raid (id)
 );
+
+
+INSERT INTO meeting (meeting_date, meeting_time) VALUES (NOW());
+INSERT INTO meeting (meeting_date, meeting_time) VALUES (NOW()); 
+INSERT INTO meeting (meeting_date, meeting_time) VALUES (NOW()); 
+

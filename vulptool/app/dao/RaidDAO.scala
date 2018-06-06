@@ -1,0 +1,62 @@
+package dao
+
+import models.{Raid, RaidDifficulty}
+import models.RaidDifficulty._
+import slick.jdbc.JdbcProfile
+import java.text.SimpleDateFormat
+
+import javax.inject.{Inject, Singleton}
+import scala.concurrent.{ExecutionContext, Future}
+import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
+
+trait RaidsComponent {
+  self: HasDatabaseConfigProvider[JdbcProfile] =>
+
+  import profile.api._
+
+  implicit val classesMapper = MappedColumnType.base[RaidDifficulty, String](
+    e => e.toString,
+    s => RaidDifficulty.withName(s)
+  )
+
+  class RaidsTable(tag: Tag) extends Table[Raid](tag, "RAIDS") {
+
+    def id = column[Int]("id", O.PrimaryKey)
+    def name = column[String]("raid_name")
+    def nbBoss = column[Int]("nb_boss")
+    def difficulty = column[String]("difficulty")
+    def isDeleted = column[Boolean]("is_deleted")
+
+    def * = (id, name, nbBoss, difficulty) <> (Raid.tupled, Raid.unapply)
+  }
+
+}
+
+@Singleton
+class RaidDAO @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)(implicit executionContext: ExecutionContext) extends RaidsComponent with HasDatabaseConfigProvider[JdbcProfile] {
+
+  import profile.api._
+
+  val raids = TableQuery[RaidsTable]
+
+  def list(): Future[Seq[Raid]] = {
+    val query = raids.filter(!_.isDeleted).sortBy(s => s.name)
+    db.run(query.result)
+  }
+
+  def findById(id: Int): Future[Option[Raid]] =
+    db.run(raids.filter(_.id === id).result.headOption)
+
+  def insert(raid: Raid): Future[Raid] = {
+    val insertQuery = raids returning raids.map(_.id) into ((raid, id) => raid.copy(id))
+    db.run(insertQuery += raid)
+  }
+
+  def update(id: Int, raid: Raid): Future[Int] = {
+    val raidToUpdate: Raid = raid.copy(id)
+    db.run(raids.filter(_.id === id).update(raidToUpdate))
+  }
+
+  def delete(id: Int): Future[Int] =
+    db.run(raids.filter(_.id === id).delete)
+}

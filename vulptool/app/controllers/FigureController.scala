@@ -14,30 +14,30 @@ class FigureController @Inject()(cc: ControllerComponents) extends AbstractContr
 
   implicit val figureToJson: Writes[Figure] = { figure =>
     Json.obj(
-      "id" -> figure.id
+      "id" -> figure.id,
       "name" -> figure.name,
-      "classe" -> figure.fclass,
+      "fclasse" -> figure.fclass,
       "lvl" -> figure.lvl,
       "ilvl" -> figure.ilvl,
-      "player" -> figure.player
+      "playerId" -> figure.playerId
     )
   }
 
   implicit val jsonToFigure: Reads[Figure] = (
     (JsPath \ "id").read[Int] and
       (JsPath \ "name").read[String] (minLength[String](2)) and
-      (JsPath \ "classe").read[String] (minLength[String](2)) and
+      (JsPath \ "fclasse").read[String] (minLength[String](2)) and
       (JsPath \ "lvl").read[Int]and
       (JsPath \ "ilvl").read[Int] and
-      (JsPath \ "player").read[Player]
+      (JsPath \ "playerId").read[Int]
     )(Figure.apply _)
 
-  def validateJson[A : Figure] = parse.json.validate(
+  def validateJson[A : Reads] = parse.json.validate(
     _.validate[A].asEither.left.map(e => BadRequest(JsError.toJson(e)))
   )
 
   //GET
-  def getFigure = Action.async {
+  def getFigures = Action.async {
     val jsonFigureList = FigureDAO.list()
     jsonFigureList map (s => Ok(Json.toJson(s)))
   }

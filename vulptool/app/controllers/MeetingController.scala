@@ -25,12 +25,12 @@ class MeetingController @Inject()(cc: ControllerComponents) extends AbstractCont
       (JsPath \ "time").read[String] (minLength[String](5) keepAnd maxLength[String](5)) //time format accepted: hh:mm
     )(Meeting.apply _)
 
-  def validateJson[A : Meeting] = parse.json.validate(
+  def validateJson[A : Reads] = parse.json.validate(
     _.validate[A].asEither.left.map(e => BadRequest(JsError.toJson(e)))
   )
 
   //GET
-  def getMeeting = Action.async {
+  def getMeetings = Action.async {
     val jsonMeetingList = MeetingDAO.list()
     jsonMeetingList map (s => Ok(Json.toJson(s)))
   }

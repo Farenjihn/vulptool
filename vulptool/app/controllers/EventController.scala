@@ -8,18 +8,19 @@ import play.api.libs.json._
 import play.api.mvc.{AbstractController, ControllerComponents}
 import models.Event
 import models.Player
+import dao.EventDAO
 
 @Singleton
 class EventController @Inject()(cc: ControllerComponents) extends AbstractController(cc) {
 
   implicit val eventToJson: Writes[Event] = { event =>
     Json.obj(
-      "id" -> event.id
+      "id" -> event.id,
       "name" -> event.name,
       "etype" -> event.etype,
-      "meeting" -> event.meeting,
-      "raid" -> event.raid,
-      "rosters" -> event.rosters
+      "meetingId" -> event.meetingId,
+      "raidId" -> event.raidId,
+      "rosterId" -> event.rosterId
     )
   }
 
@@ -27,17 +28,17 @@ class EventController @Inject()(cc: ControllerComponents) extends AbstractContro
     (JsPath \ "id").read[Int] and
       (JsPath \ "name").read[String] (minLength[String](2)) and
       (JsPath \ "etype").read[String] and
-      (JsPath \ "meeting").read[Int]  and
-      (JsPath \ "raid").read[Int] and
-      (JsPath \ "rosters").read[Player]
+      (JsPath \ "meetingId").read[Int]  and
+      (JsPath \ "raidId").read[Int] and
+      (JsPath \ "rosterId").read[Int]
     )(Event.apply _)
 
-  def validateJson[A : Event] = parse.json.validate(
+  def validateJson[A : Reads] = parse.json.validate(
     _.validate[A].asEither.left.map(e => BadRequest(JsError.toJson(e)))
   )
 
   //GET
-  def getEvent = Action.async {
+  def getEvents = Action.async {
     val jsonEventList = EventDAO.list()
     jsonEventList map (s => Ok(Json.toJson(s)))
   }

@@ -15,23 +15,21 @@ class RosterController @Inject()(cc: ControllerComponents) extends AbstractContr
   implicit val rosterToJson: Writes[Roster] = { roster =>
     Json.obj(
       "id" -> roster.id,
-      "name" -> roster.name,
-      "figures" -> roster.figures
+      "name" -> roster.name
     )
   }
 
   implicit val jsonToRoster: Reads[Roster] = (
     (JsPath \ "id").read[Int] and
-      (JsPath \ "name").read[String] and
-      (JsPath \ "figures").read[List[Figure]]
+      (JsPath \ "name").read[String]
     )(Roster.apply _)
 
-  def validateJson[A : Roster] = parse.json.validate(
+  def validateJson[A : Reads] = parse.json.validate(
     _.validate[A].asEither.left.map(e => BadRequest(JsError.toJson(e)))
   )
 
   //GET
-  def getRoster = Action.async {
+  def getRosters = Action.async {
     val jsonRosterList = RosterDAO.list()
     jsonRosterList map (s => Ok(Json.toJson(s)))
   }

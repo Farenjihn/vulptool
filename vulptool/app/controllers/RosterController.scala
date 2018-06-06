@@ -8,6 +8,7 @@ import play.api.libs.json._
 import play.api.mvc.{AbstractController, ControllerComponents}
 import models.Roster
 import models.Figure
+import dao.RosterDAO
 
 @Singleton
 class RosterController @Inject()(cc: ControllerComponents) extends AbstractController(cc) {

@@ -7,6 +7,7 @@ import play.api.libs.json.Reads._
 import play.api.libs.json._
 import play.api.mvc.{AbstractController, ControllerComponents}
 import models.Meeting
+import dao.MeetingDAO
 
 @Singleton
 class MeetingController @Inject()(cc: ControllerComponents) extends AbstractController(cc) {

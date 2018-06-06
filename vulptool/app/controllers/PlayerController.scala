@@ -7,6 +7,7 @@ import play.api.libs.json.Reads._
 import play.api.libs.json._
 import play.api.mvc.{AbstractController, ControllerComponents}
 import models.Player
+import dao.PlayerDAO
 
 import scala.concurrent.ExecutionContext.Implicits.global
 

@@ -8,7 +8,6 @@ import play.api.libs.json._
 import play.api.mvc.{AbstractController, ControllerComponents}
 import models.Event
 import models.Player
-import dao.EventDAO
 
 @Singleton
 class EventController @Inject()(cc: ControllerComponents) extends AbstractController(cc) {

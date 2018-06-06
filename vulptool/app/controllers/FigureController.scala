@@ -8,6 +8,7 @@ import play.api.libs.json._
 import play.api.mvc.{AbstractController, ControllerComponents}
 import models.Figure
 import models.Player
+import dao.FigureDAO
 
 @Singleton
 class FigureController @Inject()(cc: ControllerComponents) extends AbstractController(cc) {
@@ -16,7 +17,7 @@ class FigureController @Inject()(cc: ControllerComponents) extends AbstractContr
     Json.obj(
       "id" -> figure.id,
       "name" -> figure.name,
-      "fclasse" -> figure.fclass,
+      "fclasse" -> figure.fclasse,
       "lvl" -> figure.lvl,
       "ilvl" -> figure.ilvl,
       "playerId" -> figure.playerId
@@ -27,7 +28,7 @@ class FigureController @Inject()(cc: ControllerComponents) extends AbstractContr
     (JsPath \ "id").read[Int] and
       (JsPath \ "name").read[String] (minLength[String](2)) and
       (JsPath \ "fclasse").read[String] (minLength[String](2)) and
-      (JsPath \ "lvl").read[Int]and
+      (JsPath \ "lvl").read[Int] and
       (JsPath \ "ilvl").read[Int] and
       (JsPath \ "playerId").read[Int]
     )(Figure.apply _)

@@ -38,7 +38,7 @@ class EventController @Inject()(cc: ControllerComponents, eventDAO: EventDAO) ex
   )
 
   //GET
-  def getEvents(eventDAO: EventDAO) = Action.async {
+  def getEvents = Action.async {
     val jsonEventList = eventDAO.list()
     jsonEventList map (s => Ok(Json.toJson(s)))
   }

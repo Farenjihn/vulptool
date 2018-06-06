@@ -6,6 +6,7 @@ import play.api.libs.functional.syntax._
 import play.api.libs.json.Reads._
 import play.api.libs.json._
 import play.api.mvc.{AbstractController, ControllerComponents}
+import models.Player
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
@@ -13,13 +14,13 @@ import scala.concurrent.ExecutionContext.Implicits.global
 class PlayerController @Inject()(cc: ControllerComponents) extends AbstractController(cc) {
   implicit val playerToJson: Writes[Player] = { player =>
     Json.obj(
-      "pseudo" -> player.mainPseudo,
+      "mainPseudo" -> player.mainPseudo,
       "token" -> player.token
     )
   }
 
   implicit val jsonToPlayer: Reads[Player] = (
-    (JsPath \ "pseudo").read[String] and
+    (JsPath \ "mainPseudo").read[String] and
       (JsPath \ "token").read[String]
     )(Player.apply _)
 
@@ -28,7 +29,7 @@ class PlayerController @Inject()(cc: ControllerComponents) extends AbstractContr
   )
 
   //GET
-  def getPlayer = Action.async {
+  def getPlayers = Action.async {
     val jsonPlayerList = PlayerDAO.list()
     jsonPlayerList map (s => Ok(Json.toJson(s)))
   }

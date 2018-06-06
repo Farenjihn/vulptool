@@ -6,28 +6,31 @@ import play.api.libs.functional.syntax._
 import play.api.libs.json.Reads._
 import play.api.libs.json._
 import play.api.mvc.{AbstractController, ControllerComponents}
+import models.Meeting
 
 @Singleton
 class MeetingController @Inject()(cc: ControllerComponents) extends AbstractController(cc) {
 
-  implicit val meetingToJson: Writes[Meeting] = (
-    (JsPath \ "meetingId").write[Int] and
-      (JsPath \ "date").write[String] and
-      (JsPath \ "time").write[String]
-    )(unlift(Meeting.unapply))
+  implicit val meetingToJson: Writes[Meeting] = { meeting =>
+    Json.obj(
+      "id" -> meeting.id,
+      "date" -> meeting.date,
+      "time" -> meeting.time
+    )
+  }
 
   implicit val jsonToMeeting: Reads[Meeting] = (
-    (JsPath \ "meetingId").read[Int] and
+    (JsPath \ "id").read[Int] and
       (JsPath \ "date").read[String] (minLength[String](10) keepAnd maxLength[String](10)) and //date format accepted: jj.mm.yyyy
       (JsPath \ "time").read[String] (minLength[String](5) keepAnd maxLength[String](5)) //time format accepted: hh:mm
     )(Meeting.apply _)
 
-  def validateJson[A : Meeting] = parse.json.validate(
+  def validateJson[A : Reads] = parse.json.validate(
     _.validate[A].asEither.left.map(e => BadRequest(JsError.toJson(e)))
   )
 
   //GET
-  def getMeeting = Action.async {
+  def getMeetings = Action.async {
     val jsonMeetingList = MeetingDAO.list()
     jsonMeetingList map (s => Ok(Json.toJson(s)))
   }

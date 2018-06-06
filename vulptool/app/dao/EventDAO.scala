@@ -20,9 +20,10 @@ trait EventsComponent {
     def eType = column[Int]("event_type")
     def meetingId = column[Int]("meetingFK_id")
     def raidId = column[Int]("raidFK_id")
+    def rosterId = column[Int]("rosterFK_id")
     def isDeleted = column[Boolean]("is_deleted")
 
-    def * = (id, name, eType, meetingId, raidId) <> (Event.tupled, Event.unapply)
+    def * = (id, name, eType, meetingId, raidId, rosterId) <> (Event.tupled, Event.unapply)
   }
 
 }

@@ -1,12 +1,11 @@
 package dao
 
-import models.Event
-import slick.jdbc.JdbcProfile
-import java.text.SimpleDateFormat
-
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.{ExecutionContext, Future}
+import models.Event
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
+import slick.jdbc.JdbcProfile
+
+import scala.concurrent.{ExecutionContext, Future}
 
 trait EventsComponent {
   self: HasDatabaseConfigProvider[JdbcProfile] =>
@@ -16,11 +15,17 @@ trait EventsComponent {
   class EventsTable(tag: Tag) extends Table[Event](tag, "EVENTS") {
 
     def id = column[Int]("id", O.PrimaryKey)
+
     def name = column[String]("event_name")
-    def eType = column[Int]("event_type")
+
+    def eType = column[String]("event_type")
+
     def meetingId = column[Int]("meetingFK_id")
+
     def raidId = column[Int]("raidFK_id")
+
     def rosterId = column[Int]("rosterFK_id")
+
     def isDeleted = column[Boolean]("is_deleted")
 
     def * = (id, name, eType, meetingId, raidId, rosterId) <> (Event.tupled, Event.unapply)

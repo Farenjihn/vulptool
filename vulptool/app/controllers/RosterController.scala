@@ -1,16 +1,17 @@
 package controllers
 
+import dao.RosterDAO
 import javax.inject.{Inject, Singleton}
 import models.Roster
 import play.api.libs.functional.syntax._
 import play.api.libs.json.Reads._
 import play.api.libs.json._
 import play.api.mvc.{AbstractController, ControllerComponents}
-import models.Roster
-import models.Figure
+
+import scala.concurrent.ExecutionContext.Implicits.global
 
 @Singleton
-class RosterController @Inject()(cc: ControllerComponents) extends AbstractController(cc) {
+class RosterController @Inject()(cc: ControllerComponents, rosterDAO: RosterDAO) extends AbstractController(cc) {
 
   implicit val rosterToJson: Writes[Roster] = { roster =>
     Json.obj(
@@ -22,37 +23,37 @@ class RosterController @Inject()(cc: ControllerComponents) extends AbstractContr
   implicit val jsonToRoster: Reads[Roster] = (
     (JsPath \ "id").read[Int] and
       (JsPath \ "name").read[String]
-    )(Roster.apply _)
+    ) (Roster.apply _)
 
-  def validateJson[A : Reads] = parse.json.validate(
+  def validateJson[A: Reads] = parse.json.validate(
     _.validate[A].asEither.left.map(e => BadRequest(JsError.toJson(e)))
   )
 
   //GET
   def getRosters = Action.async {
-    val jsonRosterList = RosterDAO.list()
+    val jsonRosterList = rosterDAO.list()
     jsonRosterList map (s => Ok(Json.toJson(s)))
   }
 
   //POST
   def postRoster = Action.async(validateJson[Roster]) { request =>
     val roster = request.body
-    val createdRoster = RosterDAO.insert(roster)
+    val createdRoster = rosterDAO.insert(roster)
 
-    postRoster.map(s =>
+    createdRoster.map(s =>
       Ok(
         Json.obj(
-          "status"  -> "OK",
-          "id"      -> s.rosterId,
-          "message" -> ("Roster '" + s.rosterId + " " + s.rosterType + "' saved.")
+          "status" -> "OK",
+          "id" -> s.id,
+          "message" -> ("Roster '" + s.id + " " + s.name + "' saved.")
         )
       )
     )
   }
 
   //GET with id
-  def getRoster(rosterId: Long) = Action.async {
-    val optionalRoster = RosterDAO.findById(rosterId)
+  def getRoster(rosterId: Int) = Action.async {
+    val optionalRoster = rosterDAO.findById(rosterId)
 
     optionalRoster.map {
       case Some(s) => Ok(Json.toJson(s))
@@ -66,15 +67,15 @@ class RosterController @Inject()(cc: ControllerComponents) extends AbstractContr
   }
 
   //PUT
-  def updateRoster(rosterId: Long) = Action.async(validateJson[Roster]) { request =>
+  def updateRoster(rosterId: Int) = Action.async(validateJson[Roster]) { request =>
     val newRoster = request.body
 
     // Try to edit the student, then return a 200 OK HTTP status to the client if everything worked.
-    RosterDAO.update(rosterId, newRoster).map {
+    rosterDAO.update(rosterId, newRoster).map {
       case 1 => Ok(
         Json.obj(
           "status" -> "OK",
-          "message" -> ("Roster '" + newRoster.rosterId + " " + newRoster.rosterType + "' updated.")
+          "message" -> ("Roster '" + newRoster.id + " " + newRoster.name + "' updated.")
         )
       )
       case 0 => NotFound(Json.obj(
@@ -85,11 +86,11 @@ class RosterController @Inject()(cc: ControllerComponents) extends AbstractContr
   }
 
   //DELETE
-  def deleteRoster(rosterId: Long) = Action.async {
-    RosterDAO.delete(rosterId).map {
+  def deleteRoster(rosterId: Int) = Action.async {
+    rosterDAO.delete(rosterId).map {
       case 1 => Ok(
         Json.obj(
-          "status"  -> "OK",
+          "status" -> "OK",
           "message" -> ("Roster #" + rosterId + " deleted.")
         )
       )

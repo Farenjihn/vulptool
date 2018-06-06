@@ -1,11 +1,11 @@
 package dao
 
+import javax.inject.{Inject, Singleton}
 import models.Roster
+import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
 import slick.jdbc.JdbcProfile
 
-import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
-import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
 
 
 trait RostersComponent {
@@ -16,7 +16,9 @@ trait RostersComponent {
   class RostersTable(tag: Tag) extends Table[Roster](tag, "ROSTERS") {
 
     def id = column[Int]("id", O.PrimaryKey)
+
     def name = column[String]("name")
+
     def isDeleted = column[Boolean]("is_deleted")
 
     def * = (id, name) <> (Roster.tupled, Roster.unapply)
@@ -26,7 +28,9 @@ trait RostersComponent {
 
 @Singleton
 class RosterDAO @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)(implicit executionContext: ExecutionContext) extends RostersComponent with HasDatabaseConfigProvider[JdbcProfile] {
+
   import profile.api._
+
   val rosters = TableQuery[RostersTable]
 
   def list(): Future[Seq[Roster]] = {

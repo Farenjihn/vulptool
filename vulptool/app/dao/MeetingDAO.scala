@@ -1,13 +1,14 @@
 package dao
 
-import models.Meeting
-import slick.jdbc.JdbcProfile
-import java.text.SimpleDateFormat
 import java.sql.{Date, Time}
+import java.text.SimpleDateFormat
 
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.{ExecutionContext, Future}
+import models.Meeting
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
+import slick.jdbc.JdbcProfile
+
+import scala.concurrent.{ExecutionContext, Future}
 
 trait MeetingsComponent {
   self: HasDatabaseConfigProvider[JdbcProfile] =>
@@ -20,8 +21,11 @@ trait MeetingsComponent {
   class MeetingsTable(tag: Tag) extends Table[Meeting](tag, "MEETINGS") {
 
     def id = column[Int]("id", O.PrimaryKey)
+
     def date = column[Date]("date")
+
     def time = column[Time]("time")
+
     def isDeleted = column[Boolean]("is_deleted")
 
     def * = (id, dateFormat.format(date), timeFormat.format(time)) <> (Meeting.tupled, Meeting.unapply)

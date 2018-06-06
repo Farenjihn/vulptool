@@ -21,7 +21,7 @@ class MeetingController @Inject()(cc: ControllerComponents, meetingDAO: MeetingD
   }
 
   implicit val jsonToMeeting: Reads[Meeting] = (
-    (JsPath \ "id").read[Int] and
+    (JsPath \ "id").readNullable[Int] and
       (JsPath \ "date").read[String](minLength[String](10) keepAnd maxLength[String](10)) //date format accepted: jj.mm.yyyy HH:MM:ss
     ) (Meeting.apply _)
 

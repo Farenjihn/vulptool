@@ -15,7 +15,7 @@ trait PlayersComponent {
 
   class PlayersTable(tag: Tag) extends Table[Player](tag, "PLAYERS") {
 
-    def id = column[Int]("id", O.PrimaryKey)
+    def id = column[Int]("id", O.PrimaryKey, O.AutoInc)
 
     def pseudo = column[String]("main_pseudo")
 
@@ -25,7 +25,7 @@ trait PlayersComponent {
 
     def isDeleted = column[Boolean]("is_deleted")
 
-    def * = (id, pseudo) <> (Player.tupled, Player.unapply)
+    def * = (id.?, pseudo) <> (Player.tupled, Player.unapply)
   }
 
 }
@@ -46,12 +46,12 @@ class PlayerDAO @Inject()(protected val dbConfigProvider: DatabaseConfigProvider
     db.run(players.filter(_.id === id).result.headOption)
 
   def insert(player: Player): Future[Player] = {
-    val insertQuery = players returning players.map(_.id) into ((player, token) => player.copy(token))
+    val insertQuery = players returning players.map(_.id) into ((player, id) => player.copy(Some(id)))
     db.run(insertQuery += player)
   }
 
   def update(id: Int, player: Player): Future[Int] = {
-    val playerToUpdate: Player = player.copy(id)
+    val playerToUpdate: Player = player.copy(Some(id))
     db.run(players.filter(_.id === id).update(playerToUpdate))
   }
 

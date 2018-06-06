@@ -21,7 +21,7 @@ class RosterController @Inject()(cc: ControllerComponents, rosterDAO: RosterDAO)
   }
 
   implicit val jsonToRoster: Reads[Roster] = (
-    (JsPath \ "id").read[Int] and
+    (JsPath \ "id").readNullable[Int] and
       (JsPath \ "name").read[String]
     ) (Roster.apply _)
 

@@ -21,7 +21,7 @@ trait RostersComponent {
 
     def isDeleted = column[Boolean]("is_deleted")
 
-    def * = (id, name) <> (Roster.tupled, Roster.unapply)
+    def * = (id.?, name) <> (Roster.tupled, Roster.unapply)
   }
 
 }
@@ -42,12 +42,12 @@ class RosterDAO @Inject()(protected val dbConfigProvider: DatabaseConfigProvider
     db.run(rosters.filter(_.id === id).result.headOption)
 
   def insert(roster: Roster): Future[Roster] = {
-    val insertQuery = rosters returning rosters.map(_.id) into ((roster, id) => roster.copy(id))
+    val insertQuery = rosters returning rosters.map(_.id) into ((roster, id) => roster.copy(Some(id)))
     db.run(insertQuery += roster)
   }
 
   def update(id: Int, roster: Roster): Future[Int] = {
-    val rosterToUpdate: Roster = roster.copy(id)
+    val rosterToUpdate: Roster = roster.copy(Some(id))
     db.run(rosters.filter(_.id === id).update(rosterToUpdate))
   }
 

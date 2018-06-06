@@ -22,7 +22,7 @@ trait TemplatesComponent {
 
     def isDeleted = column[Boolean]("is_deleted")
 
-    def * = (id, eventId, rosterId) <> (Template.tupled, Template.unapply)
+    def * = (id.?, eventId, rosterId) <> (Template.tupled, Template.unapply)
   }
 
 }
@@ -43,12 +43,12 @@ class TemplateDAO @Inject()(protected val dbConfigProvider: DatabaseConfigProvid
     db.run(templates.filter(_.id === id).result.headOption)
 
   def insert(template: Template): Future[Template] = {
-    val insertQuery = templates returning templates.map(_.id) into ((template, id) => template.copy(id))
+    val insertQuery = templates returning templates.map(_.id) into ((template, id) => template.copy(Some(id)))
     db.run(insertQuery += template)
   }
 
   def update(id: Int, template: Template): Future[Int] = {
-    val templateToUpdate: Template = template.copy(id)
+    val templateToUpdate: Template = template.copy(Some(id))
     db.run(templates.filter(_.id === id).update(templateToUpdate))
   }
 

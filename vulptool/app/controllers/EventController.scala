@@ -25,7 +25,7 @@ class EventController @Inject()(cc: ControllerComponents, eventDAO: EventDAO) ex
   }
 
   implicit val jsonToEvent: Reads[Event] = (
-    (JsPath \ "id").read[Int] and
+    (JsPath \ "id").readNullable[Int] and
       (JsPath \ "name").read[String](minLength[String](2)) and
       (JsPath \ "etype").read[String] and
       (JsPath \ "meetingId").read[Int] and

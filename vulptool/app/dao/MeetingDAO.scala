@@ -25,7 +25,7 @@ trait MeetingsComponent {
 
     def isDeleted = column[Boolean]("is_deleted")
 
-    def * = (id, dateFormat.format(date)) <> (Meeting.tupled, Meeting.unapply)
+    def * = (id.?, dateFormat.format(date)) <> (Meeting.tupled, Meeting.unapply)
   }
 
 }
@@ -46,12 +46,12 @@ class MeetingDAO @Inject()(protected val dbConfigProvider: DatabaseConfigProvide
     db.run(meetings.filter(_.id === id).result.headOption)
 
   def insert(meeting: Meeting): Future[Meeting] = {
-    val insertQuery = meetings returning meetings.map(_.id) into ((meeting, id) => meeting.copy(id))
+    val insertQuery = meetings returning meetings.map(_.id) into ((meeting, id) => meeting.copy(Some(id)))
     db.run(insertQuery += meeting)
   }
 
   def update(id: Int, meeting: Meeting): Future[Int] = {
-    val meetingToUpdate: Meeting = meeting.copy(id)
+    val meetingToUpdate: Meeting = meeting.copy(Some(id))
     db.run(meetings.filter(_.id === id).update(meetingToUpdate))
   }
 

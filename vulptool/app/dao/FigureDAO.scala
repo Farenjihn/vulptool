@@ -34,7 +34,7 @@ trait FiguresComponent {
 
     def isDeleted = column[Boolean]("is_deleted")
 
-    def * = (id, name, fclasse, lvl, ilvl, playerId) <> (Figure.tupled, Figure.unapply)
+    def * = (id.?, name, fclasse, lvl, ilvl, playerId) <> (Figure.tupled, Figure.unapply)
   }
 
 }
@@ -56,12 +56,12 @@ class FigureDAO @Inject()(protected val dbConfigProvider: DatabaseConfigProvider
     db.run(figures.filter(_.id === id).result.headOption)
 
   def insert(figure: Figure): Future[Figure] = {
-    val insertQuery = figures returning figures.map(_.id) into ((figure, id) => figure.copy(id))
+    val insertQuery = figures returning figures.map(_.id) into ((figure, id) => figure.copy(Some(id)))
     db.run(insertQuery += figure)
   }
 
   def update(id: Int, figure: Figure): Future[Int] = {
-    val figureToUpdate: Figure = figure.copy(id)
+    val figureToUpdate: Figure = figure.copy(Some(id))
     db.run(figures.filter(_.id === id).update(figureToUpdate))
   }
 

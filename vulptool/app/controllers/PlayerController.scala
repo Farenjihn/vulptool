@@ -20,7 +20,7 @@ class PlayerController @Inject()(cc: ControllerComponents, playerDAO: PlayerDAO)
   }
 
   implicit val jsonToPlayer: Reads[Player] = (
-    (JsPath \ "id").read[Int] and
+    (JsPath \ "id").readNullable[Int] and
       (JsPath \ "pseudo").read[String]
     ) (Player.apply _)
 

@@ -25,7 +25,7 @@ class FigureController @Inject()(cc: ControllerComponents, figureDAO: FigureDAO)
   }
 
   implicit val jsonToFigure: Reads[Figure] = (
-    (JsPath \ "id").read[Int] and
+    (JsPath \ "id").readNullable[Int] and
       (JsPath \ "name").read[String](minLength[String](2)) and
       (JsPath \ "fclass").read[String](minLength[String](2)) and
       (JsPath \ "lvl").read[Int] and

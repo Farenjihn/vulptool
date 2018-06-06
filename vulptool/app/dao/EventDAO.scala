@@ -14,7 +14,7 @@ trait EventsComponent {
 
   class EventsTable(tag: Tag) extends Table[Event](tag, "EVENTS") {
 
-    def id = column[Int]("id", O.PrimaryKey)
+    def id = column[Int]("id", O.PrimaryKey, O.AutoInc)
 
     def name = column[String]("event_name")
 
@@ -28,7 +28,7 @@ trait EventsComponent {
 
     def isDeleted = column[Boolean]("is_deleted")
 
-    def * = (id, name, eType, meetingId, raidId, rosterId) <> (Event.tupled, Event.unapply)
+    def * = (id.?, name, eType, meetingId, raidId, rosterId) <> (Event.tupled, Event.unapply)
   }
 
 }
@@ -49,12 +49,12 @@ class EventDAO @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)
     db.run(events.filter(_.id === id).result.headOption)
 
   def insert(event: Event): Future[Event] = {
-    val insertQuery = events returning events.map(_.id) into ((event, id) => event.copy(id))
+    val insertQuery = events returning events.map(_.id) into ((event, id) => event.copy(Some(id)))
     db.run(insertQuery += event)
   }
 
   def update(id: Int, event: Event): Future[Int] = {
-    val eventToUpdate: Event = event.copy(id)
+    val eventToUpdate: Event = event.copy(Some(id))
     db.run(events.filter(_.id === id).update(eventToUpdate))
   }
 

@@ -30,7 +30,7 @@ trait RaidsComponent {
 
     def isDeleted = column[Boolean]("is_deleted")
 
-    def * = (id, name, nbBoss, difficulty) <> (Raid.tupled, Raid.unapply)
+    def * = (id.?, name, nbBoss, difficulty) <> (Raid.tupled, Raid.unapply)
   }
 
 }
@@ -51,12 +51,12 @@ class RaidDAO @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)(
     db.run(raids.filter(_.id === id).result.headOption)
 
   def insert(raid: Raid): Future[Raid] = {
-    val insertQuery = raids returning raids.map(_.id) into ((raid, id) => raid.copy(id))
+    val insertQuery = raids returning raids.map(_.id) into ((raid, id) => raid.copy(Some(id)))
     db.run(insertQuery += raid)
   }
 
   def update(id: Int, raid: Raid): Future[Int] = {
-    val raidToUpdate: Raid = raid.copy(id)
+    val raidToUpdate: Raid = raid.copy(Some(id))
     db.run(raids.filter(_.id === id).update(raidToUpdate))
   }
 

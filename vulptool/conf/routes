@@ -41,10 +41,17 @@ PUT     /roster/:id                controllers.RosterController.updateRoster(id:
 
 # Template
 GET     /template                  controllers.TemplateController.getTemplates
-GET     /template/:id              controllers.TemplateController.getTemplatee(id: Int)
+GET     /template/:id              controllers.TemplateController.getTemplate(id: Int)
 POST    /template                  controllers.TemplateController.postTemplate
 DELETE  /template/:id              controllers.TemplateController.deleteTemplate(id: Int)
 PUT     /template/:id              controllers.TemplateController.updateTemplate(id: Int)
+
+#Event
+GET     /event                  controllers.EventController.getEvents
+GET     /event/:id              controllers.EventController.getEvent(id: Int)
+POST    /event                  controllers.EventController.postEvent
+DELETE  /event/:id              controllers.EventController.deleteEvent(id: Int)
+PUT     /event/:id              controllers.EventController.updateEvent(id: Int)
 
 
 

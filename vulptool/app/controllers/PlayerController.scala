@@ -1,17 +1,17 @@
 package controllers
 
+import dao.PlayerDAO
 import javax.inject.{Inject, Singleton}
 import models.Player
 import play.api.libs.functional.syntax._
 import play.api.libs.json.Reads._
 import play.api.libs.json._
 import play.api.mvc.{AbstractController, ControllerComponents}
-import models.Player
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
 @Singleton
-class PlayerController @Inject()(cc: ControllerComponents) extends AbstractController(cc) {
+class PlayerController @Inject()(cc: ControllerComponents, playerDAO: PlayerDAO) extends AbstractController(cc) {
   implicit val playerToJson: Writes[Player] = { player =>
     Json.obj(
       "mainPseudo" -> player.mainPseudo,
@@ -22,7 +22,7 @@ class PlayerController @Inject()(cc: ControllerComponents) extends AbstractContr
   implicit val jsonToPlayer: Reads[Player] = (
     (JsPath \ "mainPseudo").read[String] and
       (JsPath \ "token").read[String]
-    )(Player.apply _)
+    ) (Player.apply _)
 
   def validateJson[A: Reads] = parse.json.validate(
     _.validate[A].asEither.left.map(e => BadRequest(JsError.toJson(e)))
@@ -30,13 +30,13 @@ class PlayerController @Inject()(cc: ControllerComponents) extends AbstractContr
 
   //GET
   def getPlayers = Action.async {
-    val jsonPlayerList = PlayerDAO.list()
+    val jsonPlayerList = playerDAO.list()
     jsonPlayerList map (s => Ok(Json.toJson(s)))
   }
 
   //GET with id
   def getPlayer(playerId: String) = Action.async {
-    val optionalPlayer = PlayerDAO.findById(playerId)
+    val optionalPlayer = playerDAO.findById(playerId)
 
     optionalPlayer.map {
       case Some(s) => Ok(Json.toJson(s))
@@ -52,14 +52,14 @@ class PlayerController @Inject()(cc: ControllerComponents) extends AbstractContr
   //POST
   def postPlayer = Action.async(validateJson[Player]) { request =>
     val player = request.body
-    val createdPlayer = PlayerDAO.insert(player)
+    val createdPlayer = playerDAO.insert(player)
 
-    postPlayer.map(s =>
+    createdPlayer.map(s =>
       Ok(
         Json.obj(
-          "status"  -> "OK",
-          "id"      -> s.playerId,
-          "message" -> ("Player '" + s.playerId + " " + s.mainPseudo + "' saved.")
+          "status" -> "OK",
+          "id" -> s.token,
+          "message" -> ("Player '" + s.token + " " + s.mainPseudo + "' saved.")
         )
       )
     )
@@ -70,11 +70,11 @@ class PlayerController @Inject()(cc: ControllerComponents) extends AbstractContr
     val newPlayer = request.body
 
     // Try to edit the student, then return a 200 OK HTTP status to the client if everything worked.
-    PlayerDAO.update(playerId, newPlayer).map {
+    playerDAO.update(playerId, newPlayer).map {
       case 1 => Ok(
         Json.obj(
           "status" -> "OK",
-          "message" -> ("Player '" + newPlayer.playerId + " " + newPlayer.mainPseudo + "' updated.")
+          "message" -> ("Player '" + newPlayer.token + " " + newPlayer.mainPseudo + "' updated.")
         )
       )
       case 0 => NotFound(Json.obj(
@@ -86,10 +86,10 @@ class PlayerController @Inject()(cc: ControllerComponents) extends AbstractContr
 
   //DELETE
   def deletePlayer(playerId: String) = Action.async {
-    PlayerDAO.delete(playerId).map {
+    playerDAO.delete(playerId).map {
       case 1 => Ok(
         Json.obj(
-          "status"  -> "OK",
+          "status" -> "OK",
           "message" -> ("Player #" + playerId + " deleted.")
         )
       )

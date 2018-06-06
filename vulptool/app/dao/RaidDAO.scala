@@ -1,20 +1,19 @@
 package dao
 
-import models.{Raid, RaidDifficulty}
-import models.RaidDifficulty._
-import slick.jdbc.JdbcProfile
-import java.text.SimpleDateFormat
-
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.{ExecutionContext, Future}
+import models.RaidDifficulty.RaidDifficulty
+import models.{Raid, RaidDifficulty}
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
+import slick.jdbc.JdbcProfile
+
+import scala.concurrent.{ExecutionContext, Future}
 
 trait RaidsComponent {
   self: HasDatabaseConfigProvider[JdbcProfile] =>
 
   import profile.api._
 
-  implicit val classesMapper = MappedColumnType.base[RaidDifficulty, String](
+  implicit val mapper = MappedColumnType.base[RaidDifficulty.Value, String](
     e => e.toString,
     s => RaidDifficulty.withName(s)
   )
@@ -22,9 +21,13 @@ trait RaidsComponent {
   class RaidsTable(tag: Tag) extends Table[Raid](tag, "RAIDS") {
 
     def id = column[Int]("id", O.PrimaryKey)
+
     def name = column[String]("raid_name")
+
     def nbBoss = column[Int]("nb_boss")
-    def difficulty = column[String]("difficulty")
+
+    def difficulty = column[RaidDifficulty]("difficulty")
+
     def isDeleted = column[Boolean]("is_deleted")
 
     def * = (id, name, nbBoss, difficulty) <> (Raid.tupled, Raid.unapply)

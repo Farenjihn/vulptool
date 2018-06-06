@@ -1,42 +1,47 @@
 package dao
 
-import models.{Figure, WoWClasses, Player}
-import models.WoWClasses._
-import slick.jdbc.JdbcProfile
-import java.text.SimpleDateFormat
-
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.{ExecutionContext, Future}
+import models.WoWClass.WoWClass
+import models.{Figure, WoWClass}
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
+import slick.jdbc.JdbcProfile
+
+import scala.concurrent.{ExecutionContext, Future}
 
 trait FiguresComponent {
   self: HasDatabaseConfigProvider[JdbcProfile] =>
 
   import profile.api._
 
-  implicit val classesMapper = MappedColumnType.base[WoWClasses, String](
+  implicit val mapper = MappedColumnType.base[WoWClass, String](
     e => e.toString,
-    s => WoWClasses.withName(s)
+    s => WoWClass.withName(s)
   )
 
   class FiguresTable(tag: Tag) extends Table[Figure](tag, "FIGURES") {
 
     def id = column[Int]("id", O.PrimaryKey)
+
     def name = column[String]("figure_name")
-    def fclasse = column[String]("classe")
+
+    def fclasse = column[WoWClass]("classe")
+
     def lvl = column[Int]("lvl")
+
     def ilvl = column[Double]("ilvl")
+
     def playerId = column[Int]("player")
+
     def isDeleted = column[Boolean]("is_deleted")
 
-    def * = (id, fclasse, lvl, ilvl, playerId) <> (Figure.tupled, Figure.unapply)
+    def * = (id, name, fclasse, lvl, ilvl, playerId) <> (Figure.tupled, Figure.unapply)
   }
 
 }
 
 @Singleton
 class FigureDAO @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)(implicit executionContext: ExecutionContext)
-  extends FiguresComponent with PlayersComponent with HasDatabaseConfigProvider[JdbcProfile] {
+  extends HasDatabaseConfigProvider[JdbcProfile] with FiguresComponent {
 
   import profile.api._
 

@@ -1,22 +1,23 @@
 package controllers
 
+import dao.FigureDAO
 import javax.inject.{Inject, Singleton}
-import models.Figure
+import models.{Figure, WoWClass}
 import play.api.libs.functional.syntax._
 import play.api.libs.json.Reads._
 import play.api.libs.json._
 import play.api.mvc.{AbstractController, ControllerComponents}
-import models.Figure
-import models.Player
+
+import scala.concurrent.ExecutionContext.Implicits.global
 
 @Singleton
-class FigureController @Inject()(cc: ControllerComponents) extends AbstractController(cc) {
+class FigureController @Inject()(cc: ControllerComponents, figureDAO: FigureDAO) extends AbstractController(cc) {
 
   implicit val figureToJson: Writes[Figure] = { figure =>
     Json.obj(
       "id" -> figure.id,
       "name" -> figure.name,
-      "fclasse" -> figure.fclass,
+      "fclass" -> figure.fclass,
       "lvl" -> figure.lvl,
       "ilvl" -> figure.ilvl,
       "playerId" -> figure.playerId
@@ -25,42 +26,42 @@ class FigureController @Inject()(cc: ControllerComponents) extends AbstractContr
 
   implicit val jsonToFigure: Reads[Figure] = (
     (JsPath \ "id").read[Int] and
-      (JsPath \ "name").read[String] (minLength[String](2)) and
-      (JsPath \ "fclasse").read[String] (minLength[String](2)) and
-      (JsPath \ "lvl").read[Int]and
-      (JsPath \ "ilvl").read[Int] and
+      (JsPath \ "name").read[String](minLength[String](2)) and
+      (JsPath \ "fclass").read[String](minLength[String](2)) and
+      (JsPath \ "lvl").read[Int] and
+      (JsPath \ "ilvl").read[Double] and
       (JsPath \ "playerId").read[Int]
-    )(Figure.apply _)
+    ) ((id, name, fclass, lvl, ilvl, playerId) => Figure(id, name, WoWClass.withName(fclass), lvl, ilvl, playerId))
 
-  def validateJson[A : Reads] = parse.json.validate(
+  def validateJson[A: Reads] = parse.json.validate(
     _.validate[A].asEither.left.map(e => BadRequest(JsError.toJson(e)))
   )
 
   //GET
   def getFigures = Action.async {
-    val jsonFigureList = FigureDAO.list()
+    val jsonFigureList = figureDAO.list()
     jsonFigureList map (s => Ok(Json.toJson(s)))
   }
 
   //POST
   def postFigure = Action.async(validateJson[Figure]) { request =>
     val figure = request.body
-    val createdFigure = FigureDAO.insert(figure)
+    val createdFigure = figureDAO.insert(figure)
 
-    postFigure.map(s =>
+    createdFigure.map(s =>
       Ok(
         Json.obj(
-          "status"  -> "OK",
-          "id"      -> s.figureId,
-          "message" -> ("Figure '" + s.figureId + " " + s.name + "' saved.")
+          "status" -> "OK",
+          "id" -> s.id,
+          "message" -> ("Figure '" + s.id + " " + s.name + "' saved.")
         )
       )
     )
   }
 
   //GET with id
-  def getFigure(figureId: Long) = Action.async {
-    val optionalFigure = FigureDAO.findById(figureId)
+  def getFigure(figureId: Int) = Action.async {
+    val optionalFigure = figureDAO.findById(figureId)
 
     optionalFigure.map {
       case Some(s) => Ok(Json.toJson(s))
@@ -74,15 +75,15 @@ class FigureController @Inject()(cc: ControllerComponents) extends AbstractContr
   }
 
   //PUT
-  def updateFigure(figureId: Long) = Action.async(validateJson[Figure]) { request =>
+  def updateFigure(figureId: Int) = Action.async(validateJson[Figure]) { request =>
     val newFigure = request.body
 
     // Try to edit the student, then return a 200 OK HTTP status to the client if everything worked.
-    FigureDAO.update(figureId, newFigure).map {
+    figureDAO.update(figureId, newFigure).map {
       case 1 => Ok(
         Json.obj(
           "status" -> "OK",
-          "message" -> ("Figure '" + newFigure.figureId + " " + newFigure.name + "' updated.")
+          "message" -> ("Figure '" + newFigure.id + " " + newFigure.name + "' updated.")
         )
       )
       case 0 => NotFound(Json.obj(
@@ -93,11 +94,11 @@ class FigureController @Inject()(cc: ControllerComponents) extends AbstractContr
   }
 
   //DELETE
-  def deleteFigure(figureId: Long) = Action.async {
-    FigureDAO.delete(figureId).map {
+  def deleteFigure(figureId: Int) = Action.async {
+    figureDAO.delete(figureId).map {
       case 1 => Ok(
         Json.obj(
-          "status"  -> "OK",
+          "status" -> "OK",
           "message" -> ("Figure #" + figureId + " deleted.")
         )
       )

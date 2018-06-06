@@ -12,35 +12,35 @@ GET     /assets/*file               controllers.Assets.versioned(path="/public",
 # API REST ENDPOINTS
 
 # Figure
-GET     /figure                    controllers.FigureController.getFigure
+GET     /figure                    controllers.FigureController.getFigures
 GET     /figure/:id                controllers.FigureController.getFigure(id: Int)
 POST    /figure                    controllers.FigureController.postFigure
 DELETE  /figure/:id                controllers.FigureController.deleteFigure(id: Int)
 PUT     /figure/:id                controllers.FigureController.updateFigure(id: Int)
 
 # Meetings
-GET     /meeting                   controllers.MeetingController.getMeeting
+GET     /meeting                   controllers.MeetingController.getMeetings
 GET     /meeting/:id               controllers.MeetingController.getMeeting(id: Int)
 POST    /meeting                   controllers.MeetingController.postMeeting
 DELETE  /meeting/:id               controllers.MeetingController.deleteMeeting(id: Int)
 PUT     /meeting/:id               controllers.MeetingController.updateMeeting(id: Int)
 
 # Player
-GET     /player                    controllers.PlayerController.getPlayer
+GET     /player                    controllers.PlayerController.getPlayers
 GET     /player/:id                controllers.PlayerController.getPlayer(id: String)
 POST    /player                    controllers.PlayerController.postPlayer
 DELETE  /player/:id                controllers.PlayerController.deletePlayer(id: String)
 PUT     /player/:id                controllers.PlayerController.updatePlayer(id: String)
 
 # Roster
-GET     /roster                    controllers.RosterController.getRoster
+GET     /roster                    controllers.RosterController.getRosters
 GET     /roster/:id                controllers.RosterController.getRoster(id: Int)
 POST    /roster                    controllers.RosterController.postRoster
 DELETE  /roster/:id                controllers.RosterController.deleteRoster(id: Int)
 PUT     /roster/:id                controllers.RosterController.updateRoster(id: Int)
 
 # Template
-GET     /template                  controllers.TemplateController.getTemplate
+GET     /template                  controllers.TemplateController.getTemplates
 GET     /template/:id              controllers.TemplateController.getTemplatee(id: Int)
 POST    /template                  controllers.TemplateController.postTemplate
 DELETE  /template/:id              controllers.TemplateController.deleteTemplate(id: Int)

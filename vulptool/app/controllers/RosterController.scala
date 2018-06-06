@@ -6,26 +6,30 @@ import play.api.libs.functional.syntax._
 import play.api.libs.json.Reads._
 import play.api.libs.json._
 import play.api.mvc.{AbstractController, ControllerComponents}
+import models.Roster
+import models.Figure
 
 @Singleton
 class RosterController @Inject()(cc: ControllerComponents) extends AbstractController(cc) {
 
-  implicit val rosterToJson: Writes[Roster] = (
-    (JsPath \ "rosterId").write[Int] and
-      (JsPath \ "rosterType").write[String]
-    )(unlift(Roster.unapply))
+  implicit val rosterToJson: Writes[Roster] = { roster =>
+    Json.obj(
+      "id" -> roster.id,
+      "name" -> roster.name
+    )
+  }
 
   implicit val jsonToRoster: Reads[Roster] = (
-    (JsPath \ "rosterId").read[Int] and
-      (JsPath \ "rosterType").read[String] (minLength[String](2))
+    (JsPath \ "id").read[Int] and
+      (JsPath \ "name").read[String]
     )(Roster.apply _)
 
-  def validateJson[A : Roster] = parse.json.validate(
+  def validateJson[A : Reads] = parse.json.validate(
     _.validate[A].asEither.left.map(e => BadRequest(JsError.toJson(e)))
   )
 
   //GET
-  def getRoster = Action.async {
+  def getRosters = Action.async {
     val jsonRosterList = RosterDAO.list()
     jsonRosterList map (s => Ok(Json.toJson(s)))
   }

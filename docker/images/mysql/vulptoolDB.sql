@@ -27,8 +27,8 @@ CREATE TABLE raid(
 
 CREATE TABLE meeting(
     id INT NOT NULL AUTO_INCREMENT,
-    time_begin TIMESTAMP NOT NULL,
-    time_end TIMESTAMP NOT NULL,
+    time_begin TIMESTAMP NULL DEFAULT NULL,
+    time_end TIMESTAMP NULL DEFAULT NULL,
     is_deleted BOOLEAN NOT NULL DEFAULT false DEFAULT false,
 
     PRIMARY KEY (id)

@@ -42,15 +42,18 @@ function onChange(date, dateString) {
 }
 
 class Calendar extends React.Component {
-    state = {
-        meetings : [],
-        firstDayOfWeek: 0
-    };
+    constructor() {
+        super();
+        this.state = {
+            meetings : [],
+            firstDayOfWeek: 0
+        };
+    }
 
     componentDidMount() {
         fetch(`/api/meeting`)
             .then(result=> {
-                this.setState({items:result.json()});
+                this.setState({items:result});
             });
     }
 

@@ -10,20 +10,24 @@ import play.api.mvc.{AbstractController, ControllerComponents}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
-@Singleton
-class RosterController @Inject()(cc: ControllerComponents, rosterDAO: RosterDAO) extends AbstractController(cc) {
+trait RosterSerialization {
 
-  implicit val rosterToJson: Writes[Roster] = { roster =>
+  implicit val meetingToJson: Writes[Roster] = { roster =>
     Json.obj(
       "id" -> roster.id,
       "name" -> roster.name
     )
   }
 
-  implicit val jsonToRoster: Reads[Roster] = (
+  implicit val jsonToMeeting: Reads[Roster] = (
     (JsPath \ "id").readNullable[Int] and
       (JsPath \ "name").read[String]
-    ) (Roster.apply _)
+    ) ((id, name) => Roster(id, name))
+}
+
+@Singleton
+class RosterController @Inject()(cc: ControllerComponents, rosterDAO: RosterDAO) extends AbstractController(cc) with RosterSerialization {
+
 
   def validateJson[A: Reads] = parse.json.validate(
     _.validate[A].asEither.left.map(e => BadRequest(JsError.toJson(e)))

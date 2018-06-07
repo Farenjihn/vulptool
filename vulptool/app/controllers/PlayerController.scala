@@ -10,19 +10,27 @@ import play.api.mvc.{AbstractController, ControllerComponents}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
-@Singleton
-class PlayerController @Inject()(cc: ControllerComponents, playerDAO: PlayerDAO) extends AbstractController(cc) {
+trait PlayerSerialization {
+
   implicit val playerToJson: Writes[Player] = { player =>
     Json.obj(
       "id" -> player.id,
-      "main_pseudo" -> player.pseudo
+      "main_pseudo" -> player.main_pseudo,
+      "auth_code" -> player.auth_code,
+      "access_code" -> player.access_code
     )
   }
 
-  implicit val jsonToPlayer: Reads[Player] = (
+  implicit val jsonToMeeting: Reads[Player] = (
     (JsPath \ "id").readNullable[Int] and
-      (JsPath \ "main_pseudo").read[String]
-    ) (Player.apply _)
+      (JsPath \ "main_pseudo").read[String] and
+      (JsPath \ "auth_code").read[String] and
+      (JsPath \ "access_code").read[String]
+  ) ((id, main_pseudo, auth_code, access_code) => Player(id, main_pseudo, auth_code, access_code))
+}
+
+@Singleton
+class PlayerController @Inject()(cc: ControllerComponents, playerDAO: PlayerDAO) extends AbstractController(cc) with PlayerSerialization {
 
   def validateJson[A: Reads] = parse.json.validate(
     _.validate[A].asEither.left.map(e => BadRequest(JsError.toJson(e)))
@@ -59,7 +67,7 @@ class PlayerController @Inject()(cc: ControllerComponents, playerDAO: PlayerDAO)
         Json.obj(
           "status" -> "OK",
           "id" -> player.id,
-          "message" -> ("Player '" + player.id + " " + player.pseudo + "' saved.")
+          "message" -> ("Player '" + player.id + " " + player.main_pseudo + "' saved.")
         )
       )
     )
@@ -74,7 +82,7 @@ class PlayerController @Inject()(cc: ControllerComponents, playerDAO: PlayerDAO)
       case 1 => Ok(
         Json.obj(
           "status" -> "OK",
-          "message" -> ("Player '" + newPlayer.id + " " + newPlayer.pseudo + "' updated.")
+          "message" -> ("Player '" + newPlayer.id + " " + newPlayer.main_pseudo + "' updated.")
         )
       )
       case 0 => NotFound(Json.obj(

@@ -17,7 +17,7 @@ trait PlayersComponent {
 
     def id = column[Int]("id", O.PrimaryKey, O.AutoInc)
 
-    def pseudo = column[String]("main_pseudo")
+    def main_pseudo = column[String]("main_pseudo")
 
     def authCode = column[String]("auth_code")
 
@@ -25,7 +25,7 @@ trait PlayersComponent {
 
     def isDeleted = column[Boolean]("is_deleted")
 
-    def * = (id.?, pseudo) <> (Player.tupled, Player.unapply)
+    def * = (id.?, main_pseudo, authCode, accessCode) <> (Player.tupled, Player.unapply)
   }
 
 }
@@ -38,7 +38,7 @@ class PlayerDAO @Inject()(protected val dbConfigProvider: DatabaseConfigProvider
   val players = TableQuery[PlayersTable]
 
   def list(): Future[Seq[Player]] = {
-    val query = players.filter(!_.isDeleted).sortBy(_.pseudo)
+    val query = players.filter(!_.isDeleted).sortBy(_.main_pseudo)
     db.run(query.result)
   }
 

@@ -1,3 +1,5 @@
+DROP DATABASE IF EXISTS vulptool;
+CREATE DATABASE IF NOT EXISTS vulptool;
 USE vulptool;
 
 SET FOREIGN_KEY_CHECKS = 0;
@@ -25,7 +27,8 @@ CREATE TABLE raid(
 
 CREATE TABLE meeting(
     id INT NOT NULL AUTO_INCREMENT,
-    time TIMESTAMP NOT NULL,
+    time_begin TIMESTAMP NOT NULL,
+    time_end TIMESTAMP NOT NULL,
     is_deleted BOOLEAN NOT NULL DEFAULT false DEFAULT false,
 
     PRIMARY KEY (id)
@@ -128,5 +131,5 @@ INSERT INTO figure (name, fclass, lvl, ilvl, player_id) VALUES ("test figure", "
 
 INSERT INTO raid (name, nb_boss, difficulty ) VALUES ("test raid", 0, "mythic mode");
 INSERT INTO roster (name) VALUES ("test roster");
-INSERT INTO meeting (time) VALUES (CURRENT_TIMESTAMP());
+INSERT INTO meeting (time_begin, time_end) VALUES (NOW(), DATE_ADD(NOW(), INTERVAL 3 HOUR));
 INSERT INTO event (name, raid_id, meeting_id, roster_id) VALUES ("test event", 1, 1, 1);

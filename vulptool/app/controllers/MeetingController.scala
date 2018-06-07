@@ -17,19 +17,20 @@ trait MeetingSerialization {
   implicit val meetingToJson: Writes[Meeting] = { meeting =>
     Json.obj(
       "id" -> meeting.id,
-      "time" -> meeting.time.toString
+      "time_begin" -> meeting.time_begin.toString,
+      "time_end" -> meeting.time_end.toString
     )
   }
 
   implicit val jsonToMeeting: Reads[Meeting] = (
     (JsPath \ "id").readNullable[Int] and
-      (JsPath \ "time").read[String]
-    ) ((id, time) => Meeting(id, Timestamp.valueOf(time)))
+      (JsPath \ "time_begin").read[String] and
+      (JsPath \ "time_end").read[String]
+    ) ((id, time_begin, time_end) => Meeting(id, Timestamp.valueOf(time_begin), Timestamp.valueOf(time_end)))
 }
 
 @Singleton
 class MeetingController @Inject()(cc: ControllerComponents, meetingDAO: MeetingDAO) extends AbstractController(cc) with MeetingSerialization {
-
 
   def validateJson[A: Reads] = parse.json.validate(
     _.validate[A].asEither.left.map(e => BadRequest(JsError.toJson(e)))
@@ -66,7 +67,7 @@ class MeetingController @Inject()(cc: ControllerComponents, meetingDAO: MeetingD
         Json.obj(
           "status" -> "OK",
           "id" -> meeting.id,
-          "message" -> ("Meeting '" + meeting.id + " " + meeting.time + "' saved.")
+          "message" -> ("Meeting '" + meeting.id + " " + meeting.time_begin + " " + meeting.time_end + "' saved.")
         )
       )
     )
@@ -81,7 +82,7 @@ class MeetingController @Inject()(cc: ControllerComponents, meetingDAO: MeetingD
       case 1 => Ok(
         Json.obj(
           "status" -> "OK",
-          "message" -> ("Meeting '" + newMeeting.id + " " + newMeeting.time + "' updated.")
+          "message" -> ("Meeting '" + newMeeting.id + " " + newMeeting.time_begin + " " + newMeeting.time_end + "' updated.")
         )
       )
       case 0 => NotFound(Json.obj(

@@ -20,7 +20,7 @@ trait FiguresComponent {
 
   class FiguresTable(tag: Tag) extends Table[Figure](tag, "figure") {
 
-    def id = column[Int]("id", O.PrimaryKey)
+    def id = column[Int]("id", O.PrimaryKey, O.AutoInc)
 
     def name = column[String]("name")
 
@@ -30,7 +30,7 @@ trait FiguresComponent {
 
     def ilvl = column[Double]("ilvl")
 
-    def playerId = column[Int]("player")
+    def playerId = column[Int]("player_id")
 
     def isDeleted = column[Boolean]("is_deleted")
 

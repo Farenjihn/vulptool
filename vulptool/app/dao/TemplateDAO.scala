@@ -14,7 +14,7 @@ trait TemplatesComponent {
 
   class TemplatesTable(tag: Tag) extends Table[Template](tag, "template") {
 
-    def id = column[Int]("id", O.PrimaryKey)
+    def id = column[Int]("id", O.PrimaryKey, O.AutoInc)
 
     def eventId = column[Int]("saved_event_id")
 

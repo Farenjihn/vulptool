@@ -1,0 +1,52 @@
+package controllers
+
+import models.{Figure, WoWClass}
+import org.scalatestplus.play._
+import org.scalatestplus.play.guice._
+import play.api.libs.json.Json
+import play.api.test.Helpers._
+import play.api.test._
+
+class FigureControllerSpec extends PlaySpec with GuiceOneAppPerTest with Injecting with FigureSerialization {
+  var createdId = 0
+
+  "FigureController GET" should {
+    "return the list of figures from the router" in {
+      val request = FakeRequest(GET, "/figure")
+      val events = route(app, request).get
+
+      status(events) mustBe OK
+      contentType(events) mustBe Some("application/json")
+    }
+
+    "return a specific figure from the router" in {
+      val request = FakeRequest(GET, "/figure/1")
+      val events = route(app, request).get
+
+      status(events) mustBe OK
+      contentType(events) mustBe Some("application/json")
+    }
+  }
+
+  "FigureController POST" should {
+    val figure = Figure(None, "added figure", WoWClass.DeathKnight, 25, 130, 1)
+
+    "create a new figure from the router" in {
+      val request = FakeRequest(POST, "/figure").withJsonBody(figureToJson.writes(figure))
+      val ret = route(app, request).get
+
+      status(ret) mustBe OK
+      createdId = (Json.parse(contentAsString(ret)) \ "id").get.as[Int]
+    }
+  }
+
+  "FigureController DELETE" should {
+    "delete the figure event from the router" in {
+      val request = FakeRequest(DELETE, "/figure/" + createdId)
+      val ret = route(app, request).get
+
+      status(ret) mustBe OK
+    }
+  }
+}
+

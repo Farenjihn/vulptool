@@ -1,5 +1,7 @@
 package models
 
+import java.sql.Timestamp
+
 import models.RaidDifficulty.RaidDifficulty
 import models.WoWClass.WoWClass
 
@@ -19,7 +21,7 @@ case class Figure(id: Option[Int], name: String, fclass: WoWClass, lvl: Int, ilv
 
 case class FigureRoster(figureId: Int, rosterId: Int)
 
-case class Meeting(id: Option[Int], time: String)
+case class Meeting(id: Option[Int], time: Timestamp)
 
 case class Player(id: Option[Int], pseudo: String)
 
@@ -28,5 +30,3 @@ case class Raid(id: Option[Int], name: String, nb_boss: Int, difficulty: RaidDif
 case class Roster(id: Option[Int], name: String)
 
 case class Template(id: Option[Int], eventId: Int, rosterId: Int)
-
-

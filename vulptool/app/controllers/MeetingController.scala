@@ -1,5 +1,7 @@
 package controllers
 
+import java.sql.Timestamp
+
 import dao.MeetingDAO
 import javax.inject.{Inject, Singleton}
 import models.Meeting
@@ -10,20 +12,24 @@ import play.api.mvc.{AbstractController, ControllerComponents}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
-@Singleton
-class MeetingController @Inject()(cc: ControllerComponents, meetingDAO: MeetingDAO) extends AbstractController(cc) {
+trait MeetingSerialization {
 
   implicit val meetingToJson: Writes[Meeting] = { meeting =>
     Json.obj(
       "id" -> meeting.id,
-      "time" -> meeting.time
+      "time" -> meeting.time.toString
     )
   }
 
   implicit val jsonToMeeting: Reads[Meeting] = (
     (JsPath \ "id").readNullable[Int] and
-      (JsPath \ "time").read[String](minLength[String](10) keepAnd maxLength[String](10)) //date format accepted: jj.mm.yyyy HH:MM:ss
-    ) (Meeting.apply _)
+      (JsPath \ "time").read[String]
+    ) ((id, time) => Meeting(id, Timestamp.valueOf(time)))
+}
+
+@Singleton
+class MeetingController @Inject()(cc: ControllerComponents, meetingDAO: MeetingDAO) extends AbstractController(cc) with MeetingSerialization {
+
 
   def validateJson[A: Reads] = parse.json.validate(
     _.validate[A].asEither.left.map(e => BadRequest(JsError.toJson(e)))

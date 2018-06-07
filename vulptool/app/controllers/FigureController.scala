@@ -10,8 +10,7 @@ import play.api.mvc.{AbstractController, ControllerComponents}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
-@Singleton
-class FigureController @Inject()(cc: ControllerComponents, figureDAO: FigureDAO) extends AbstractController(cc) {
+trait FigureSerialization {
 
   implicit val figureToJson: Writes[Figure] = { figure =>
     Json.obj(
@@ -32,6 +31,10 @@ class FigureController @Inject()(cc: ControllerComponents, figureDAO: FigureDAO)
       (JsPath \ "ilvl").read[Double] and
       (JsPath \ "playerId").read[Int]
     ) ((id, name, fclass, lvl, ilvl, playerId) => Figure(id, name, WoWClass.withName(fclass), lvl, ilvl, playerId))
+}
+
+@Singleton
+class FigureController @Inject()(cc: ControllerComponents, figureDAO: FigureDAO) extends AbstractController(cc) with FigureSerialization {
 
   def validateJson[A: Reads] = parse.json.validate(
     _.validate[A].asEither.left.map(e => BadRequest(JsError.toJson(e)))

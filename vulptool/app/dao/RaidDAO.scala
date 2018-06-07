@@ -20,7 +20,7 @@ trait RaidsComponent {
 
   class RaidsTable(tag: Tag) extends Table[Raid](tag, "raid") {
 
-    def id = column[Int]("id", O.PrimaryKey)
+    def id = column[Int]("id", O.PrimaryKey, O.AutoInc)
 
     def name = column[String]("name")
 

@@ -15,7 +15,7 @@ trait RostersComponent {
 
   class RostersTable(tag: Tag) extends Table[Roster](tag, "roster") {
 
-    def id = column[Int]("id", O.PrimaryKey)
+    def id = column[Int]("id", O.PrimaryKey, O.AutoInc)
 
     def name = column[String]("name")
 

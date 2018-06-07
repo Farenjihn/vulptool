@@ -25,7 +25,7 @@ CREATE TABLE raid(
 
 CREATE TABLE meeting(
     id INT NOT NULL AUTO_INCREMENT,
-    time DATE NOT NULL,
+    time TIMESTAMP NOT NULL,
     is_deleted BOOLEAN NOT NULL DEFAULT false DEFAULT false,
 
     PRIMARY KEY (id)
@@ -123,7 +123,10 @@ CREATE TABLE record(
     FOREIGN KEY (raid_id) REFERENCES raid (id)
 );
 
-INSERT INTO raid (name, nb_boss, difficulty, is_deleted) VALUES ("test raid", 0, "mythic mode", false);
-INSERT INTO roster (name, is_deleted) VALUES ("test roster", false);
-INSERT INTO meeting (time, is_deleted) VALUES (NOW(), false);
-INSERT INTO event (name, raid_id, meeting_id, roster_id, is_deleted) VALUES ("test event", 1, 1, 1, false);
+INSERT INTO player (main_pseudo, auth_code, access_code) VALUES ("test player", "AUTHCODE", "ACCESSCODE");
+INSERT INTO figure (name, fclass, lvl, ilvl, player_id) VALUES ("test figure", "DeathKnight", 0, 0, 1);
+
+INSERT INTO raid (name, nb_boss, difficulty ) VALUES ("test raid", 0, "mythic mode");
+INSERT INTO roster (name) VALUES ("test roster");
+INSERT INTO meeting (time) VALUES (CURRENT_TIMESTAMP());
+INSERT INTO event (name, raid_id, meeting_id, roster_id) VALUES ("test event", 1, 1, 1);

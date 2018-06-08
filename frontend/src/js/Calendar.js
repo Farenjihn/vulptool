@@ -47,13 +47,12 @@ class Calendar extends React.Component {
         super();
         this.state = {
             meetings: [],
-            firstDayOfWeek: 0,
             formVisible: false
         };
     }
 
     componentDidMount() {
-        fetch(`http://localhost:9000/meeting`, {
+        fetch('http://localhost:9000/meeting', {
             method: 'GET',
         })
             .then(results => results.json())
@@ -61,6 +60,19 @@ class Calendar extends React.Component {
             .catch(function (error) {
                 console.log("There was an error Fetching data: /// " + error + " \\\\\\");
             });
+
+        /*fetch('http://localhost:9000/player', {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                main_pseudo: "test player2",
+                auth_code: "AUTHCODE2",
+                access_code:  "ACCESSCODE2",
+            })
+        })*/
     }
 
     showModal = () => {
@@ -89,55 +101,11 @@ class Calendar extends React.Component {
         return (
             <Content style={{ margin: '16px 16px' }}>
                 <div style={{ padding: 24, background: '#fff', minHeight: 360 }}>
-                    {/*<div className="gutter-example">
-                        <Row gutter={16}>
-                            <Col className="gutter-row" span={3}>
-                                <div className="gutter-box">Wednesday</div>
-
-                            </Col>
-                            <Col className="gutter-row" span={3}>
-                                <div className="gutter-box">Thursday</div>
-                                <Card
-                                    //style={{ width: 300 }}
-                                    cover={<img alt="example" src="https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png" />}
-                                    actions={[<Icon type="setting" />, <Icon type="edit" />, <Icon type="ellipsis" />]}
-                                >
-                                    <Meta
-                                        avatar={<Avatar src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png" />}
-                                        title="RAID X"
-                                        description="This is the description"
-                                    />
-                                </Card>
-                            </Col>
-                            <Col className="gutter-row" span={3}>
-                                <div className="gutter-box">Friday</div>
-                            </Col>
-                            <Col className="gutter-row" span={3}>
-                                <div className="gutter-box">Saturday</div>
-                            </Col>
-                            <Col className="gutter-row" span={3}>
-                                <div className="gutter-box">Sunday</div>
-                            </Col>
-                            <Col className="gutter-row" span={3}>
-                                <div className="gutter-box">Monday</div>
-                            </Col>
-                            <Col className="gutter-row" span={3}>
-                                <div className="gutter-box">Tuesday</div>
-                            </Col>
-                            <Col className="gutter-row" span={3}>
-                                <div className="gutter-box">Rosters</div>
-                            </Col>
-                        </Row>
-                    </div>*/}
 
                     <div>
                         <WeekPicker onChange={onChange} placeholder="Select week"/>
                     </div>
 
-                    <div>
-                        {this.state.meetings.map(meeting =>
-                            <div key={meeting.id}> {meeting.time_begin} </div>)}
-                    </div>
 
                     <div>
                         <Button type="primary" onClick={this.showModal}>New Event</Button>

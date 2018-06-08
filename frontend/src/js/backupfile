@@ -1,0 +1,53 @@
+This fucking file contains idea I had, but not yet in code.
+
+
+
+<div>
+    {this.state.meetings.map(meeting =>
+        <div key={meeting.id}> {meeting.time_begin} </div>)}
+</div>
+
+
+
+
+
+    {/*<div className="gutter-example">
+        <Row gutter={16}>
+            <Col className="gutter-row" span={3}>
+                <div className="gutter-box">Wednesday</div>
+
+            </Col>
+            <Col className="gutter-row" span={3}>
+                <div className="gutter-box">Thursday</div>
+                <Card
+                    //style={{ width: 300 }}
+                    cover={<img alt="example" src="https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png" />}
+                    actions={[<Icon type="setting" />, <Icon type="edit" />, <Icon type="ellipsis" />]}
+                >
+                    <Meta
+                        avatar={<Avatar src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png" />}
+                        title="RAID X"
+                        description="This is the description"
+                    />
+                </Card>
+            </Col>
+            <Col className="gutter-row" span={3}>
+                <div className="gutter-box">Friday</div>
+            </Col>
+            <Col className="gutter-row" span={3}>
+                <div className="gutter-box">Saturday</div>
+            </Col>
+            <Col className="gutter-row" span={3}>
+                <div className="gutter-box">Sunday</div>
+            </Col>
+            <Col className="gutter-row" span={3}>
+                <div className="gutter-box">Monday</div>
+            </Col>
+            <Col className="gutter-row" span={3}>
+                <div className="gutter-box">Tuesday</div>
+            </Col>
+            <Col className="gutter-row" span={3}>
+                <div className="gutter-box">Rosters</div>
+            </Col>
+        </Row>
+    </div>*/}

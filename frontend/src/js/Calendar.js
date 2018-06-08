@@ -1,9 +1,10 @@
 import React from "react";
-import './Calendar.css';
+import '../css/Calendar.css';
+import EventForm from './EventForm';
 
 import { Layout, Menu, Breadcrumb, Icon } from 'antd';
 import { List, Row, Col } from 'antd';
-import { Card, Avatar } from 'antd';
+import { Button, Card, Avatar } from 'antd';
 import { DatePicker } from 'antd';
 import moment from 'moment';
 
@@ -45,16 +46,43 @@ class Calendar extends React.Component {
     constructor() {
         super();
         this.state = {
-            meetings : [],
-            firstDayOfWeek: 0
+            meetings: [],
+            firstDayOfWeek: 0,
+            formVisible: false
         };
     }
 
     componentDidMount() {
-        fetch(`/api/meeting`)
-            .then(result=> {
-                this.setState({items:result});
+        fetch(`http://localhost:9000/meeting`, {
+            method: 'GET',
+        })
+            .then(results => results.json())
+            .then(data => this.setState({ meetings: data }))
+            .catch(function (error) {
+                console.log("There was an error Fetching data: /// " + error + " \\\\\\");
             });
+    }
+
+    showModal = () => {
+        this.setState({ formVisible: true });
+    }
+    handleCancel = () => {
+        this.setState({ formVisible: false });
+    }
+    handleCreate = () => {
+        const form = this.formRef.props.form;
+        form.validateFields((err, values) => {
+            if (err) {
+                return;
+            }
+
+            console.log('Received values of form: ', values);
+            form.resetFields();
+            this.setState({ formVisible: false });
+        });
+    }
+    saveFormRef = (formRef) => {
+        this.formRef = formRef;
     }
 
     render() {
@@ -107,8 +135,20 @@ class Calendar extends React.Component {
                     </div>
 
                     <div>
-                        {JSON.stringify(this.state.meetings)}
+                        {this.state.meetings.map(meeting =>
+                            <div key={meeting.id}> {meeting.time_begin} </div>)}
                     </div>
+
+                    <div>
+                        <Button type="primary" onClick={this.showModal}>New Event</Button>
+                        <EventForm
+                            wrappedComponentRef={this.saveFormRef}
+                            visible={this.state.formVisible}
+                            onCancel={this.handleCancel}
+                            onCreate={this.handleCreate}
+                        />
+                    </div>
+
 
                     <List
                         itemLayout="vertical"

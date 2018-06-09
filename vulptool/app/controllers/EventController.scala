@@ -16,7 +16,7 @@ trait EventSerialization {
     Json.obj(
       "id" -> event.id,
       "name" -> event.name,
-      "category" -> event.category,
+      "description" -> event.description,
       "meetingId" -> event.meetingId,
       "raidId" -> event.raidId,
       "rosterId" -> event.rosterId
@@ -26,7 +26,7 @@ trait EventSerialization {
   implicit val jsonToEvent: Reads[Event] = (
     (JsPath \ "id").readNullable[Int] and
       (JsPath \ "name").read[String](minLength[String](2)) and
-      (JsPath \ "category").read[String] and
+      (JsPath \ "description").read[String] and
       (JsPath \ "meetingId").read[Int] and
       (JsPath \ "raidId").read[Int] and
       (JsPath \ "rosterId").read[Int]
@@ -80,7 +80,6 @@ class EventController @Inject()(cc: ControllerComponents, eventDAO: EventDAO) ex
   def updateEvent(eventId: Int) = Action.async(validateJson[Event]) { request =>
     val newEvent = request.body
 
-    // Try to edit the student, then return a 200 OK HTTP status to the client if everything worked.
     eventDAO.update(eventId, newEvent).map({
       case 1 => Ok(
         Json.obj(

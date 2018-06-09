@@ -54,7 +54,7 @@ CREATE TABLE player(
 
 CREATE TABLE event(
     id INT NOT NULL AUTO_INCREMENT,
-    category ENUM('') NOT NULL,
+    description VARCHAR(511) NOT NULL,
     name VARCHAR(255) NOT NULL,
     raid_id INT NOT NULL,
     meeting_id INT NOT NULL,

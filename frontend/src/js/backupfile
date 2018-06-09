@@ -8,6 +8,18 @@ This fucking file contains idea I had, but not yet in code.
 </div>
 
 
+fetch('http://localhost:9000/player', {
+            method: 'DELETE',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                main_pseudo: "test player2",
+                auth_code: "AUTHCODE2",
+                access_code:  "ACCESSCODE2",
+            })
+        })
 
 
 

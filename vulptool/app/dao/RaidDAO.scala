@@ -61,5 +61,5 @@ class RaidDAO @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)(
   }
 
   def delete(id: Int): Future[Int] =
-    db.run(raids.filter(_.id === id).delete)
+    db.run(raids.filter(_.id === id).map(_.isDeleted).update(true))
 }

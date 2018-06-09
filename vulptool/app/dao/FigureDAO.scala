@@ -66,5 +66,5 @@ class FigureDAO @Inject()(protected val dbConfigProvider: DatabaseConfigProvider
   }
 
   def delete(id: Int): Future[Int] =
-    db.run(figures.filter(_.id === id).delete)
+    db.run(figures.filter(_.id === id).map(_.isDeleted).update(true))
 }

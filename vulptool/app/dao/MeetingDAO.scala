@@ -1,10 +1,10 @@
 package dao
 
-import java.sql.{Date, Timestamp}
-import java.text.SimpleDateFormat
+import java.sql.Timestamp
+import java.sql.Date
 
 import javax.inject.{Inject, Singleton}
-import models.Meeting
+import models.{Event, Meeting}
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
 import slick.jdbc.JdbcProfile
 
@@ -31,16 +31,39 @@ trait MeetingsComponent {
 }
 
 @Singleton
-class MeetingDAO @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)(implicit executionContext: ExecutionContext) extends MeetingsComponent with HasDatabaseConfigProvider[JdbcProfile] {
+class MeetingDAO @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)(implicit executionContext: ExecutionContext)
+  extends MeetingsComponent with EventsComponent with HasDatabaseConfigProvider[JdbcProfile] {
 
   import profile.api._
 
   val meetings = TableQuery[MeetingsTable]
+  val events = TableQuery[EventsTable]
 
   def list(): Future[Seq[Meeting]] = {
     val query = meetings.filter(!_.isDeleted).sortBy(_.time_begin)
     db.run(query.result)
   }
+
+  /** Get list of students from Date */
+  def listFromDates(start: Date, end: Date): Future[Seq[Meeting]] =
+    listFromDates(Timestamp.from(start.toInstant), Timestamp.from(end.toInstant))
+
+  /** Get list of students from String */
+  def listFromDates(start: String, end: String): Future[Seq[Meeting]] =
+    listFromDates(Timestamp.valueOf(start), Timestamp.valueOf(end))
+
+  /** Get list of students from Timestamps */
+  def listFromDates(start: Timestamp, end: Timestamp): Future[Seq[Meeting]] = {
+    val query = for {
+      m <- meetings if m.time_begin > start && m.time_end < end
+    } yield m
+
+    db.run(query.result)
+  }
+
+  /** get event refering to this meeging */
+  def getEventFromMeeting(id: Int): Future[Option[Event]] =
+    db.run(events.filter(_.id === id).result.headOption)
 
   def findById(id: Int): Future[Option[Meeting]] =
     db.run(meetings.filter(_.id === id).result.headOption)
@@ -56,5 +79,5 @@ class MeetingDAO @Inject()(protected val dbConfigProvider: DatabaseConfigProvide
   }
 
   def delete(id: Int): Future[Int] =
-    db.run(meetings.filter(_.id === id).delete)
+    db.run(meetings.filter(_.id === id).map(_.isDeleted).update(true))
 }

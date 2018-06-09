@@ -31,7 +31,7 @@ class MeetingControllerSpec extends PlaySpec with GuiceOneAppPerTest with Inject
   }
 
   "MeetingController POST" should {
-    val meeting = Meeting(None, Timestamp.valueOf("2018-06-07 08:33:26"))
+    val meeting = Meeting(None, Timestamp.valueOf("2018-06-07 08:33:26"), Timestamp.valueOf("2018-06-07 08:33:26"))
 
     "create a new meeting from the router" in {
       val request = FakeRequest(POST, "/meeting").withJsonBody(meetingToJson.writes(meeting))

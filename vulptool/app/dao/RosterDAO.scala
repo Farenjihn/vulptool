@@ -1,7 +1,7 @@
 package dao
 
 import javax.inject.{Inject, Singleton}
-import models.Roster
+import models.{Figure, Roster}
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
 import slick.jdbc.JdbcProfile
 
@@ -27,16 +27,31 @@ trait RostersComponent {
 }
 
 @Singleton
-class RosterDAO @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)(implicit executionContext: ExecutionContext) extends RostersComponent with HasDatabaseConfigProvider[JdbcProfile] {
+class RosterDAO @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)(implicit executionContext: ExecutionContext)
+  extends RostersComponent // with FiguresRosterComponent with FiguresComponent
+    with HasDatabaseConfigProvider[JdbcProfile] {
 
   import profile.api._
 
   val rosters = TableQuery[RostersTable]
+  // val figures = TableQuery[FiguresTable]
+  // val figuresRosters = TableQuery[FiguresRosterTable]
 
   def list(): Future[Seq[Roster]] = {
     val query = rosters.filter(!_.isDeleted).sortBy(_.name)
     db.run(query.result)
   }
+
+  /*
+  def getFiguresFromRoster(id: Int): Future[Seq[Figure]] = {
+    val query = for {
+      figureRoster <- figuresRosters
+      figure <- figures if figureRoster.roster_id === figure.id
+    } yield figure
+
+    db.run(query.result)
+  }
+  */
 
   def findById(id: Int): Future[Option[Roster]] =
     db.run(rosters.filter(_.id === id).result.headOption)
@@ -52,5 +67,5 @@ class RosterDAO @Inject()(protected val dbConfigProvider: DatabaseConfigProvider
   }
 
   def delete(id: Int): Future[Int] =
-    db.run(rosters.filter(_.id === id).delete)
+    db.run(rosters.filter(_.id === id).map(_.isDeleted).update(true))
 }

@@ -116,7 +116,7 @@ class Calendar extends React.Component {
                 headers: {
                     'Accept': 'application/json',
                     'Content-Type': 'application/json',
-                }, 
+                },
                 body: JSON.stringify({
                     name: values.raid,
                     nb_boss: 0,

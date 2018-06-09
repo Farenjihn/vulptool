@@ -19,7 +19,7 @@ case class Event(id: Option[Int], name: String, description: String, meetingId: 
 
 case class Figure(id: Option[Int], name: String, fclass: WoWClass, lvl: Int, ilvl: Double, playerId: Int)
 
-case class FigureRoster(figureId: Int, rosterId: Int)
+case class FigureRoster(figure_id: Int, roster_id: Int)
 
 case class Meeting(id: Option[Int], time_begin: Timestamp, time_end: Timestamp)
 

@@ -56,5 +56,5 @@ class PlayerDAO @Inject()(protected val dbConfigProvider: DatabaseConfigProvider
   }
 
   def delete(id: Int): Future[Int] =
-    db.run(players.filter(_.id === id).delete)
+    db.run(players.filter(_.id === id).map(_.isDeleted).update(true))
 }

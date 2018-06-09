@@ -1,7 +1,7 @@
 package dao
 
 import javax.inject.{Inject, Singleton}
-import models.Event
+import models.{Event, Meeting, Raid, Roster}
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
 import slick.jdbc.JdbcProfile
 
@@ -34,11 +34,15 @@ trait EventsComponent {
 }
 
 @Singleton
-class EventDAO @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)(implicit executionContext: ExecutionContext) extends EventsComponent with HasDatabaseConfigProvider[JdbcProfile] {
+class EventDAO @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)(implicit executionContext: ExecutionContext)
+  extends EventsComponent with HasDatabaseConfigProvider[JdbcProfile] {
 
   import profile.api._
 
   val events = TableQuery[EventsTable]
+  // val rosters = TableQuery[RostersTable]
+  // val meetings = TableQuery[MeetingsTable]
+  // val raids = TableQuery[RaidsTable]
 
   def list(): Future[Seq[Event]] = {
     val query = events.filter(!_.isDeleted).sortBy(_.description)
@@ -48,6 +52,16 @@ class EventDAO @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)
   def findById(id: Int): Future[Option[Event]] =
     db.run(events.filter(_.id === id).result.headOption)
 
+  /*
+  def getRosterOfEvent(id: Int): Future[Option[Roster]] =
+    db.run(rosters.filter(_.id === id).result.headOption)
+
+  def getMeetingOfEvent(id: Int): Future[Option[Meeting]] =
+    db.run(meetings.filter(_.id === id).result.headOption)
+
+  def getRaidOfEvent(id: Int): Future[Option[Raid]] =
+    db.run(raids.filter(_.id === id).result.headOption)
+  */
   def insert(event: Event): Future[Event] = {
     val insertQuery = events returning events.map(_.id) into ((event, id) => event.copy(Some(id)))
     db.run(insertQuery += event)
@@ -59,5 +73,5 @@ class EventDAO @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)
   }
 
   def delete(id: Int): Future[Int] =
-    db.run(events.filter(_.id === id).delete)
+    db.run(events.filter(_.id === id).map(_.isDeleted).update(true))
 }

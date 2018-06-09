@@ -53,5 +53,5 @@ class TemplateDAO @Inject()(protected val dbConfigProvider: DatabaseConfigProvid
   }
 
   def delete(id: Int): Future[Int] =
-    db.run(templates.filter(_.id === id).delete)
+    db.run(templates.filter(_.id === id).map(_.isDeleted).update(true))
 }

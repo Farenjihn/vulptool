@@ -1,7 +1,7 @@
 package dao
 
 import javax.inject.{Inject, Singleton}
-import models.{Figure, Roster}
+import models.Roster
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
 import slick.jdbc.JdbcProfile
 
@@ -23,7 +23,6 @@ trait RostersComponent {
 
     def * = (id.?, name) <> (Roster.tupled, Roster.unapply)
   }
-
 }
 
 @Singleton

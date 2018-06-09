@@ -17,8 +17,8 @@ trait MeetingSerialization {
   implicit val meetingToJson: Writes[Meeting] = { meeting =>
     Json.obj(
       "id" -> meeting.id,
-      "time_begin" -> meeting.time_begin.toString,
-      "time_end" -> meeting.time_end.toString
+      "time_begin" -> meeting.timeBegin.toString,
+      "time_end" -> meeting.timeEnd.toString
     )
   }
 
@@ -26,7 +26,7 @@ trait MeetingSerialization {
     (JsPath \ "id").readNullable[Int] and
       (JsPath \ "time_begin").read[String] and
       (JsPath \ "time_end").read[String]
-    ) ((id, time_begin, time_end) => Meeting(id, Timestamp.valueOf(time_begin), Timestamp.valueOf(time_end)))
+    ) ((id, timeBegin, timeEnd) => Meeting(id, Timestamp.valueOf(timeBegin), Timestamp.valueOf(timeEnd)))
 }
 
 @Singleton
@@ -38,8 +38,8 @@ class MeetingController @Inject()(cc: ControllerComponents, meetingDAO: MeetingD
 
   //GET
   def getMeetings = Action.async {
-    val jsonMeetingList = meetingDAO.list()
-    jsonMeetingList.map(meeting => Ok(Json.toJson(meeting)))
+    val meetingList = meetingDAO.list()
+    meetingList.map(meeting => Ok(Json.toJson(meeting)))
   }
 
   //GET with id
@@ -69,7 +69,7 @@ class MeetingController @Inject()(cc: ControllerComponents, meetingDAO: MeetingD
         Json.obj(
           "status" -> "OK",
           "id" -> meeting.id,
-          "message" -> ("Meeting '" + meeting.id + " " + meeting.time_begin + " " + meeting.time_end + "' saved.")
+          "message" -> ("Meeting '" + meeting.id + " " + meeting.timeBegin + " " + meeting.timeEnd + "' saved.")
         )
       )
     )
@@ -84,7 +84,7 @@ class MeetingController @Inject()(cc: ControllerComponents, meetingDAO: MeetingD
       case 1 => Ok(
         Json.obj(
           "status" -> "OK",
-          "message" -> ("Meeting '" + newMeeting.id + " " + newMeeting.time_begin + " " + newMeeting.time_end + "' updated.")
+          "message" -> ("Meeting '" + newMeeting.id + " " + newMeeting.timeBegin + " " + newMeeting.timeEnd + "' updated.")
         )
       )
       case 0 => NotFound(Json.obj(

@@ -1,7 +1,6 @@
 package dao
 
-import java.sql.Timestamp
-import java.sql.Date
+import java.sql.{Date, Timestamp}
 
 import javax.inject.{Inject, Singleton}
 import models.{Event, Meeting}
@@ -27,7 +26,6 @@ trait MeetingsComponent {
 
     def * = (id.?, time_begin, time_end) <> (Meeting.tupled, Meeting.unapply)
   }
-
 }
 
 @Singleton
@@ -44,15 +42,12 @@ class MeetingDAO @Inject()(protected val dbConfigProvider: DatabaseConfigProvide
     db.run(query.result)
   }
 
-  /** Get list of students from Date */
   def listFromDates(start: Date, end: Date): Future[Seq[Meeting]] =
     listFromDates(Timestamp.from(start.toInstant), Timestamp.from(end.toInstant))
 
-  /** Get list of students from String */
   def listFromDates(start: String, end: String): Future[Seq[Meeting]] =
     listFromDates(Timestamp.valueOf(start), Timestamp.valueOf(end))
 
-  /** Get list of students from Timestamps */
   def listFromDates(start: Timestamp, end: Timestamp): Future[Seq[Meeting]] = {
     val query = for {
       m <- meetings if m.time_begin > start && m.time_end < end
@@ -61,7 +56,6 @@ class MeetingDAO @Inject()(protected val dbConfigProvider: DatabaseConfigProvide
     db.run(query.result)
   }
 
-  /** get event refering to this meeging */
   def getEventFromMeeting(id: Int): Future[Option[Event]] =
     db.run(events.filter(_.id === id).result.headOption)
 

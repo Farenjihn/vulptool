@@ -13,18 +13,18 @@ class FigureControllerSpec extends PlaySpec with GuiceOneAppPerTest with Injecti
   "FigureController GET" should {
     "return the list of figures from the router" in {
       val request = FakeRequest(GET, "/figure")
-      val events = route(app, request).get
+      val figures = route(app, request).get
 
-      status(events) mustBe OK
-      contentType(events) mustBe Some("application/json")
+      status(figures) mustBe OK
+      contentType(figures) mustBe Some("application/json")
     }
 
     "return a specific figure from the router" in {
       val request = FakeRequest(GET, "/figure/1")
-      val events = route(app, request).get
+      val figure = route(app, request).get
 
-      status(events) mustBe OK
-      contentType(events) mustBe Some("application/json")
+      status(figure) mustBe OK
+      contentType(figure) mustBe Some("application/json")
     }
   }
 
@@ -41,7 +41,7 @@ class FigureControllerSpec extends PlaySpec with GuiceOneAppPerTest with Injecti
   }
 
   "FigureController DELETE" should {
-    "delete the figure event from the router" in {
+    "delete the given figure from the router" in {
       val request = FakeRequest(DELETE, "/figure/" + createdId)
       val ret = route(app, request).get
 

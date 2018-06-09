@@ -21,10 +21,10 @@ class EventControllerSpec extends PlaySpec with GuiceOneAppPerTest with Injectin
 
     "return a specific event from the router" in {
       val request = FakeRequest(GET, "/event/1")
-      val events = route(app, request).get
+      val event = route(app, request).get
 
-      status(events) mustBe OK
-      contentType(events) mustBe Some("application/json")
+      status(event) mustBe OK
+      contentType(event) mustBe Some("application/json")
     }
   }
 

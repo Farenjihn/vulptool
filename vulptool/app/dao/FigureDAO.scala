@@ -13,7 +13,7 @@ trait FiguresComponent {
 
   import profile.api._
 
-  implicit val mapper = MappedColumnType.base[WoWClass, String](
+  implicit lazy val mapper = MappedColumnType.base[WoWClass, String](
     e => e.toString,
     s => WoWClass.withName(s)
   )
@@ -36,7 +36,6 @@ trait FiguresComponent {
 
     def * = (id.?, name, fclass, lvl, ilvl, playerId) <> (Figure.tupled, Figure.unapply)
   }
-
 }
 
 @Singleton

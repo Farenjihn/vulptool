@@ -13,7 +13,7 @@ trait RaidsComponent {
 
   import profile.api._
 
-  implicit val mapper = MappedColumnType.base[RaidDifficulty.Value, String](
+  implicit lazy val mapper = MappedColumnType.base[RaidDifficulty.Value, String](
     e => e.toString,
     s => RaidDifficulty.withName(s)
   )
@@ -32,11 +32,11 @@ trait RaidsComponent {
 
     def * = (id.?, name, nbBoss, difficulty) <> (Raid.tupled, Raid.unapply)
   }
-
 }
 
 @Singleton
-class RaidDAO @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)(implicit executionContext: ExecutionContext) extends RaidsComponent with HasDatabaseConfigProvider[JdbcProfile] {
+class RaidDAO @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)(implicit executionContext: ExecutionContext)
+  extends RaidsComponent with HasDatabaseConfigProvider[JdbcProfile] {
 
   import profile.api._
 

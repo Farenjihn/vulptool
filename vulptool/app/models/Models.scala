@@ -19,13 +19,13 @@ case class Event(id: Option[Int], name: String, category: String, meetingId: Int
 
 case class Figure(id: Option[Int], name: String, fclass: WoWClass, lvl: Int, ilvl: Double, playerId: Int)
 
-case class FigureRoster(figure_id: Int, roster_id: Int)
+case class FigureRoster(figureId: Int, rosterId: Int)
 
-case class Meeting(id: Option[Int], time_begin: Timestamp, time_end: Timestamp)
+case class Meeting(id: Option[Int], timeBegin: Timestamp, timeEnd: Timestamp)
 
-case class Player(id: Option[Int], main_pseudo: String, auth_code: String, access_code: String)
+case class Player(id: Option[Int], mainPseudo: String, authCode: String, accessCode: String)
 
-case class Raid(id: Option[Int], name: String, nb_boss: Int, difficulty: RaidDifficulty)
+case class Raid(id: Option[Int], name: String, nbBoss: Int, difficulty: RaidDifficulty)
 
 case class Roster(id: Option[Int], name: String)
 

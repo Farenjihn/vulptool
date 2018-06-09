@@ -7,7 +7,6 @@ import slick.jdbc.JdbcProfile
 
 import scala.concurrent.{ExecutionContext, Future}
 
-
 trait PlayersComponent {
   self: HasDatabaseConfigProvider[JdbcProfile] =>
 
@@ -27,11 +26,11 @@ trait PlayersComponent {
 
     def * = (id.?, main_pseudo, authCode, accessCode) <> (Player.tupled, Player.unapply)
   }
-
 }
 
 @Singleton
-class PlayerDAO @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)(implicit executionContext: ExecutionContext) extends PlayersComponent with HasDatabaseConfigProvider[JdbcProfile] {
+class PlayerDAO @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)(implicit executionContext: ExecutionContext)
+  extends PlayersComponent with HasDatabaseConfigProvider[JdbcProfile] {
 
   import profile.api._
 

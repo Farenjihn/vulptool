@@ -12,22 +12,21 @@ import scala.concurrent.ExecutionContext.Implicits.global
 
 trait RosterSerialization {
 
-  implicit val meetingToJson: Writes[Roster] = { roster =>
+  implicit val rosterToJson: Writes[Roster] = { roster =>
     Json.obj(
       "id" -> roster.id,
       "name" -> roster.name
     )
   }
 
-  implicit val jsonToMeeting: Reads[Roster] = (
+  implicit val jsonToRoster: Reads[Roster] = (
     (JsPath \ "id").readNullable[Int] and
       (JsPath \ "name").read[String]
-    ) ((id, name) => Roster(id, name))
+    ) (Roster.apply _)
 }
 
 @Singleton
 class RosterController @Inject()(cc: ControllerComponents, rosterDAO: RosterDAO) extends AbstractController(cc) with RosterSerialization {
-
 
   def validateJson[A: Reads] = parse.json.validate(
     _.validate[A].asEither.left.map(e => BadRequest(JsError.toJson(e)))

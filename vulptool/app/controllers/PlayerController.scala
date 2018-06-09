@@ -15,9 +15,9 @@ trait PlayerSerialization {
   implicit val playerToJson: Writes[Player] = { player =>
     Json.obj(
       "id" -> player.id,
-      "main_pseudo" -> player.main_pseudo,
-      "auth_code" -> player.auth_code,
-      "access_code" -> player.access_code
+      "main_pseudo" -> player.mainPseudo,
+      "auth_code" -> player.authCode,
+      "access_code" -> player.accessCode
     )
   }
 
@@ -26,7 +26,7 @@ trait PlayerSerialization {
       (JsPath \ "main_pseudo").read[String] and
       (JsPath \ "auth_code").read[String] and
       (JsPath \ "access_code").read[String]
-  ) ((id, main_pseudo, auth_code, access_code) => Player(id, main_pseudo, auth_code, access_code))
+  ) (Player.apply _)
 }
 
 @Singleton
@@ -38,8 +38,8 @@ class PlayerController @Inject()(cc: ControllerComponents, playerDAO: PlayerDAO)
 
   //GET
   def getPlayers = Action.async {
-    val jsonPlayerList = playerDAO.list()
-    jsonPlayerList.map(player => Ok(Json.toJson(player)))
+    val playerList = playerDAO.list()
+    playerList.map(player => Ok(Json.toJson(player)))
   }
 
   //GET with id
@@ -67,7 +67,7 @@ class PlayerController @Inject()(cc: ControllerComponents, playerDAO: PlayerDAO)
         Json.obj(
           "status" -> "OK",
           "id" -> player.id,
-          "message" -> ("Player '" + player.id + " " + player.main_pseudo + "' saved.")
+          "message" -> ("Player '" + player.id + " " + player.mainPseudo + "' saved.")
         )
       )
     )
@@ -82,7 +82,7 @@ class PlayerController @Inject()(cc: ControllerComponents, playerDAO: PlayerDAO)
       case 1 => Ok(
         Json.obj(
           "status" -> "OK",
-          "message" -> ("Player '" + newPlayer.id + " " + newPlayer.main_pseudo + "' updated.")
+          "message" -> ("Player '" + newPlayer.id + " " + newPlayer.mainPseudo + "' updated.")
         )
       )
       case 0 => NotFound(Json.obj(

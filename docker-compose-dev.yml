@@ -20,46 +20,5 @@ services:
         ports:
           - 6060:80
 
-    traefik:
-        image: traefik
-        ports:
-            - 8000:80
-            - 9000:8080
-        volumes:
-            - /var/run/docker.sock:/var/run/docker.sock
-            - ./traefik/traefik-dev.toml:/traefik.toml
-
-    api:
-        image: hseeberger/scala-sbt
-        expose:
-            - 9000
-        volumes:
-            - type: bind
-              source: ./vulptool
-              target: /backend
-        working_dir: /backend
-        entrypoint: "sbt ~run"
-        labels:
-            - traefik.enable=true
-            - traefik.priority=2
-            - traefik.port=9000
-            - traefik.frontend.rule=PathPrefixStrip:/api
-
-    webui:
-        image: node
-        expose:
-            - 3000
-        volumes:
-            - type: bind
-              source: ./frontend
-              target: /frontend
-        working_dir: /frontend
-        entrypoint: npm start
-        labels:
-            - traefik.enable=true
-            - traefik.priority=1
-            - traefik.port=3000
-            - traefik.frontend.rule=PathPrefix:/
-
 volumes:
   vulptool-data:

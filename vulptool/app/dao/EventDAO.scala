@@ -1,7 +1,7 @@
 package dao
 
 import javax.inject.{Inject, Singleton}
-import models.{Event, Meeting, Raid, Roster}
+import models.Event
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
 import slick.jdbc.JdbcProfile
 
@@ -14,6 +14,10 @@ trait EventsComponent {
 
   class EventsTable(tag: Tag) extends Table[Event](tag, "event") {
 
+    def isDeleted = column[Boolean]("is_deleted")
+
+    def * = (id.?, name, category, meetingId, raidId, rosterId) <> (Event.tupled, Event.unapply)
+
     def id = column[Int]("id", O.PrimaryKey, O.AutoInc)
 
     def name = column[String]("name")
@@ -25,10 +29,6 @@ trait EventsComponent {
     def raidId = column[Int]("raid_id")
 
     def rosterId = column[Int]("roster_id")
-
-    def isDeleted = column[Boolean]("is_deleted")
-
-    def * = (id.?, name, category, meetingId, raidId, rosterId) <> (Event.tupled, Event.unapply)
   }
 
 }

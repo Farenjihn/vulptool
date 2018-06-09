@@ -24,11 +24,11 @@ trait TemplatesComponent {
 
     def * = (id.?, eventId, rosterId) <> (Template.tupled, Template.unapply)
   }
-
 }
 
 @Singleton
-class TemplateDAO @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)(implicit executionContext: ExecutionContext) extends TemplatesComponent with HasDatabaseConfigProvider[JdbcProfile] {
+class TemplateDAO @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)(implicit executionContext: ExecutionContext)
+  extends TemplatesComponent with HasDatabaseConfigProvider[JdbcProfile] {
 
   import profile.api._
 

@@ -17,9 +17,9 @@ trait EventSerialization {
       "id" -> event.id,
       "name" -> event.name,
       "category" -> event.category,
-      "meetingId" -> event.meetingId,
-      "raidId" -> event.raidId,
-      "rosterId" -> event.rosterId
+      "meeting_id" -> event.meetingId,
+      "raid_id" -> event.raidId,
+      "roster_id" -> event.rosterId
     )
   }
 
@@ -27,9 +27,9 @@ trait EventSerialization {
     (JsPath \ "id").readNullable[Int] and
       (JsPath \ "name").read[String](minLength[String](2)) and
       (JsPath \ "category").read[String] and
-      (JsPath \ "meetingId").read[Int] and
-      (JsPath \ "raidId").read[Int] and
-      (JsPath \ "rosterId").read[Int]
+      (JsPath \ "meeting_id").read[Int] and
+      (JsPath \ "raid_id").read[Int] and
+      (JsPath \ "roster_id").read[Int]
     ) (Event.apply _)
 }
 
@@ -42,8 +42,8 @@ class EventController @Inject()(cc: ControllerComponents, eventDAO: EventDAO) ex
 
   //GET
   def getEvents = Action.async {
-    val jsonEventList = eventDAO.list()
-    jsonEventList.map(event => Ok(Json.toJson(event)))
+    val eventList = eventDAO.list()
+    eventList.map(event => Ok(Json.toJson(event)))
   }
 
   //GET with id

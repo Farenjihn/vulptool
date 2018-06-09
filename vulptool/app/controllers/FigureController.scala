@@ -19,7 +19,7 @@ trait FigureSerialization {
       "fclass" -> figure.fclass,
       "lvl" -> figure.lvl,
       "ilvl" -> figure.ilvl,
-      "playerId" -> figure.playerId
+      "player_id" -> figure.playerId
     )
   }
 
@@ -29,7 +29,7 @@ trait FigureSerialization {
       (JsPath \ "fclass").read[String](minLength[String](2)) and
       (JsPath \ "lvl").read[Int] and
       (JsPath \ "ilvl").read[Double] and
-      (JsPath \ "playerId").read[Int]
+      (JsPath \ "player_id").read[Int]
     ) ((id, name, fclass, lvl, ilvl, playerId) => Figure(id, name, WoWClass.withName(fclass), lvl, ilvl, playerId))
 }
 
@@ -42,8 +42,8 @@ class FigureController @Inject()(cc: ControllerComponents, figureDAO: FigureDAO)
 
   //GET
   def getFigures = Action.async {
-    val jsonFigureList = figureDAO.list()
-    jsonFigureList.map(figure => Ok(Json.toJson(figure)))
+    val figureList = figureDAO.list()
+    figureList.map(figure => Ok(Json.toJson(figure)))
   }
 
   //GET with id

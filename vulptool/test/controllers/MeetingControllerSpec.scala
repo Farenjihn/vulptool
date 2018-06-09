@@ -15,18 +15,18 @@ class MeetingControllerSpec extends PlaySpec with GuiceOneAppPerTest with Inject
   "MeetingController GET" should {
     "return the list of meetings from the router" in {
       val request = FakeRequest(GET, "/meeting")
-      val events = route(app, request).get
+      val meetings = route(app, request).get
 
-      status(events) mustBe OK
-      contentType(events) mustBe Some("application/json")
+      status(meetings) mustBe OK
+      contentType(meetings) mustBe Some("application/json")
     }
 
     "return a specific meeting from the router" in {
       val request = FakeRequest(GET, "/meeting/1")
-      val events = route(app, request).get
+      val meeting = route(app, request).get
 
-      status(events) mustBe OK
-      contentType(events) mustBe Some("application/json")
+      status(meeting) mustBe OK
+      contentType(meeting) mustBe Some("application/json")
     }
   }
 
@@ -43,7 +43,7 @@ class MeetingControllerSpec extends PlaySpec with GuiceOneAppPerTest with Inject
   }
 
   "MeetingController DELETE" should {
-    "delete the meeting event from the router" in {
+    "delete the given meeting from the router" in {
       val request = FakeRequest(DELETE, "/meeting/" + createdId)
       val ret = route(app, request).get
 

@@ -23,6 +23,7 @@ trait RostersComponent {
 
     def * = (id.?, name) <> (Roster.tupled, Roster.unapply)
   }
+
 }
 
 @Singleton

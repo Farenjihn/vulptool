@@ -61,18 +61,6 @@ class Calendar extends React.Component {
                 console.log("There was an error Fetching data: /// " + error + " \\\\\\");
             });
 
-        /*fetch('http://localhost:9000/player', {
-            method: 'POST',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                main_pseudo: "test player2",
-                auth_code: "AUTHCODE2",
-                access_code:  "ACCESSCODE2",
-            })
-        })*/
     }
 
     showModal = () => {
@@ -89,6 +77,95 @@ class Calendar extends React.Component {
             }
 
             console.log('Received values of form: ', values);
+
+
+            let time_begin = values["date-picker"].utc().set({
+                'hour': values["time-begin"].get('hour'),
+                'minute': values["time-begin"].get('minute'),
+                'second': 0
+            }).unix();
+            let time_end = values["date-picker"].utc().set({
+                'hour': values["time-end"].get('hour'),
+                'minute': values["time-end"].get('minute'),
+                'second': 0
+            }).unix();
+
+            let meeting_id;
+            fetch('http://localhost:9000/meeting', {
+                method: 'POST',
+                headers: {
+                    // 'Accept': 'application/json',
+                    // 'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    time_begin: time_begin,
+                    time_end: time_end,
+                })
+            })
+                .then(results => results.json())
+                .then(data => meeting_id = data.id)
+                .catch(function (error) {
+                    console.log("There was an error POST meeting: /// " + error + " \\\\\\");
+                });
+
+            console.log(meeting_id);
+
+            /*let raid_id;
+            fetch('http://localhost:9000/raid', {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    name: values.raid,
+                    nb_boss: 0,
+                    difficulty: values.difficulty
+                })
+            })
+                .then(results => results.json())
+                .then(data => raid_id = data.id)
+                .catch(function (error) {
+                    console.log("There was an error POST raid: /// " + error + " \\\\\\");
+                });*/
+
+            /*let roster_id;
+            fetch('http://localhost:9000/roster', {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    name: "Default test",
+                })
+            })
+                .then(results => results.json())
+                .then(data => roster_id = data.id)
+                .catch(function (error) {
+                    console.log("There was an error POST raid: /// " + error + " \\\\\\");
+                });
+
+            fetch('http://localhost:9000/event', {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    name: values.title,
+                    description: values.description,
+                    meeting_id: meeting_id,
+                    raid_id: 0,
+                    roster_id: roster_id
+                })
+            })
+                .then(results => results.json())
+                .then(data => console.log(data))
+                .catch(function (error) {
+                    console.log("There was an error POST event: /// " + error + " \\\\\\");
+                });*/
+
             form.resetFields();
             this.setState({ formVisible: false });
         });

@@ -22,6 +22,7 @@ trait FiguresRosterComponent {
 
     def * = (figure_id, roster_id) <> (FigureRoster.tupled, FigureRoster.unapply)
   }
+
 }
 
 @Singleton

@@ -26,6 +26,7 @@ trait MeetingsComponent {
 
     def * = (id.?, time_begin, time_end) <> (Meeting.tupled, Meeting.unapply)
   }
+
 }
 
 @Singleton

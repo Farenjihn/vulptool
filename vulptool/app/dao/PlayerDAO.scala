@@ -26,6 +26,7 @@ trait PlayersComponent {
 
     def * = (id.?, main_pseudo, authCode, accessCode) <> (Player.tupled, Player.unapply)
   }
+
 }
 
 @Singleton

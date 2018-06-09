@@ -9,7 +9,8 @@ import { DatePicker } from 'antd';
 import { TimePicker } from 'antd';
 import moment from 'moment';
 
-const format = 'HH:mm';
+const formatDate = 'YYYY-MM-DD';
+const formatTime = 'HH:mm';
 const FormItem = Form.Item;
 const Option = Select.Option;
 const RadioButton = Radio.Button;
@@ -51,44 +52,45 @@ const EventFrom = Form.create()(
                                 </Select>
                             )}
                         </FormItem>
-
-                        <FormItem label="Date">
-                            {getFieldDecorator('date-picker', {
-                                rules: [{ type: 'object', required: true, message: 'Please select date!' }],
-                            })(
-                                <DatePicker />
-                            )}
-                        </FormItem>
-                        <FormItem label="Start Time">
-                            {getFieldDecorator('time-begin', {
-                                rules: [{ type: 'object', required: true, message: 'Please select time!' }],
-                                initialValue: moment('20:30', format),
-                            })(
-                                <TimePicker format={format} minuteStep={10}/>
-                            )}
-                        </FormItem>
-                        <FormItem label="End Time">
-                            {getFieldDecorator('time-end', {
-                                rules: [{ type: 'object', required: true, message: 'Please select time!' }],
-                                initialValue: moment('23:50', format),
-                            })(
-                                <TimePicker format={format} minuteStep={10}/>
-                            )}
-                        </FormItem>
-
-
-
                         <FormItem className="collection-create-form_last-form-item">
-                            {getFieldDecorator('modifier', {
+                            {getFieldDecorator('difficulty', {
                                 initialValue: 'mythic mode',
                             })(
                                 <Radio.Group>
+                                    <RadioButton value="raid finder">Raid Finder</RadioButton>
                                     <RadioButton value="normal mode">Normal Mode</RadioButton>
                                     <RadioButton value="hard mode">Hard Mode</RadioButton>
                                     <RadioButton value="mythic mode">Mythic Mode</RadioButton>
                                 </Radio.Group>
                             )}
                         </FormItem>
+
+                        <FormItem label="Date">
+                            {getFieldDecorator('date-picker', {
+                                rules: [{ type: 'object', required: true, message: 'Please select date!' }],
+                                initialValue: moment(new Date(), formatDate),
+
+                            })(
+                                <DatePicker format={formatDate} />
+                            )}
+                        </FormItem>
+                        <FormItem label="Start Time">
+                            {getFieldDecorator('time-begin', {
+                                rules: [{ type: 'object', required: true, message: 'Please select time!' }],
+                                initialValue: moment('20:30', formatTime),
+                            })(
+                                <TimePicker format={formatTime} minuteStep={10}/>
+                            )}
+                        </FormItem>
+                        <FormItem label="End Time">
+                            {getFieldDecorator('time-end', {
+                                rules: [{ type: 'object', required: true, message: 'Please select time!' }],
+                                initialValue: moment('23:50', formatTime),
+                            })(
+                                <TimePicker format={formatTime} minuteStep={10}/>
+                            )}
+                        </FormItem>
+
                     </Form>
                 </Modal>
             );

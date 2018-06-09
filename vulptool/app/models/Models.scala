@@ -15,7 +15,7 @@ object RaidDifficulty extends Enumeration {
   val RaidFinder, Normal, Heroic, Mythic = Value
 }
 
-case class Event(id: Option[Int], name: String, category: String, meetingId: Int, raidId: Int, rosterId: Int)
+case class Event(id: Option[Int], name: String, description: String, meetingId: Int, raidId: Int, rosterId: Int)
 
 case class Figure(id: Option[Int], name: String, fclass: WoWClass, lvl: Int, ilvl: Double, playerId: Int)
 

@@ -24,6 +24,7 @@ trait TemplatesComponent {
 
     def * = (id.?, eventId, rosterId) <> (Template.tupled, Template.unapply)
   }
+
 }
 
 @Singleton

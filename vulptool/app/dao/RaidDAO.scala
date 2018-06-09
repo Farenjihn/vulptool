@@ -32,6 +32,7 @@ trait RaidsComponent {
 
     def * = (id.?, name, nbBoss, difficulty) <> (Raid.tupled, Raid.unapply)
   }
+
 }
 
 @Singleton

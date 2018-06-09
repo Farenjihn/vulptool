@@ -36,6 +36,7 @@ trait FiguresComponent {
 
     def * = (id.?, name, fclass, lvl, ilvl, playerId) <> (Figure.tupled, Figure.unapply)
   }
+
 }
 
 @Singleton

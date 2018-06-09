@@ -17,7 +17,7 @@ CREATE TABLE raid(
     id INT NOT NULL AUTO_INCREMENT,
     name VARCHAR(255) NOT NULL,
     nb_boss INT NOT NULL,
-    difficulty ENUM('raid finder', 'normal mode', 'hard mode', 'mythic mode') NOT NULL,
+    difficulty ENUM('RaidFinder', 'Normal', 'Heroic', 'Mythic') NOT NULL,
     is_deleted BOOLEAN NOT NULL DEFAULT false,
 
     PRIMARY KEY (id)
@@ -52,7 +52,7 @@ CREATE TABLE player(
 
 CREATE TABLE event(
     id INT NOT NULL AUTO_INCREMENT,
-    category ENUM('') NOT NULL,
+    description TEXT NOT NULL,
     name VARCHAR(255) NOT NULL,
     raid_id INT NOT NULL,
     meeting_id INT NOT NULL,
@@ -127,7 +127,7 @@ CREATE TABLE record(
 INSERT INTO player (main_pseudo, auth_code, access_code) VALUES ("test player", "AUTHCODE", "ACCESSCODE");
 INSERT INTO figure (name, fclass, lvl, ilvl, player_id) VALUES ("test figure", "DeathKnight", 0, 0, 1);
 
-INSERT INTO raid (name, nb_boss, difficulty ) VALUES ("test raid", 0, "mythic mode");
+INSERT INTO raid (name, nb_boss, difficulty ) VALUES ("test raid", 0, "Mythic");
 INSERT INTO roster (name) VALUES ("test roster");
 INSERT INTO meeting (time_begin, time_end) VALUES (NOW(), DATE_ADD(NOW(), INTERVAL 3 HOUR));
-INSERT INTO event (name, raid_id, meeting_id, roster_id) VALUES ("test event", 1, 1, 1);
+INSERT INTO event (name, description, raid_id, meeting_id, roster_id) VALUES ("test event", "some description", 1, 1, 1);

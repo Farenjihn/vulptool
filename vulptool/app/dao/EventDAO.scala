@@ -14,21 +14,22 @@ trait EventsComponent {
 
   class EventsTable(tag: Tag) extends Table[Event](tag, "event") {
 
-    def isDeleted = column[Boolean]("is_deleted")
-
-    def * = (id.?, name, category, meetingId, raidId, rosterId) <> (Event.tupled, Event.unapply)
-
     def id = column[Int]("id", O.PrimaryKey, O.AutoInc)
 
     def name = column[String]("name")
 
-    def category = column[String]("category")
+    def description = column[String]("description")
 
     def meetingId = column[Int]("meeting_id")
 
     def raidId = column[Int]("raid_id")
 
     def rosterId = column[Int]("roster_id")
+
+    def isDeleted = column[Boolean]("is_deleted")
+
+    def * = (id.?, name, description, meetingId, raidId, rosterId) <> (Event.tupled, Event.unapply)
+
   }
 
 }
@@ -45,7 +46,7 @@ class EventDAO @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)
   // val raids = TableQuery[RaidsTable]
 
   def list(): Future[Seq[Event]] = {
-    val query = events.filter(!_.isDeleted).sortBy(_.category)
+    val query = events.filter(!_.isDeleted).sortBy(_.description)
     db.run(query.result)
   }
 

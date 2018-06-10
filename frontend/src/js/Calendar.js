@@ -2,21 +2,18 @@ import React from "react";
 import "../css/Calendar.css";
 import EventForm from "./EventForm";
 
-import { Layout, Menu, Breadcrumb, Icon } from "antd";
-import { List, Row, Col } from "antd";
-import { Button, Card, Avatar } from "antd";
-import { DatePicker } from "antd";
+import {Avatar, Button, Card, DatePicker, Icon, Layout, List, Menu} from "antd";
 import moment from "moment";
 
 const RangePicker = DatePicker.RangePicker;
 const WeekPicker = DatePicker.WeekPicker;
 
-const { Meta } = Card;
-const { Header, Content, Footer, Sider } = Layout;
+const {Meta} = Card;
+const {Header, Content, Footer, Sider} = Layout;
 const SubMenu = Menu.SubMenu;
-const IconText = ({ type, text }) => (
+const IconText = ({type, text}) => (
   <span>
-    <Icon type={type} style={{ marginRight: 8 }} />
+    <Icon type={type} style={{marginRight: 8}}/>
     {text}
   </span>
 );
@@ -45,35 +42,12 @@ function onChange(date, dateString) {
 }
 
 class Calendar extends React.Component {
-  constructor() {
-    super();
-    this.state = {
-      meetings: [],
-      formVisible: false
-    };
-  }
-
-  componentDidMount() {
-    fetch("http://localhost:9000/meeting", {
-      method: "GET"
-    })
-      .then(results => results.json())
-      .then(data => this.setState({ meetings: data }))
-      .catch(function(error) {
-        console.log(
-          "There was an error Fetching data: /// " + error + " \\\\\\"
-        );
-      });
-  }
-
   showModal = () => {
-    this.setState({ formVisible: true });
+    this.setState({formVisible: true});
   };
-
   handleCancel = () => {
-    this.setState({ formVisible: false });
+    this.setState({formVisible: false});
   };
-
   handleCreate = () => {
     const form = this.formRef.props.form;
     form.validateFields((err, values) => {
@@ -117,7 +91,7 @@ class Calendar extends React.Component {
       })
         .then(results => results.json())
         .then(data => (meeting_id = data.id))
-        .catch(function(error) {
+        .catch(function (error) {
           console.log(
             "There was an error POST meeting: /// " + error + " \\\\\\"
           );
@@ -182,19 +156,40 @@ class Calendar extends React.Component {
                 });*/
 
       form.resetFields();
-      this.setState({ formVisible: false });
+      this.setState({formVisible: false});
     });
   };
   saveFormRef = formRef => {
     this.formRef = formRef;
   };
 
+  constructor() {
+    super();
+    this.state = {
+      meetings: [],
+      formVisible: false
+    };
+  }
+
+  componentDidMount() {
+    fetch("http://localhost:9000/meeting", {
+      method: "GET"
+    })
+      .then(results => results.json())
+      .then(data => this.setState({meetings: data}))
+      .catch(function (error) {
+        console.log(
+          "There was an error Fetching data: /// " + error + " \\\\\\"
+        );
+      });
+  }
+
   render() {
     return (
-      <Content style={{ margin: "16px 16px" }}>
-        <div style={{ padding: 24, background: "#fff", minHeight: 360 }}>
+      <Content style={{margin: "16px 16px"}}>
+        <div style={{padding: 24, background: "#fff", minHeight: 360}}>
           <div>
-            <WeekPicker onChange={onChange} placeholder="Select week" />
+            <WeekPicker onChange={onChange} placeholder="Select week"/>
           </div>
 
           <div>
@@ -223,9 +218,9 @@ class Calendar extends React.Component {
               <List.Item
                 key={item.title}
                 actions={[
-                  <IconText type="star-o" text="156" />,
-                  <IconText type="like-o" text="156" />,
-                  <IconText type="message" text="2" />
+                  <IconText type="star-o" text="156"/>,
+                  <IconText type="like-o" text="156"/>,
+                  <IconText type="message" text="2"/>
                 ]}
                 extra={
                   <img
@@ -236,7 +231,7 @@ class Calendar extends React.Component {
                 }
               >
                 <List.Item.Meta
-                  avatar={<Avatar src={item.avatar} />}
+                  avatar={<Avatar src={item.avatar}/>}
                   title={<a href={item.href}>{item.title}</a>}
                   description={item.description}
                 />

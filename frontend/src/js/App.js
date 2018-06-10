@@ -85,6 +85,7 @@ class SiderDemo extends React.Component {
                 </Menu.Item>
               </Menu>
             </Sider>
+            <Route exact path="/" component={Welcome}/>
             <Route path="/welcome" component={Welcome}/>
             <Route path="/calendar" component={Calendar}/>
           </Layout>

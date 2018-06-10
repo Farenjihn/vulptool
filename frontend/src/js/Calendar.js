@@ -79,10 +79,13 @@ class Calendar extends React.Component {
       console.log(time_end);
 
       let meeting_id;
-      fetch("http://localhost:9000/meeting", {
-        method: "POST",
+      let raid_id;
+      let roster_id;
+
+      fetch('http://localhost:9000/meeting', {
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json"
+          'Content-Type': 'application/json'
         },
         body: JSON.stringify({
           time_begin: time_begin,
@@ -95,65 +98,66 @@ class Calendar extends React.Component {
           console.log(
             "There was an error POST meeting: /// " + error + " \\\\\\"
           );
-        });
+        })
 
-      console.log(meeting_id);
+        .then(
+          fetch('http://localhost:9000/raid', {
+            method: 'POST',
+            headers: {
+              'Accept': 'application/json',
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              name: values.raid,
+              nb_boss: 0,
+              difficulty: values.difficulty
+            })
+          })
+            .then(results => results.json())
+            .then(data => raid_id = data.id)
+            .catch(function (error) {
+              console.log("There was an error POST raid: /// " + error + " \\\\\\");
+            })
 
-      /*let raid_id;
-            fetch('http://localhost:9000/raid', {
+            .then(
+              fetch('http://localhost:9000/roster', {
                 method: 'POST',
                 headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json',
+                  'Accept': 'application/json',
+                  'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    name: values.raid,
-                    nb_boss: 0,
-                    difficulty: values.difficulty
+                  name: "Default test",
                 })
-            })
-                .then(results => results.json())
-                .then(data => raid_id = data.id)
-                .catch(function (error) {
-                    console.log("There was an error POST raid: /// " + error + " \\\\\\");
-                });*/
-
-      /*let roster_id;
-            fetch('http://localhost:9000/roster', {
-                method: 'POST',
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    name: "Default test",
-                })
-            })
+              })
                 .then(results => results.json())
                 .then(data => roster_id = data.id)
                 .catch(function (error) {
-                    console.log("There was an error POST raid: /// " + error + " \\\\\\");
-                });
+                  console.log("There was an error POST raid: /// " + error + " \\\\\\");
+                })));
 
-            fetch('http://localhost:9000/event', {
-                method: 'POST',
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    name: values.title,
-                    description: values.description,
-                    meeting_id: meeting_id,
-                    raid_id: 0,
-                    roster_id: roster_id
-                })
-            })
-                .then(results => results.json())
-                .then(data => console.log(data))
-                .catch(function (error) {
-                    console.log("There was an error POST event: /// " + error + " \\\\\\");
-                });*/
+
+      console.log("Meeting id " + meeting_id + ", Raid id " + raid_id + ", Roster id " + roster_id)
+
+      /*fetch('http://localhost:9000/event', {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name: values.title,
+          description: values.description,
+          meeting_id: meeting_id,
+          raid_id: 0,
+          roster_id: roster_id
+        })
+      })
+        .then(results => results.json())
+        .then(data => console.log(data))
+        .catch(function (error) {
+          console.log("There was an error POST event: /// " + error + " \\\\\\");
+        });*/
 
       form.resetFields();
       this.setState({formVisible: false});

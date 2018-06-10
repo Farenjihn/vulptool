@@ -39,6 +39,7 @@ const EventFrom = Form.create()(
             <FormItem label="Raid">
               {getFieldDecorator('raid', {
                 rules: [{required: true, message: 'Please select a raid!'}],
+                initialValue: 't21'
               })(
                 <Select placeholder="Raid" onChange={this.handleSelectChange}>
                   <Option value="t21">Antorus the Buring Throne</Option>
@@ -48,13 +49,13 @@ const EventFrom = Form.create()(
             </FormItem>
             <FormItem className="collection-create-form_last-form-item">
               {getFieldDecorator('difficulty', {
-                initialValue: 'mythic mode',
+                initialValue: 'Mythic',
               })(
                 <Radio.Group>
-                  <RadioButton value="raid finder">Raid Finder</RadioButton>
-                  <RadioButton value="normal mode">Normal Mode</RadioButton>
-                  <RadioButton value="hard mode">Hard Mode</RadioButton>
-                  <RadioButton value="mythic mode">Mythic Mode</RadioButton>
+                  <RadioButton value="RaidFinder">Raid Finder</RadioButton>
+                  <RadioButton value="Normal">Normal</RadioButton>
+                  <RadioButton value="Heroic">Heroic</RadioButton>
+                  <RadioButton value="Mythic">Mythic</RadioButton>
                 </Radio.Group>
               )}
             </FormItem>

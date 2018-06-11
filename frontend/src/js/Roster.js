@@ -61,18 +61,149 @@ const data = [{
   player: 'Crazy',
 }];
 
-let uuid = 0;
-
 class Roster extends React.Component {
-
   constructor(props) {
     super(props);
     this.state = {
       mode: 'left', // position of tabs
+      formVisible: false
     };
   }
 
+  showModal = () => {
+    this.setState({formVisible: true});
+  };
+  handleCancel = () => {
+    this.setState({formVisible: false});
+  };
+  handleCreate = () => {
+    const form = this.formRef.props.form;
+    form.validateFields((err, values) => {
+      if (err) {
+        return;
+      }
 
+      console.log("Received values of form: ", values);
+
+      let time_begin = values["date-picker"]
+        .utc()
+        .set({
+          hour: values["time-begin"].get("hour"),
+          minute: values["time-begin"].get("minute"),
+          second: 0
+        })
+        .format("YYYY-MM-DD HH:mm:ss");
+
+      let time_end = values["date-picker"]
+        .utc()
+        .set({
+          hour: values["time-end"].get("hour"),
+          minute: values["time-end"].get("minute"),
+          second: 0
+        })
+        .format("YYYY-MM-DD HH:mm:ss");
+
+      // console.log(time_begin);
+      // console.log(time_end);
+
+      fetch('http://localhost:9000/meeting', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          time_begin: time_begin,
+          time_end: time_end
+        })
+      })
+        .then(results => results.json())
+        .then(data => (this.setState({meeting_id: data.id})))
+        .catch(function (error) {
+          console.log(
+            "There was an error POST meeting: /// " + error + " \\\\\\"
+          );
+        })
+
+        .then(
+          fetch('http://localhost:9000/raid', {
+            method: 'POST',
+            headers: {
+              'Accept': 'application/json',
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              name: values.raid,
+              nb_boss: 0,
+              difficulty: values.difficulty
+            })
+          })
+            .then(results => results.json())
+            .then(data => this.setState({raid_id: data.id}))
+            .catch(function (error) {
+              console.log("There was an error POST raid: /// " + error + " \\\\\\");
+            }))
+
+        .then(
+          fetch('http://localhost:9000/roster', {
+            method: 'POST',
+            headers: {
+              'Accept': 'application/json',
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              name: "Default test",
+            })
+          })
+            .then(results => results.json())
+            .then(data => this.setState({roster_id: data.id}))
+            .catch(function (error) {
+              console.log("There was an error POST raid: /// " + error + " \\\\\\");
+            }))
+
+        .then(fetch('http://localhost:9000/event', {
+          method: 'POST',
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            name: values.title,
+            description: values.description,
+            meeting_id: this.state.meeting_id,
+            raid_id: this.state.raid_id,
+            roster_id: this.state.roster_id
+          })
+        })
+          .then(results => results.json())
+          .then(data => console.log(data))
+          .catch(function (error) {
+            console.log("There was an error POST event: /// " + error + " \\\\\\");
+          }));
+
+
+      // console.log("Meeting id " + this.state.meeting_id + ", Raid id " + this.state.raid_id + ", Roster id " + this.state.roster_id)
+
+      form.resetFields();
+      this.setState({formVisible: false});
+    });
+  };
+  saveFormRef = formRef => {
+    this.formRef = formRef;
+  };
+
+  handleCreate = () => {
+    const form = this.formRef.props.form;
+    form.validateFields((err, values) => {
+      if (err) {
+        return;
+      }
+
+      console.log("Received values of form: ", values);
+
+      form.resetFields();
+      this.setState({formVisible: false});
+    });
+  };
 
   render() {
     const { mode } = this.state;
@@ -91,6 +222,7 @@ class Roster extends React.Component {
               onCreate={this.handleCreate}
             />
           </div>
+
 
           <Tabs
             defaultActiveKey="1"

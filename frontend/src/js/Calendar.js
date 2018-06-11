@@ -42,6 +42,17 @@ function onChange(date, dateString) {
 }
 
 class Calendar extends React.Component {
+  constructor() {
+    super();
+    this.state = {
+      meeting_id: 0,
+      raid_id: 0,
+      roster_id: 0,
+      meetings: [],
+      formVisible: false
+    };
+  }
+
   showModal = () => {
     this.setState({formVisible: true});
   };
@@ -163,16 +174,6 @@ class Calendar extends React.Component {
     this.formRef = formRef;
   };
 
-  constructor() {
-    super();
-    this.state = {
-      meeting_id: 0,
-      raid_id: 0,
-      roster_id: 0,
-      meetings: [],
-      formVisible: false
-    };
-  }
 
   componentDidMount() {
     fetch("http://localhost:9000/meeting", {

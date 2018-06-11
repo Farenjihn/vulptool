@@ -75,12 +75,8 @@ class Calendar extends React.Component {
         })
         .format("YYYY-MM-DD HH:mm:ss");
 
-      console.log(time_begin);
-      console.log(time_end);
-
-      let meeting_id;
-      let raid_id;
-      let roster_id;
+      // console.log(time_begin);
+      // console.log(time_end);
 
       fetch('http://localhost:9000/meeting', {
         method: 'POST',
@@ -93,7 +89,7 @@ class Calendar extends React.Component {
         })
       })
         .then(results => results.json())
-        .then(data => (meeting_id = data.id))
+        .then(data => (this.setState({meeting_id: data.id})))
         .catch(function (error) {
           console.log(
             "There was an error POST meeting: /// " + error + " \\\\\\"
@@ -114,50 +110,50 @@ class Calendar extends React.Component {
             })
           })
             .then(results => results.json())
-            .then(data => raid_id = data.id)
+            .then(data => this.setState({raid_id: data.id}))
             .catch(function (error) {
               console.log("There was an error POST raid: /// " + error + " \\\\\\");
+            }))
+
+        .then(
+          fetch('http://localhost:9000/roster', {
+            method: 'POST',
+            headers: {
+              'Accept': 'application/json',
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              name: "Default test",
             })
+          })
+            .then(results => results.json())
+            .then(data => this.setState({roster_id: data.id}))
+            .catch(function (error) {
+              console.log("There was an error POST raid: /// " + error + " \\\\\\");
+            }))
 
-            .then(
-              fetch('http://localhost:9000/roster', {
-                method: 'POST',
-                headers: {
-                  'Accept': 'application/json',
-                  'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                  name: "Default test",
-                })
-              })
-                .then(results => results.json())
-                .then(data => roster_id = data.id)
-                .catch(function (error) {
-                  console.log("There was an error POST raid: /// " + error + " \\\\\\");
-                })));
-
-
-      console.log("Meeting id " + meeting_id + ", Raid id " + raid_id + ", Roster id " + roster_id)
-
-      /*fetch('http://localhost:9000/event', {
-        method: 'POST',
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          name: values.title,
-          description: values.description,
-          meeting_id: meeting_id,
-          raid_id: 0,
-          roster_id: roster_id
+        .then(fetch('http://localhost:9000/event', {
+          method: 'POST',
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            name: values.title,
+            description: values.description,
+            meeting_id: this.state.meeting_id,
+            raid_id: this.state.raid_id,
+            roster_id: this.state.roster_id
+          })
         })
-      })
-        .then(results => results.json())
-        .then(data => console.log(data))
-        .catch(function (error) {
-          console.log("There was an error POST event: /// " + error + " \\\\\\");
-        });*/
+          .then(results => results.json())
+          .then(data => console.log(data))
+          .catch(function (error) {
+            console.log("There was an error POST event: /// " + error + " \\\\\\");
+          }));
+
+
+       // console.log("Meeting id " + this.state.meeting_id + ", Raid id " + this.state.raid_id + ", Roster id " + this.state.roster_id)
 
       form.resetFields();
       this.setState({formVisible: false});
@@ -170,6 +166,9 @@ class Calendar extends React.Component {
   constructor() {
     super();
     this.state = {
+      meeting_id: 0,
+      raid_id: 0,
+      roster_id: 0,
       meetings: [],
       formVisible: false
     };

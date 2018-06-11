@@ -17,7 +17,7 @@ CREATE TABLE raid(
     id INT NOT NULL AUTO_INCREMENT,
     name VARCHAR(255) NOT NULL,
     nb_boss INT NOT NULL,
-    difficulty VARCHAR(255) NOT NULL,
+    difficulty ENUM('RaidFinder', 'Normal', 'Heroic', 'Mythic') NOT NULL,
     is_deleted BOOLEAN NOT NULL DEFAULT false,
 
     PRIMARY KEY (id)

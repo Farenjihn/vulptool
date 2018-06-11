@@ -10,7 +10,7 @@ const Option = Select.Option;
 const RadioButton = Radio.Button;
 const RadioGroup = Radio.Group;
 
-const EventFrom = Form.create()(
+const FormRoster = Form.create()(
   class extends React.Component {
     render() {
       const {visible, onCancel, onCreate, form} = this.props;
@@ -93,4 +93,4 @@ const EventFrom = Form.create()(
   }
 );
 
-export default EventFrom;
+export default FormRoster;

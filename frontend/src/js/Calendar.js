@@ -1,6 +1,6 @@
 import React from "react";
 import "../css/Calendar.css";
-import EventForm from "./EventForm";
+import EventForm from "./FormEvent";
 
 import {Avatar, Button, Card, DatePicker, Icon, Layout, List, Menu} from "antd";
 import moment from "moment";

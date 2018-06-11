@@ -2,6 +2,7 @@ import React from "react";
 import '../css/App.css';
 import Calendar from './Calendar';
 import Welcome from './Welcome';
+import Roster from './Roster';
 
 
 import {BrowserRouter as Router, Link, Route} from 'react-router-dom';
@@ -88,6 +89,7 @@ class SiderDemo extends React.Component {
             <Route exact path="/" component={Welcome}/>
             <Route path="/welcome" component={Welcome}/>
             <Route path="/calendar" component={Calendar}/>
+            <Route path="/roster" component={Roster}/>
           </Layout>
           <Footer style={{height: '48px', textAlign: 'center'}}>
             Ant Design ©2016 Created by Ant UED

@@ -126,8 +126,8 @@ CREATE TABLE record(
 
 INSERT INTO player (main_pseudo, auth_code, access_code) VALUES ("test player", "AUTHCODE", "ACCESSCODE");
 INSERT INTO figure (name, fclass, lvl, ilvl, player_id) VALUES ("test figure", "DeathKnight", 0, 0, 1);
-
 INSERT INTO raid (name, nb_boss, difficulty ) VALUES ("test raid", 0, "Mythic");
 INSERT INTO roster (name) VALUES ("test roster");
 INSERT INTO meeting (time_begin, time_end) VALUES (NOW(), DATE_ADD(NOW(), INTERVAL 3 HOUR));
 INSERT INTO event (name, description, raid_id, meeting_id, roster_id) VALUES ("test event", "some description", 1, 1, 1);
+INSERT INTO figure_roster (figure_id, roster_id) VALUES (1, 1);

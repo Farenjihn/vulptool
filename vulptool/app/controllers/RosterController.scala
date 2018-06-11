@@ -2,15 +2,18 @@ package controllers
 
 import dao.RosterDAO
 import javax.inject.{Inject, Singleton}
-import models.Roster
+import models.{Figure, Roster, RosterFull}
 import play.api.libs.functional.syntax._
 import play.api.libs.json.Reads._
 import play.api.libs.json._
 import play.api.mvc.{AbstractController, ControllerComponents}
 
+import scala.concurrent.Await
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.duration.Duration
+import scala.util.{Failure, Success}
 
-trait RosterSerialization {
+trait RosterSerialization extends FigureSerialization {
 
   implicit val rosterToJson: Writes[Roster] = { roster =>
     Json.obj(
@@ -19,10 +22,25 @@ trait RosterSerialization {
     )
   }
 
+  implicit val rosterFullToJson: Writes[RosterFull] = { roster =>
+    Json.obj(
+      "id" -> roster.id,
+      "name" -> roster.name,
+      "figures" -> roster.figures.map(Json.toJson(_))
+    )
+  }
+
   implicit val jsonToRoster: Reads[Roster] = (
     (JsPath \ "id").readNullable[Int] and
       (JsPath \ "name").read[String]
     ) (Roster.apply _)
+
+  implicit val jsonToRosterFull: Reads[RosterFull] = (
+    (JsPath \ "id").readNullable[Int] and
+      (JsPath \ "name").read[String] and
+      (JsPath \ "figures").read[List[Figure]]
+    ) (RosterFull.apply _)
+
 }
 
 @Singleton
@@ -38,12 +56,22 @@ class RosterController @Inject()(cc: ControllerComponents, rosterDAO: RosterDAO)
     jsonRosterList.map(roster => Ok(Json.toJson(roster)))
   }
 
-  //GET with id
+  //GET with id and with figures
   def getRoster(rosterId: Int) = Action.async {
     val optionalRoster = rosterDAO.findById(rosterId)
 
     optionalRoster.map {
-      case Some(roster) => Ok(Json.toJson(roster))
+      case Some(roster) => {
+        val figures = rosterDAO.getFiguresFromRoster(rosterId).map {
+          figures => Some(figures)
+        } recover {
+          case timeout: java.util.concurrent.TimeoutException => None
+        }
+        val figuresAcutal = Await.result(figures, Duration.Inf)
+
+        val rosterFull = RosterFull(roster.id, roster.name, figuresAcutal.getOrElse(Seq()).toList)
+        Ok(Json.toJson(rosterFull))
+      }
       case None =>
         // Send back a 404 Not Found HTTP status to the client if the roster does not exist.
         NotFound(Json.obj(

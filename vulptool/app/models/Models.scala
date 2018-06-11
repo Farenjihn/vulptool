@@ -28,5 +28,6 @@ case class Player(id: Option[Int], mainPseudo: String, authCode: String, accessC
 case class Raid(id: Option[Int], name: String, nbBoss: Int, difficulty: RaidDifficulty)
 
 case class Roster(id: Option[Int], name: String)
+case class RosterFull(id: Option[Int], name: String, figures: List[Figure])
 
 case class Template(id: Option[Int], eventId: Int, rosterId: Int)

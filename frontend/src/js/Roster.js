@@ -1,5 +1,7 @@
 import React from "react";
 import FormRoster from './FormRoster'
+import '../css/App.css';
+
 
 import {Avatar, Button, Card, DatePicker, Icon, Layout, List, Menu} from "antd";
 import { Table, Divider } from 'antd';
@@ -29,10 +31,10 @@ const columns = [{
   dataIndex: 'player',
   key: 'player'
 }, {
-    title: 'Action',
-    key: 'action',
-    render: (text, record) => (
-      <span>
+  title: 'Action',
+  key: 'action',
+  render: (text, record) => (
+    <span>
       <a href="javascript:;">Action 一 {record.name}</a>
       <Divider type="vertical" />
       <a href="javascript:;">Delete</a>
@@ -41,8 +43,8 @@ const columns = [{
         More actions <Icon type="down" />
       </a>
     </span>
-    ),
-  }];
+  ),
+}];
 
 const data = [{
   key: '1',
@@ -210,18 +212,17 @@ class Roster extends React.Component {
     return (
       <Content style={{margin: "16px 16px"}}>
         <div style={{padding: 24, background: "#fff", minHeight: 360}}>
-
-          <div>
-            <Button type="primary" onClick={this.showModal}>
-              New Roster
-            </Button>
-            <FormRoster
-              wrappedComponentRef={this.saveFormRef}
-              visible={this.state.formVisible}
-              onCancel={this.handleCancel}
-              onCreate={this.handleCreate}
-            />
-          </div>
+            <div className="add-button">
+              <Button type="primary" onClick={this.showModal}>
+                New Roster
+              </Button>
+              <FormRoster
+                wrappedComponentRef={this.saveFormRef}
+                visible={this.state.formVisible}
+                onCancel={this.handleCancel}
+                onCreate={this.handleCreate}
+              />
+            </div>
 
 
           <Tabs
@@ -230,7 +231,7 @@ class Roster extends React.Component {
             style={{ minHeight: 220 }}
           >
             <TabPane tab="Roster 1" key="1">
-              <Table columns={columns} dataSource={data} />
+              <Table columns={columns} dataSource={data} pagination={false} />
             </TabPane>
             <TabPane tab="Roster 2" key="2">Content of tab 2</TabPane>
             <TabPane tab="Roster 3" key="3">Content of tab 3</TabPane>

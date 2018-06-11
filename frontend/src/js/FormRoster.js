@@ -4,17 +4,11 @@ import '../css/FormRoster.css';
 
 import {DatePicker, Form, Input, Modal, Radio, Select, TimePicker} from 'antd';
 import {Icon, Button } from 'antd';
-import moment from 'moment';
 
-const formatDate = 'YYYY-MM-DD';
-const formatTime = 'HH:mm';
 const FormItem = Form.Item;
-const Option = Select.Option;
-const RadioButton = Radio.Button;
-const RadioGroup = Radio.Group;
+
 
 let uuid = 0;
-
 
 const FormRoster = Form.create()(
   class FormRoster extends React.Component {
@@ -46,8 +40,6 @@ const FormRoster = Form.create()(
       });
     }
 
-
-
     render() {
       const { getFieldDecorator, getFieldValue } = this.props.form;
       const {visible, onCancel, onCreate, form} = this.props;
@@ -73,19 +65,19 @@ const FormRoster = Form.create()(
         return (
           <FormItem
             {...(index === 0 ? formItemLayout : formItemLayoutWithOutLabel)}
-            label={index === 0 ? 'Passengers' : ''}
+            label={index === 0 ? 'Characters' : ''}
             required={false}
             key={k}
           >
-            {getFieldDecorator(`names[${k}]`, {
+            {getFieldDecorator(`figures[${k}]`, {
               validateTrigger: ['onChange', 'onBlur'],
               rules: [{
                 required: true,
                 whitespace: true,
-                message: "Please input passenger's name or delete this field.",
+                message: "Please input character's name or delete this field.",
               }],
             })(
-              <Input placeholder="passenger name" style={{ width: '60%', marginRight: 8 }} />
+              <Input placeholder="character name" style={{ width: '60%', marginRight: 8 }} />
             )}
             {keys.length > 1 ? (
               <Icon
@@ -101,12 +93,19 @@ const FormRoster = Form.create()(
       return (
         <Modal
           visible={visible}
-          title="Create a new event"
+          title="Create a new roster"
           okText="Create"
           onCancel={onCancel}
           onOk={onCreate}
         >
           <Form>
+            <FormItem label="Name">
+              {getFieldDecorator('name', {
+                rules: [{required: true, message: 'Please input a name for the roster!'}],
+              })(
+                <Input/>
+              )}
+            </FormItem>
             {formItems}
             <FormItem {...formItemLayoutWithOutLabel}>
               <Button type="dashed" onClick={this.add} style={{ width: '60%' }}>

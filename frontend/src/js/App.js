@@ -41,11 +41,12 @@ class SiderDemo extends React.Component {
       <Router>
         <div>
           <Header className="header">
-            <Menu theme="dark" mode="horizontal">
-              <Menu.Item key="login">
-                Login
-              </Menu.Item>
-              {/*<SubMenu title={<span><Icon type="setting" />Account</span>}>
+            <div className="add-button">
+              <Menu theme="dark" mode="horizontal">
+                <Menu.Item key="login">
+                  Login
+                </Menu.Item>
+                {/*<SubMenu title={<span><Icon type="setting" />Account</span>}>
                                 <MenuItemGroup title="Item 1">
                                     <Menu.Item key="setting:1">Settings</Menu.Item>
                                     <Menu.Item key="setting:2">Characters</Menu.Item>
@@ -54,10 +55,11 @@ class SiderDemo extends React.Component {
                                     <Menu.Item key="setting:3">Logout</Menu.Item>
                                 </MenuItemGroup>
                             </SubMenu>*/}
-              <Menu.Item key="feedback">
-                <a href="https://google.com" target="_blank" rel="noopener noreferrer">{<span><Icon type="mail"/>Feedback</span>}</a>
-              </Menu.Item>
-            </Menu>
+                <Menu.Item key="feedback">
+                  <a href="https://google.com" target="_blank" rel="noopener noreferrer">{<span><Icon type="mail"/>Feedback</span>}</a>
+                </Menu.Item>
+              </Menu>
+            </div>
           </Header>
           <Layout style={{minHeight: '100vh'}}>
             <Sider

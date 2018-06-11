@@ -164,7 +164,7 @@ class Calendar extends React.Component {
           }));
 
 
-       // console.log("Meeting id " + this.state.meeting_id + ", Raid id " + this.state.raid_id + ", Roster id " + this.state.roster_id)
+      // console.log("Meeting id " + this.state.meeting_id + ", Raid id " + this.state.raid_id + ", Roster id " + this.state.roster_id)
 
       form.resetFields();
       this.setState({formVisible: false});
@@ -196,7 +196,7 @@ class Calendar extends React.Component {
             <WeekPicker onChange={onChange} placeholder="Select week"/>
           </div>
 
-          <div>
+          <div className="add-button">
             <Button type="primary" onClick={this.showModal}>
               New Event
             </Button>

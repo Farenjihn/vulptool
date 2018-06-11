@@ -2,6 +2,7 @@ import React from "react";
 import '../css/App.css';
 import Calendar from './Calendar';
 import Welcome from './Welcome';
+import Roster from './Roster';
 
 
 import {BrowserRouter as Router, Link, Route} from 'react-router-dom';
@@ -40,11 +41,12 @@ class SiderDemo extends React.Component {
       <Router>
         <div>
           <Header className="header">
-            <Menu theme="dark" mode="horizontal">
-              <Menu.Item key="login">
-                Login
-              </Menu.Item>
-              {/*<SubMenu title={<span><Icon type="setting" />Account</span>}>
+            <div className="add-button">
+              <Menu theme="dark" mode="horizontal">
+                <Menu.Item key="login">
+                  Login
+                </Menu.Item>
+                {/*<SubMenu title={<span><Icon type="setting" />Account</span>}>
                                 <MenuItemGroup title="Item 1">
                                     <Menu.Item key="setting:1">Settings</Menu.Item>
                                     <Menu.Item key="setting:2">Characters</Menu.Item>
@@ -53,10 +55,11 @@ class SiderDemo extends React.Component {
                                     <Menu.Item key="setting:3">Logout</Menu.Item>
                                 </MenuItemGroup>
                             </SubMenu>*/}
-              <Menu.Item key="feedback">
-                <a href="https://google.com" target="_blank" rel="noopener noreferrer">{<span><Icon type="mail"/>Feedback</span>}</a>
-              </Menu.Item>
-            </Menu>
+                <Menu.Item key="feedback">
+                  <a href="https://google.com" target="_blank" rel="noopener noreferrer">{<span><Icon type="mail"/>Feedback</span>}</a>
+                </Menu.Item>
+              </Menu>
+            </div>
           </Header>
           <Layout style={{minHeight: '100vh'}}>
             <Sider
@@ -88,6 +91,7 @@ class SiderDemo extends React.Component {
             <Route exact path="/" component={Welcome}/>
             <Route path="/welcome" component={Welcome}/>
             <Route path="/calendar" component={Calendar}/>
+            <Route path="/roster" component={Roster}/>
           </Layout>
           <Footer style={{height: '48px', textAlign: 'center'}}>
             Ant Design ©2016 Created by Ant UED

@@ -2,15 +2,17 @@ package controllers
 
 import dao.EventDAO
 import javax.inject.{Inject, Singleton}
-import models.Event
+import models._
 import play.api.libs.functional.syntax._
 import play.api.libs.json.Reads._
 import play.api.libs.json._
 import play.api.mvc.{AbstractController, ControllerComponents}
 
+import scala.concurrent.Await
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.duration.Duration
 
-trait EventSerialization {
+trait EventSerialization extends MeetingSerialization with RaidSerialization with RosterSerialization{
 
   implicit val eventToJson: Writes[Event] = { event =>
     Json.obj(
@@ -23,6 +25,17 @@ trait EventSerialization {
     )
   }
 
+  implicit val eventFullToJson: Writes[EventFull] = { event =>
+    Json.obj(
+      "id" -> event.id,
+      "name" -> event.name,
+      "description" -> event.description,
+      "meeting" -> Json.toJson(event.meeting),
+      "raid" -> Json.toJson(event.raid),
+      "roster" -> Json.toJson(event.roster)
+    )
+  }
+
   implicit val jsonToEvent: Reads[Event] = (
     (JsPath \ "id").readNullable[Int] and
       (JsPath \ "name").read[String](minLength[String](2)) and
@@ -31,6 +44,15 @@ trait EventSerialization {
       (JsPath \ "raidId").read[Int] and
       (JsPath \ "rosterId").read[Int]
     ) (Event.apply _)
+
+  implicit val jsonToEventFull: Reads[EventFull] = (
+    (JsPath \ "id").readNullable[Int] and
+      (JsPath \ "name").read[String](minLength[String](2)) and
+      (JsPath \ "description").read[String] and
+      (JsPath \ "meetingId").read[Meeting] and
+      (JsPath \ "raidId").read[Raid] and
+      (JsPath \ "rosterId").read[Roster]
+    ) (EventFull.apply _)
 }
 
 @Singleton
@@ -51,7 +73,14 @@ class EventController @Inject()(cc: ControllerComponents, eventDAO: EventDAO) ex
     val optionalEvent = eventDAO.findById(eventId)
 
     optionalEvent.map({
-      case Some(event) => Ok(Json.toJson(event))
+      case Some(event) => {
+        val meeting = Await.result(eventDAO.getMeetingOfEvent(eventId), Duration.Inf).get
+        val raid = Await.result(eventDAO.getRaidOfEvent(eventId), Duration.Inf).get
+        val roster = Await.result(eventDAO.getRosterOfEvent(eventId), Duration.Inf).get
+
+        val eventFull = EventFull(event.id, event.name, event.description, meeting, raid, roster)
+        Ok(Json.toJson(eventFull))
+      }
       case None =>
         // Send back a 404 Not Found HTTP status to the client if the event does not exist.
         NotFound(Json.obj(

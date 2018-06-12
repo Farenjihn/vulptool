@@ -16,6 +16,7 @@ object RaidDifficulty extends Enumeration {
 }
 
 case class Event(id: Option[Int], name: String, description: String, meetingId: Int, raidId: Int, rosterId: Int)
+case class EventFull(id: Option[Int], name: String, description: String, meeting: Meeting, raid: Raid, roster: Roster)
 
 case class Figure(id: Option[Int], name: String, fclass: WoWClass, lvl: Int, ilvl: Double, playerId: Int)
 

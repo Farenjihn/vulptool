@@ -67,9 +67,9 @@ class RosterController @Inject()(cc: ControllerComponents, rosterDAO: RosterDAO)
         } recover {
           case timeout: java.util.concurrent.TimeoutException => None
         }
-        val figuresAcutal = Await.result(figures, Duration.Inf)
+        val figuresActual = Await.result(figures, Duration.Inf)
 
-        val rosterFull = RosterFull(roster.id, roster.name, figuresAcutal.getOrElse(Seq()).toList)
+        val rosterFull = RosterFull(roster.id, roster.name, figuresActual.getOrElse(Seq()).toList)
         Ok(Json.toJson(rosterFull))
       }
       case None =>

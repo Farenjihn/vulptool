@@ -1,5 +1,7 @@
 package controllers
 
+import java.sql.Timestamp
+
 import dao.EventDAO
 import javax.inject.{Inject, Singleton}
 import models._
@@ -85,9 +87,9 @@ class EventController @Inject()(cc: ControllerComponents, eventDAO: EventDAO) ex
     })
   }
 
-  // POST with dates
-  def postEventsByMeetingDate(begin: Int, end: Int) = Action.async(validateJson[Meeting]) { request =>
-    val optionalEvents = eventDAO.listFromDates(begin, end)
+  // GET with dates
+  def getEventsByMeetingDate(begin: Long, end: Long) = Action.async {
+    val optionalEvents = eventDAO.listFromDates(new Timestamp(begin * 1000L), new Timestamp(end * 1000L))
 
     optionalEvents.map(_.map(getFullEvent))
       .map(eventFull => Ok(Json.toJson(eventFull)))

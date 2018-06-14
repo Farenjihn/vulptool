@@ -86,9 +86,8 @@ class EventController @Inject()(cc: ControllerComponents, eventDAO: EventDAO) ex
   }
 
   // POST with dates
-  def postEventsByMeetingDate = Action.async(validateJson[Meeting]) { request =>
-    val meeting = request.body
-    val optionalEvents = eventDAO.listFromDates(meeting.timeBegin, meeting.timeEnd)
+  def postEventsByMeetingDate(begin: Int, end: Int) = Action.async(validateJson[Meeting]) { request =>
+    val optionalEvents = eventDAO.listFromDates(begin, end)
 
     optionalEvents.map(_.map(getFullEvent))
       .map(eventFull => Ok(Json.toJson(eventFull)))

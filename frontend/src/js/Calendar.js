@@ -37,17 +37,44 @@ for (let i = 0; i < 4; i++) {
   });
 }
 
+var displaytWeek = moment();
+
+function nextWeek() {
+  console.log("Next Week called");
+  onChange(displaytWeek.add(7, "days"))
+}
+
+function previousWeek() {
+  console.log("Previous Week called");
+  onChange(displaytWeek.subtract(7, "days"))
+}
+
 function onChange(date, dateString) {
-  console.log(date, dateString);
+  console.log(moment().hour(0).minute(0).second(0).day("Wednesday").week(date.week()).utc(true));
+  console.log(moment().hour(23).minute(59).second(59).day("Tuesday").week(date.week()).utc(true));
+
+  displaytWeek = moment().hour(0).minute(0).second(0).day("Wednesday").week(date.week()).utc(true);
+
+  fetch("http://localhost:9000/meeting", {
+    method: "GET",
+    body: JSON.stringify({
+      date_begin: moment().hour(0).minute(0).second(0).day("Wednesday").week(date.week()).utc(true).format("YYYY-MM-DD hh:mm:ss"),
+      date_end: moment().hour(23).minute(59).second(59).day("Thuesday").week(date.week()).utc(true).format("YYYY-MM-DD hh:mm:ss")
+    })
+  })
+    .then(results => results.json())
+    .then(data => this.setState({meetings: data}))
+    .catch(function (error) {
+      console.log(
+        "There was an error Fetching data: /// " + error + " \\\\\\"
+      );
+    });
 }
 
 class Calendar extends React.Component {
   constructor() {
     super();
     this.state = {
-      meeting_id: 0,
-      raid_id: 0,
-      roster_id: 0,
       meetings: [],
       formVisible: false
     };
@@ -84,7 +111,7 @@ class Calendar extends React.Component {
           minute: values["time-end"].get("minute"),
           second: 0
         })
-        .format("YYYY-MM-DD HH:mm:ss");
+        .format("YYYY-MM-DD hh:mm:ss");
 
       // console.log(time_begin);
       // console.log(time_end);
@@ -105,66 +132,7 @@ class Calendar extends React.Component {
           console.log(
             "There was an error POST meeting: /// " + error + " \\\\\\"
           );
-        })
-
-        .then(
-          fetch('http://localhost:9000/raid', {
-            method: 'POST',
-            headers: {
-              'Accept': 'application/json',
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              name: values.raid,
-              nb_boss: 0,
-              difficulty: values.difficulty
-            })
-          })
-            .then(results => results.json())
-            .then(data => this.setState({raid_id: data.id}))
-            .catch(function (error) {
-              console.log("There was an error POST raid: /// " + error + " \\\\\\");
-            }))
-
-        .then(
-          fetch('http://localhost:9000/roster', {
-            method: 'POST',
-            headers: {
-              'Accept': 'application/json',
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              name: "Default test",
-            })
-          })
-            .then(results => results.json())
-            .then(data => this.setState({roster_id: data.id}))
-            .catch(function (error) {
-              console.log("There was an error POST raid: /// " + error + " \\\\\\");
-            }))
-
-        .then(fetch('http://localhost:9000/event', {
-          method: 'POST',
-          headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            name: values.title,
-            description: values.description,
-            meeting_id: this.state.meeting_id,
-            raid_id: this.state.raid_id,
-            roster_id: this.state.roster_id
-          })
-        })
-          .then(results => results.json())
-          .then(data => console.log(data))
-          .catch(function (error) {
-            console.log("There was an error POST event: /// " + error + " \\\\\\");
-          }));
-
-
-      // console.log("Meeting id " + this.state.meeting_id + ", Raid id " + this.state.raid_id + ", Roster id " + this.state.roster_id)
+        });
 
       form.resetFields();
       this.setState({formVisible: false});
@@ -176,8 +144,13 @@ class Calendar extends React.Component {
 
 
   componentDidMount() {
-    fetch("http://localhost:9000/meeting", {
-      method: "GET"
+    var url = "http://localhost:9000/eventByDate";
+    url = url + "/" + moment().hour(0).minute(0).second(0).day("Wednesday").week(moment().week()).utc(true).unix() + "/" + moment().hour(23).minute(59).second(59).day("Thuesday").week(moment().week()).utc(true).unix();
+
+    console.log(url);
+
+    fetch(url, {
+      method: "GET",
     })
       .then(results => results.json())
       .then(data => this.setState({meetings: data}))
@@ -193,7 +166,21 @@ class Calendar extends React.Component {
       <Content style={{margin: "16px 16px"}}>
         <div style={{padding: 24, background: "#fff", minHeight: 360}}>
           <div>
-            <WeekPicker onChange={onChange} placeholder="Select week"/>
+            <Button.Group>
+              <Button onClick={previousWeek} icon="left"/>
+              <WeekPicker id="weekpicker" onChange={onChange} placeholder={moment().day("Wednesday").utc(true).format("Do MMM YY")}/>
+              <Button onClick={nextWeek} icon="right"/>
+            </Button.Group>
+
+            <Button className="add-button" type="primary" onClick={this.showModal}>
+              New Event
+            </Button>
+            <EventForm
+              wrappedComponentRef={this.saveFormRef}
+              visible={this.state.formVisible}
+              onCancel={this.handleCancel}
+              onCreate={this.handleCreate}
+            />
           </div>
 
           <div className="add-button">
@@ -206,6 +193,10 @@ class Calendar extends React.Component {
               onCancel={this.handleCancel}
               onCreate={this.handleCreate}
             />
+          </div>
+
+          <div>
+            {this.state.meetings}
           </div>
 
           <List

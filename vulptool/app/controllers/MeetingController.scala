@@ -17,8 +17,8 @@ trait MeetingSerialization {
   implicit val meetingToJson: Writes[Meeting] = { meeting =>
     Json.obj(
       "id" -> meeting.id,
-      "time_begin" -> meeting.timeBegin.toString,
-      "time_end" -> meeting.timeEnd.toString
+      "time_begin" -> meeting.timeBegin.getTime.toString,
+      "time_end" -> meeting.timeEnd.getTime.toString
     )
   }
 
@@ -26,7 +26,7 @@ trait MeetingSerialization {
     (JsPath \ "id").readNullable[Int] and
       (JsPath \ "time_begin").read[String] and
       (JsPath \ "time_end").read[String]
-    ) ((id, timeBegin, timeEnd) => Meeting(id, Timestamp.valueOf(timeBegin), Timestamp.valueOf(timeEnd)))
+    ) ((id, timeBegin, timeEnd) => Meeting(id, new Timestamp(timeBegin.toLong * 1000L), new Timestamp(timeEnd.toLong * 1000L)))
 }
 
 @Singleton

@@ -46,6 +46,7 @@ PUT     /template/:id              controllers.TemplateController.updateTemplate
 #Event
 GET     /event                     controllers.EventController.getEvents
 GET     /event/:id                 controllers.EventController.getEvent(id: Int)
+POST    /eventByDate               controllers.EventController.postEventsByMeetingDate
 POST    /event                     controllers.EventController.postEvent
 DELETE  /event/:id                 controllers.EventController.deleteEvent(id: Int)
 PUT     /event/:id                 controllers.EventController.updateEvent(id: Int)

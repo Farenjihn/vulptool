@@ -65,7 +65,7 @@ class EventController @Inject()(cc: ControllerComponents, eventDAO: EventDAO) ex
   //GET
   def getEvents = Action.async {
     val eventList = eventDAO.list()
-    eventList.map(event => Ok(Json.toJson(event)))
+    eventList.map(_.map(getFullEvent)).map(event => Ok(Json.toJson(event)))
   }
 
   //GET with id
@@ -74,12 +74,7 @@ class EventController @Inject()(cc: ControllerComponents, eventDAO: EventDAO) ex
 
     optionalEvent.map({
       case Some(event) => {
-        val meeting = Await.result(eventDAO.getMeetingOfEvent(eventId), Duration.Inf).get
-        val raid = Await.result(eventDAO.getRaidOfEvent(eventId), Duration.Inf).get
-        val roster = Await.result(eventDAO.getRosterOfEvent(eventId), Duration.Inf).get
-
-        val eventFull = EventFull(event.id, event.name, event.description, meeting, raid, roster)
-        Ok(Json.toJson(eventFull))
+        Ok(Json.toJson(getFullEvent(event)))
       }
       case None =>
         // Send back a 404 Not Found HTTP status to the client if the event does not exist.
@@ -88,6 +83,23 @@ class EventController @Inject()(cc: ControllerComponents, eventDAO: EventDAO) ex
           "message" -> ("Event #" + eventId + " not found.")
         ))
     })
+  }
+
+  // POST with dates
+  def postEventsByMeetingDate = Action.async(validateJson[Meeting]) { request =>
+    val meeting = request.body
+    val optionalEvents = eventDAO.listFromDates(meeting.timeBegin, meeting.timeEnd)
+
+    optionalEvents.map(_.map(getFullEvent))
+      .map(eventFull => Ok(Json.toJson(eventFull)))
+  }
+
+  def getFullEvent(event: Event): EventFull = {
+    val meeting = Await.result(eventDAO.getMeetingOfEvent(event.id.get), Duration.Inf).get
+    val raid = Await.result(eventDAO.getRaidOfEvent(event.id.get), Duration.Inf).get
+    val roster = Await.result(eventDAO.getRosterOfEvent(event.id.get), Duration.Inf).get
+
+    EventFull(event.id, event.name, event.description, meeting, raid, roster)
   }
 
   //POST

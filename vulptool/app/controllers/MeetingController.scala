@@ -57,8 +57,6 @@ class MeetingController @Inject()(cc: ControllerComponents, meetingDAO: MeetingD
     }
   }
 
-  //GET with dates
-
   //POST
   def postMeeting = Action.async(validateJson[Meeting]) { request =>
     val meeting = request.body

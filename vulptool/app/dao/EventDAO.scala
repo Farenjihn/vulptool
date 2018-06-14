@@ -1,5 +1,7 @@
 package dao
 
+import java.sql.{Date, Timestamp}
+
 import javax.inject.{Inject, Singleton}
 import models.{Event, Meeting, Raid, Roster}
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
@@ -48,6 +50,21 @@ class EventDAO @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)
 
   def list(): Future[Seq[Event]] = {
     val query = events.filter(!_.isDeleted).sortBy(_.description)
+    db.run(query.result)
+  }
+
+  def listFromDates(start: Date, end: Date): Future[Seq[Event]] =
+    listFromDates(Timestamp.from(start.toInstant), Timestamp.from(end.toInstant))
+
+  def listFromDates(start: String, end: String): Future[Seq[Event]] =
+    listFromDates(Timestamp.valueOf(start), Timestamp.valueOf(end))
+
+  def listFromDates(start: Timestamp, end: Timestamp): Future[Seq[Event]] = {
+    val query = for {
+      m <- meetings if m.time_begin >= start && m.time_end <= end
+      e <- events if e.id === m.id
+    } yield e
+
     db.run(query.result)
   }
 

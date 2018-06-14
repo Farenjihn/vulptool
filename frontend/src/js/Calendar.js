@@ -144,7 +144,7 @@ class Calendar extends React.Component {
 
 
   componentDidMount() {
-    var url = "http://localhost:9000/eventByDate";
+    let url = "http://localhost:9000/eventByDate";
     url = url + "/" + moment().hour(0).minute(0).second(0).day("Wednesday").week(moment().week()).utc(true).unix() + "/" + moment().hour(23).minute(59).second(59).day("Thuesday").week(moment().week()).utc(true).unix();
 
     console.log(url);
@@ -165,35 +165,33 @@ class Calendar extends React.Component {
     return (
       <Content style={{margin: "16px 16px"}}>
         <div style={{padding: 24, background: "#fff", minHeight: 360}}>
-          <div>
-            <Button.Group>
-              <Button onClick={previousWeek} icon="left"/>
-              <WeekPicker id="weekpicker" onChange={onChange} placeholder={moment().day("Wednesday").utc(true).format("Do MMM YY")}/>
-              <Button onClick={nextWeek} icon="right"/>
-            </Button.Group>
 
-            <Button className="add-button" type="primary" onClick={this.showModal}>
-              New Event
-            </Button>
-            <EventForm
-              wrappedComponentRef={this.saveFormRef}
-              visible={this.state.formVisible}
-              onCancel={this.handleCancel}
-              onCreate={this.handleCreate}
-            />
+          <div className="footer-container">
+            <div className="div-left">
+              <ul className="footer">
+                <Button.Group>
+                  <Button onClick={previousWeek} icon="left"/>
+                  <WeekPicker id="weekpicker" onChange={onChange} placeholder={moment().day("Wednesday").utc(true).format("Do MMM YY")}/>
+                  <Button onClick={nextWeek} icon="right"/>
+                </Button.Group>
+              </ul>
+            </div>
+            <div className="div-right">
+              <ul className="footer">
+                <Button type="primary" onClick={this.showModal}>
+                  New Event
+                </Button>
+                <EventForm
+                  wrappedComponentRef={this.saveFormRef}
+                  visible={this.state.formVisible}
+                  onCancel={this.handleCancel}
+                  onCreate={this.handleCreate}
+                />
+              </ul>
+            </div>
           </div>
 
-          <div className="add-button">
-            <Button type="primary" onClick={this.showModal}>
-              New Event
-            </Button>
-            <EventForm
-              wrappedComponentRef={this.saveFormRef}
-              visible={this.state.formVisible}
-              onCancel={this.handleCancel}
-              onCreate={this.handleCreate}
-            />
-          </div>
+
 
           <div>
             {this.state.meetings}

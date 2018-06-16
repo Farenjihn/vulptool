@@ -39,6 +39,23 @@ for (let i = 0; i < 4; i++) {
 
 var displaytWeek = moment();
 
+// check if an element exists in array using a comparer function
+// comparer : function(currentElement)
+Array.prototype.inArray = function(comparer) {
+  for(var i=0; i < this.length; i++) {
+    if(comparer(this[i])) return true;
+  }
+  return false;
+};
+
+// adds an element to the array if it does not already exist using a comparer
+// function
+Array.prototype.pushIfNotExist = function(element, comparer) {
+  if (!this.inArray(comparer)) {
+    this.push(element);
+  }
+};
+
 function nextWeek() {
   console.log("Next Week called");
   weekPickerChange(displaytWeek.add(7, "days"))
@@ -50,25 +67,34 @@ function previousWeek() {
 }
 
 function weekPickerChange(date, dateString) {
-  console.log(moment().hour(0).minute(0).second(0).day("Wednesday").week(date.week()).utc(true));
-  console.log(moment().hour(23).minute(59).second(59).day("Tuesday").week(date.week()).utc(true));
-
   displaytWeek = moment().hour(0).minute(0).second(0).day("Wednesday").week(date.week()).utc(true);
 
-  // fetch("http://localhost:9000/meeting", {
-  //   method: "GET",
-  //   body: JSON.stringify({
-  //     date_begin: moment().hour(0).minute(0).second(0).day("Wednesday").week(date.week()).utc(true).format("YYYY-MM-DD hh:mm:ss"),
-  //     date_end: moment().hour(23).minute(59).second(59).day("Thuesday").week(date.week()).utc(true).format("YYYY-MM-DD hh:mm:ss")
-  //   })
-  // })
-  //   .then(results => results.json())
-  //   .then(data => this.setState({meetings: data}))
-  //   .catch(function (error) {
-  //     console.log(
-  //       "There was an error Fetching data: /// " + error + " \\\\\\"
-  //     );
-  //   });
+  let url = "http://localhost:9000/eventByDate";
+  url = url + "/" + moment().hour(0).minute(0).second(0).day("Wednesday").week(date.week()).utc(true).unix() + "/" + moment().hour(23).minute(59).second(59).day("Tuesday").week(date.week()).utc(true).unix();
+
+  fetch(url, {
+    method: "GET",
+  })
+    .then(results => results.json())
+    .then(data => {
+      let meetingsCopy = this.state.meetings;
+      console.log(meetingsCopy);
+
+      if (data.length > 0) {
+        for (let meeting in data) {
+          meetingsCopy.pushIfNotExist(meeting, function (e) {
+            return e.id === meeting.id;
+          });
+        }
+      }
+
+      console.log(meetingsCopy);
+    })
+    .catch(function (error) {
+      console.log(
+        "There was an error Fetching data: /// " + error + " \\\\\\"
+      );
+    });
 }
 
 class Calendar extends React.Component {
@@ -113,8 +139,6 @@ class Calendar extends React.Component {
         })
         .format("YYYY-MM-DD hh:mm:ss");
 
-      // console.log(time_begin);
-      // console.log(time_end);
 
       fetch('http://localhost:9000/meeting', {
         method: 'POST',
@@ -171,9 +195,9 @@ class Calendar extends React.Component {
             <div className="div-left">
               <ul className="footer">
                 <Button.Group>
-                  <Button onClick={previousWeek} icon="left"/>
-                  <WeekPicker id="weekpicker" onChange={weekPickerChange} placeholder={moment().day("Wednesday").utc(true).format("Do MMM YY")}/>
-                  <Button onClick={nextWeek} icon="right"/>
+                  <Button onClick={previousWeek.bind(this)} icon="left"/>
+                  <WeekPicker id="weekpicker" onChange={weekPickerChange.bind(this)} placeholder={moment().day("Wednesday").utc(true).format("Do MMM YY")}/>
+                  <Button onClick={nextWeek.bind(this)} icon="right"/>
                 </Button.Group>
               </ul>
             </div>

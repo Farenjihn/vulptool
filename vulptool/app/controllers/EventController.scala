@@ -2,7 +2,7 @@ package controllers
 
 import java.sql.Timestamp
 
-import dao.EventDAO
+import dao.{EventDAO, MeetingDAO, RaidDAO, RosterDAO}
 import javax.inject.{Inject, Singleton}
 import models._
 import play.api.libs.functional.syntax._
@@ -32,9 +32,9 @@ trait EventSerialization extends MeetingSerialization with RaidSerialization wit
       "id" -> event.id,
       "name" -> event.name,
       "description" -> event.description,
-      "meeting" -> Json.toJson(event.meeting),
-      "raid" -> Json.toJson(event.raid),
-      "roster" -> Json.toJson(event.roster)
+      "meeting" -> event.meeting,
+      "raid" -> event.raid,
+      "roster" -> event.roster
     )
   }
 
@@ -51,14 +51,15 @@ trait EventSerialization extends MeetingSerialization with RaidSerialization wit
     (JsPath \ "id").readNullable[Int] and
       (JsPath \ "name").read[String](minLength[String](2)) and
       (JsPath \ "description").read[String] and
-      (JsPath \ "meetingId").read[Meeting] and
-      (JsPath \ "raidId").read[Raid] and
-      (JsPath \ "rosterId").read[Roster]
+      (JsPath \ "meeting").read[Meeting] and
+      (JsPath \ "raid").read[Raid] and
+      (JsPath \ "roster").read[Roster]
     ) (EventFull.apply _)
 }
 
 @Singleton
-class EventController @Inject()(cc: ControllerComponents, eventDAO: EventDAO) extends AbstractController(cc) with EventSerialization {
+class EventController @Inject()(cc: ControllerComponents, eventDAO: EventDAO, meetingDAO: MeetingDAO, raidDAO: RaidDAO, rosterDAO: RosterDAO)
+  extends AbstractController(cc) with EventSerialization {
 
   def validateJson[A: Reads] = parse.json.validate(
     _.validate[A].asEither.left.map(e => BadRequest(JsError.toJson(e)))
@@ -104,9 +105,18 @@ class EventController @Inject()(cc: ControllerComponents, eventDAO: EventDAO) ex
   }
 
   //POST
-  def postEvent = Action.async(validateJson[Event]) { request =>
-    val event = request.body
-    val createdEvent = eventDAO.insert(event)
+  def postEvent = Action.async(validateJson[EventFull]) { request =>
+    println("Blabla")
+    val eventFull = request.body
+
+    println("Here")
+
+    val meeting = Await.result(meetingDAO.insert(eventFull.meeting), Duration.Inf)
+    val raid = Await.result(raidDAO.insert(eventFull.raid), Duration.Inf)
+    val roster = Await.result(rosterDAO.insert(eventFull.roster), Duration.Inf)
+    val createdEvent = eventDAO.insert(
+      Event(eventFull.id, eventFull.name, eventFull.description, meeting.id.get, raid.id.get, roster.id.get)
+    )
 
     createdEvent.map(event =>
       Ok(

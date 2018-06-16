@@ -17,8 +17,8 @@ trait MeetingSerialization {
   implicit val meetingToJson: Writes[Meeting] = { meeting =>
     Json.obj(
       "id" -> meeting.id,
-      "time_begin" -> meeting.timeBegin.getTime.toString,
-      "time_end" -> meeting.timeEnd.getTime.toString
+      "time_begin" -> ((meeting.timeBegin.getTime)/1000L).toString,
+      "time_end" -> ((meeting.timeEnd.getTime)/1000L).toString
     )
   }
 

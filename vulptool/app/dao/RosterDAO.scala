@@ -1,7 +1,7 @@
 package dao
 
 import javax.inject.{Inject, Singleton}
-import models.{Figure, Roster, RosterFull}
+import models._
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
 import slick.jdbc.JdbcProfile
 
@@ -45,7 +45,8 @@ class RosterDAO @Inject()(protected val dbConfigProvider: DatabaseConfigProvider
   def getFiguresFromRoster(id: Int): Future[Seq[Figure]] = {
     val query = for {
       figureRoster <- figuresRosters
-      figure <- figures if figureRoster.figure_id === figure.id
+      if figureRoster.roster_id === id
+      figure <- figures if figure.id === figureRoster.figure_id
     } yield figure
 
     db.run(query.result)

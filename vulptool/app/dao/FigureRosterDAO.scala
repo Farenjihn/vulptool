@@ -1,7 +1,7 @@
 package dao
 
 import javax.inject.{Inject, Singleton}
-import models.FigureRoster
+import models.{Figure, FigureRoster}
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
 import slick.jdbc.JdbcProfile
 
@@ -31,10 +31,18 @@ class FigureRosterDAO @Inject()(protected val dbConfigProvider: DatabaseConfigPr
 
   import profile.api._
 
-  val FiguresRoster = TableQuery[FiguresRosterTable]
+  val figuresRoster = TableQuery[FiguresRosterTable]
 
   def list(): Future[Seq[FigureRoster]] = {
-    val query = FiguresRoster.filter(!_.isDeleted)
+    val query = figuresRoster.filter(!_.isDeleted)
     db.run(query.result)
+  }
+
+  def insertFiguresWithRoster(newFiguresRoster: Seq[FigureRoster]): Future[Unit] = {
+    val action = DBIO.seq(
+      figuresRoster ++= newFiguresRoster
+    )
+
+    db.run(action.transactionally)
   }
 }

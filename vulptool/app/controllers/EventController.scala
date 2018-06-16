@@ -106,10 +106,7 @@ class EventController @Inject()(cc: ControllerComponents, eventDAO: EventDAO, me
 
   //POST
   def postEvent = Action.async(validateJson[EventFull]) { request =>
-    println("Blabla")
     val eventFull = request.body
-
-    println("Here")
 
     val meeting = Await.result(meetingDAO.insert(eventFull.meeting), Duration.Inf)
     val raid = Await.result(raidDAO.insert(eventFull.raid), Duration.Inf)

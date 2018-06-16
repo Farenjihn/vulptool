@@ -75,38 +75,6 @@ class Roster extends React.Component {
         );
       });
   }
-  
-
-  handleCreate = () => {
-    const form = this.formRef.props.form;
-    form.validateFields((err, values) => {
-      if (err) {
-        return;
-      }
-
-      console.log("Received values of form: ", values);
-
-      fetch(conf.baseURL + '/roster', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          name: values.name,
-          figures: values["figures"]
-        })
-      })
-        .then(results => results.json())
-        .catch(function (error) {
-          console.log(
-            "There was an error POST roster: /// " + error + " \\\\\\"
-          );
-        });
-
-      form.resetFields();
-      this.setState({formVisible: false});
-    });
-  };
 
   createTabs = () => {
     let tabs = [];
@@ -133,7 +101,7 @@ class Roster extends React.Component {
           <div className="add-button">
             <Link to={"/roster/create"}>
               <Button type="primary">
-                <span>Create Roster</span>
+                <span>New Roster</span>
               </Button>
             </Link>
           </div>

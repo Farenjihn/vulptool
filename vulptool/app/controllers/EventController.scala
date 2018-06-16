@@ -68,7 +68,8 @@ class EventController @Inject()(cc: ControllerComponents, eventDAO: EventDAO, me
   //GET
   def getEvents = Action.async {
     val eventList = eventDAO.list()
-    eventList.map(_.map(getFullEvent)).map(event => Ok(Json.toJson(event)))
+    eventList.map(_.map(getFullEvent).sortBy(_.meeting.timeBegin.getTime()))
+      .map(event => Ok(Json.toJson(event)))
   }
 
   //GET with id
@@ -92,10 +93,10 @@ class EventController @Inject()(cc: ControllerComponents, eventDAO: EventDAO, me
   def getEventsByMeetingDate(begin: Long, end: Long) = Action.async {
     val optionalEvents = eventDAO.listFromDates(new Timestamp(begin * 1000L), new Timestamp(end * 1000L))
 
-    optionalEvents.map(_.map(getFullEvent))
+    optionalEvents.map(_.map(getFullEvent).sortBy(_.meeting.timeBegin.getTime()))
       .map(eventFull => Ok(Json.toJson(eventFull)))
   }
-
+  
   def getFullEvent(event: Event): EventFull = {
     val meeting = Await.result(eventDAO.getMeetingOfEvent(event.id.get), Duration.Inf).get
     val raid = Await.result(eventDAO.getRaidOfEvent(event.id.get), Duration.Inf).get

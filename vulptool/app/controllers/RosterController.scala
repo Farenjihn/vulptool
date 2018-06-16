@@ -40,10 +40,11 @@ trait RosterSerialization extends FigureSerialization {
       (JsPath \ "figures").read[List[Figure]]
     ) (RosterFull.apply _)
 
-  implicit val jsonToRosterInsert: Reads[RosterInsert] = (
-    (JsPath \ "name").read[String] and
+  implicit val jsonToRosterWithFigures: Reads[RosterWithFigures] = (
+    (JsPath \ "id").readNullable[Int] and
+      (JsPath \ "name").read[String] and
       (JsPath \ "figures").read[List[Int]]
-    ) (RosterInsert.apply _)
+    ) (RosterWithFigures.apply _)
 }
 
 @Singleton
@@ -56,7 +57,7 @@ class RosterController @Inject()(cc: ControllerComponents, rosterDAO: RosterDAO,
   //GET
   def getRosters = Action.async {
     val jsonRosterList = rosterDAO.list()
-    jsonRosterList.map(roster => Ok(Json.toJson(roster)))
+    jsonRosterList.map(_.map(getRosterWithFigures)).map(roster => Ok(Json.toJson(roster)))
   }
 
   //GET with id and with figures
@@ -65,8 +66,7 @@ class RosterController @Inject()(cc: ControllerComponents, rosterDAO: RosterDAO,
 
     optionalRoster.map {
       case Some(roster) => {
-        val figuresActual = Await.result(rosterDAO.getFiguresFromRoster(rosterId), Duration.Inf)
-        Ok(Json.toJson(RosterFull(roster.id, roster.name, figuresActual.toList)))
+        Ok(Json.toJson(getRosterWithFigures(roster)))
       }
       case None =>
         // Send back a 404 Not Found HTTP status to the client if the roster does not exist.
@@ -77,8 +77,13 @@ class RosterController @Inject()(cc: ControllerComponents, rosterDAO: RosterDAO,
     }
   }
 
+  def getRosterWithFigures(roster: Roster): RosterFull = {
+    val figuresActual = Await.result(rosterDAO.getFiguresFromRoster(roster.id.get), Duration.Inf)
+    RosterFull(roster.id, roster.name, figuresActual.toList)
+  }
+
   //POST
-  def postRoster = Action.async(validateJson[RosterInsert]) { request =>
+  def postRoster = Action.async(validateJson[RosterWithFigures]) { request =>
     val rosterInsert = request.body
     val createdRoster = Await.result(rosterDAO.insert(Roster(None, rosterInsert.name)), Duration.Inf)
     val result = figureRosterDAO.insertFiguresWithRoster(rosterInsert.figures.map(f => FigureRoster(f, createdRoster.id.get)))
@@ -95,11 +100,10 @@ class RosterController @Inject()(cc: ControllerComponents, rosterDAO: RosterDAO,
   }
 
   //PUT
-  def updateRoster(rosterId: Int) = Action.async(validateJson[Roster]) { request =>
+  def updateRoster(rosterId: Int) = Action.async(validateJson[RosterWithFigures]) { request =>
     val newRoster = request.body
 
-    // Try to edit the student, then return a 200 OK HTTP status to the client if everything worked.
-    rosterDAO.update(rosterId, newRoster).map {
+    rosterDAO.update(rosterId, Roster(newRoster.id, newRoster.name)).map {
       case 1 => Ok(
         Json.obj(
           "status" -> "OK",

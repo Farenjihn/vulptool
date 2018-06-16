@@ -30,6 +30,6 @@ case class Raid(id: Option[Int], name: String, nbBoss: Int, difficulty: RaidDiff
 
 case class Roster(id: Option[Int], name: String)
 case class RosterFull(id: Option[Int], name: String, figures: List[Figure])
-case class RosterInsert(name: String, figures: List[Int])
+case class RosterWithFigures(id: Option[Int], name: String, figures: List[Int])
 
 case class Template(id: Option[Int], eventId: Int, rosterId: Int)

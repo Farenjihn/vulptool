@@ -61,7 +61,7 @@ class EventDAO @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)
 
   def listFromDates(start: Timestamp, end: Timestamp): Future[Seq[Event]] = {
     val query = for {
-      m <- meetings if m.time_begin >= start && m.time_end <= end
+      m <- meetings.sortBy(_.time_begin) if m.time_begin >= start && m.time_end <= end
       e <- events if e.id === m.id
     } yield e
 
@@ -75,7 +75,7 @@ class EventDAO @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)
     db.run(rosters.filter(_.id === id).result.headOption)
 
   def getMeetingOfEvent(id: Int): Future[Option[Meeting]] =
-    db.run(meetings.filter(_.id === id).result.headOption)
+    db.run(meetings.filter(_.id === id).sortBy(_.time_begin).result.headOption)
 
   def getRaidOfEvent(id: Int): Future[Option[Raid]] =
     db.run(raids.filter(_.id === id).result.headOption)

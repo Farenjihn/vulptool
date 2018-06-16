@@ -63,3 +63,52 @@ fetch('http://localhost:9000/player', {
             </Col>
         </Row>
     </div>*/}
+
+
+    <FormItem
+                      {...(index === 0 ? formItemLayout : formItemLayoutWithOutLabel)}
+                      label={index === 0 ? 'Characters' : ''}
+                      required={false}
+                      key={k}
+                    >
+                      {getFieldDecorator(`figures[${k}]`, {
+                        validateTrigger: ['onChange', 'onBlur'],
+                        rules: [{
+                          required: true,
+                          whitespace: true,
+                          message: "Please input character's name or delete this field.",
+                        }],
+                      })(
+                        <AutoComplete
+                          style={{width: '60%', marginRight: 8}}
+                          placeholder="character name"
+                          filterOption={(inputValue, option) => option.props.children.toUpperCase().indexOf(inputValue.toUpperCase()) !== -1}
+                        />
+                      )}
+                      {keys.length > 1 ? (
+                        <Icon
+                          className="dynamic-delete-button"
+                          type="minus-circle-o"
+                          disabled={keys.length === 1}
+                          onClick={() => this.remove(k)}
+                        />
+                      ) : null}
+                    </FormItem>
+                    );
+                    });
+                    return (
+                    <Form>
+                      <FormItem label="Name">
+                        {getFieldDecorator('name', {
+                          rules: [{required: true, message: 'Please input a name for the roster!'}],
+                        })(
+                          <Input/>
+                        )}
+                      </FormItem>
+                      {formItems}
+                      <FormItem {...formItemLayoutWithOutLabel}>
+                        <Button type="dashed" onClick={this.add} style={{width: '60%'}}>
+                          <Icon type="plus"/> Add field
+                        </Button>
+                      </FormItem>
+                    </Form>

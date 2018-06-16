@@ -35,8 +35,6 @@ function weekPickerChange(date) {
 
   console.log(url);
 
-
-
   fetch(url, {
     method: "GET",
   })

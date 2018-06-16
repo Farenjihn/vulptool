@@ -60,7 +60,7 @@ class RaidController @Inject()(cc: ControllerComponents, raidDAO: RaidDAO) exten
   //POST
   def postRaid = Action.async(validateJson[Raid]) { request =>
     val raid = request.body
-    val createdRaid = raidDAO.insert(raid)
+    val createdRaid = raidDAO.insertIfNotExists(raid)
 
     createdRaid.map(raid =>
       Ok(

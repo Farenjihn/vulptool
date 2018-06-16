@@ -96,7 +96,7 @@ class EventController @Inject()(cc: ControllerComponents, eventDAO: EventDAO, me
     optionalEvents.map(_.map(getFullEvent).sortBy(_.meeting.timeBegin.getTime()))
       .map(eventFull => Ok(Json.toJson(eventFull)))
   }
-  
+
   def getFullEvent(event: Event): EventFull = {
     val meeting = Await.result(eventDAO.getMeetingOfEvent(event.id.get), Duration.Inf).get
     val raid = Await.result(eventDAO.getRaidOfEvent(event.id.get), Duration.Inf).get
@@ -110,7 +110,7 @@ class EventController @Inject()(cc: ControllerComponents, eventDAO: EventDAO, me
     val eventFull = request.body
 
     val meeting = Await.result(meetingDAO.insert(eventFull.meeting), Duration.Inf)
-    val raid = Await.result(raidDAO.insert(eventFull.raid), Duration.Inf)
+    val raid = Await.result(raidDAO.insertIfNotExists(eventFull.raid), Duration.Inf)
     val roster = Await.result(rosterDAO.insert(eventFull.roster), Duration.Inf)
     val createdEvent = eventDAO.insert(
       Event(eventFull.id, eventFull.name, eventFull.description, meeting.id.get, raid.id.get, roster.id.get)

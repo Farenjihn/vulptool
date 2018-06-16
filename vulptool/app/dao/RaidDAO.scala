@@ -51,9 +51,36 @@ class RaidDAO @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)(
   def findById(id: Int): Future[Option[Raid]] =
     db.run(raids.filter(_.id === id).result.headOption)
 
-  def insert(raid: Raid): Future[Raid] = {
-    val insertQuery = raids returning raids.map(_.id) into ((raid, id) => raid.copy(Some(id)))
-    db.run(insertQuery += raid)
+  def insertIfNotExists(raid: Raid): Future[Raid] = {
+    val a = {
+      raids.filter(_.nbBoss === raid.nbBoss)
+        .filter(_.name === raid.name)
+        .filter(_.difficulty === raid.difficulty)
+        .result.headOption.flatMap {
+        case (Some(raid)) =>
+          DBIO.successful(raid) // no-op
+        case None =>
+          val raidId =
+            (raids returning raids.map(_.id)) += Raid(
+              raid.id,
+              raid.name,
+              raid.nbBoss,
+              raid.difficulty
+            )
+
+          val newRaid = raidId.map { id =>
+            Raid(
+              Some(id),
+              raid.name,
+              raid.nbBoss,
+              raid.difficulty
+            )
+          }
+          newRaid
+
+      }
+    }
+    db.run(a.transactionally)
   }
 
   def update(id: Int, raid: Raid): Future[Int] = {

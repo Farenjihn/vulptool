@@ -61,6 +61,10 @@ trait EventSerialization extends MeetingSerialization with RaidSerialization wit
 class EventController @Inject()(cc: ControllerComponents, eventDAO: EventDAO, meetingDAO: MeetingDAO, raidDAO: RaidDAO, rosterDAO: RosterDAO)
   extends AbstractController(cc) with EventSerialization {
 
+  def EventFromFull(e: EventFull) =
+    Event(e.id, e.name, e.description, e.meeting.id.get, e.raid.id.get, e.roster.id.get)
+
+
   def validateJson[A: Reads] = parse.json.validate(
     _.validate[A].asEither.left.map(e => BadRequest(JsError.toJson(e)))
   )
@@ -127,16 +131,21 @@ class EventController @Inject()(cc: ControllerComponents, eventDAO: EventDAO, me
   }
 
   //PUT
-  def updateEvent(eventId: Int) = Action.async(validateJson[Event]) { request =>
-    val newEvent = request.body
+  def updateEvent(eventId: Int) = Action.async(validateJson[EventFull]) { request =>
+    val newEventFull = request.body
+    eventDAO.update(eventId, EventFromFull(newEventFull)).map({
+      case 1 => {
+        meetingDAO.update(newEventFull.meeting.id.get, newEventFull.meeting)
+        raidDAO.update(newEventFull.raid.id.get, newEventFull.raid)
+        rosterDAO.update(newEventFull.roster.id.get, newEventFull.roster)
 
-    eventDAO.update(eventId, newEvent).map({
-      case 1 => Ok(
-        Json.obj(
-          "status" -> "OK",
-          "message" -> ("Event '" + newEvent.id + " " + newEvent.name + "' updated.")
+        Ok(
+          Json.obj(
+            "status" -> "OK",
+            "message" -> ("Event '" + eventId + " " + newEventFull.name + "' updated.")
+          )
         )
-      )
+      }
       case 0 => NotFound(Json.obj(
         "status" -> "Not Found",
         "message" -> ("Event #" + eventId + " not found.")

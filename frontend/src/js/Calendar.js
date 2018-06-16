@@ -221,16 +221,23 @@ class Calendar extends React.Component {
                 }
               >
                 <List.Item.Meta
-                  avatar={<Avatar src={item.avatar} />}
-                  title={<a href={item.href}>{item.name}</a>}
-                  description={item.description}
+                  avatar={<Avatar src={item.avatar}/>}
+                  title={<a href={item.href}>{item.name} - {moment(item.meeting.time_begin/1000, "X").format("dddd Do MMMM YYYY hh:mm")}</a>}
+                  description={<div>{item.raid.name} - {item.raid.difficulty}</div>}
                 />
 
-                <List.Item.Content
-                  {moment(item.meeting.time_begin, "X").format("dddd Do MMMM YYYY")}
-                />
                 <div>
-                  "HEllllllooo"
+                  <p>{item.description}</p>
+
+                  <p><b>Roster :</b> {item.roster.name}</p>
+
+                  {/*<List
+                    size="small"
+                    header={<div>Rosters</div>}
+                    dataSource={item.roster}
+                    renderItem={rosterList => (<List.Item>{rosterList.name}</List.Item>)}
+                  />*/}
+
                 </div>
               </List.Item>
             )}

@@ -3,11 +3,7 @@ import FormRoster from './FormRoster'
 import '../css/App.css';
 
 
-import {Avatar, Button, Card, DatePicker, Icon, Layout, List, Menu} from "antd";
-import { Table, Divider } from 'antd';
-
-import { Tabs, Radio } from 'antd';
-import { Form, Input } from 'antd';
+import {Button, Divider, Form, Icon, Layout, Table, Tabs} from "antd";
 
 
 const FormItem = Form.Item;

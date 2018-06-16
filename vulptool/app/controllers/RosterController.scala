@@ -29,6 +29,15 @@ trait RosterSerialization extends FigureSerialization {
     )
   }
 
+  implicit val rosterWithFiguresToJson: Writes[RosterWithFigures] = { roster =>
+    Json.obj(
+      "id" -> roster.id,
+      "name" -> roster.name,
+      "figures" -> roster.figures
+    )
+
+  }
+
   implicit val jsonToRoster: Reads[Roster] = (
     (JsPath \ "id").readNullable[Int] and
       (JsPath \ "name").read[String]

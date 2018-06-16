@@ -4,6 +4,7 @@ import Calendar from './Calendar';
 import Welcome from './Welcome';
 import Roster from './Roster';
 import EventEdit from './EventEdit';
+import RosterCreate from './RosterCreate.js';
 
 
 import {BrowserRouter as Router, Link, Route} from 'react-router-dom';
@@ -98,6 +99,7 @@ class SiderDemo extends React.Component {
             <Route path="/welcome" component={Welcome}/>
             <Route path="/calendar" component={Calendar}/>
             <Route path="/roster" component={Roster}/>
+            <Route exact path="/roster/create" component={RosterCreate}/>
             <Route path="/eventEdit" component={EventEdit}/>
           </Layout>
           <Footer style={{height: '48px', textAlign: 'center'}}>

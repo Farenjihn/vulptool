@@ -41,34 +41,32 @@ var displaytWeek = moment();
 
 function nextWeek() {
   console.log("Next Week called");
-  weekPickerChange(displaytWeek.add(7, "days"))
+  weekPickerChange.call(this, displaytWeek.add(7, "days"))
 }
 
 function previousWeek() {
   console.log("Previous Week called");
-  weekPickerChange(displaytWeek.subtract(7, "days"))
+  weekPickerChange.call(this, displaytWeek.subtract(7, "days"))
 }
 
 function weekPickerChange(date, dateString) {
-  console.log(moment().hour(0).minute(0).second(0).day("Wednesday").week(date.week()).utc(true));
-  console.log(moment().hour(23).minute(59).second(59).day("Tuesday").week(date.week()).utc(true));
-
   displaytWeek = moment().hour(0).minute(0).second(0).day("Wednesday").week(date.week()).utc(true);
 
-  // fetch("http://localhost:9000/meeting", {
-  //   method: "GET",
-  //   body: JSON.stringify({
-  //     date_begin: moment().hour(0).minute(0).second(0).day("Wednesday").week(date.week()).utc(true).format("YYYY-MM-DD hh:mm:ss"),
-  //     date_end: moment().hour(23).minute(59).second(59).day("Thuesday").week(date.week()).utc(true).format("YYYY-MM-DD hh:mm:ss")
-  //   })
-  // })
-  //   .then(results => results.json())
-  //   .then(data => this.setState({meetings: data}))
-  //   .catch(function (error) {
-  //     console.log(
-  //       "There was an error Fetching data: /// " + error + " \\\\\\"
-  //     );
-  //   });
+  let url = "http://localhost:9000/eventByDate";
+  url = url + "/" + moment().hour(0).minute(0).second(0).day("Wednesday").week(date.week()).utc(true).unix() + "/" + moment().hour(0).minute(0).second(0).day("Wednesday").week(date.week()+1).utc(true).unix();
+
+  console.log(url);
+
+  fetch(url, {
+    method: "GET",
+  })
+    .then(results => results.json())
+    .then(data => this.setState({meetings: data}))
+    .catch(function (error) {
+      console.log(
+        "There was an error GET eventByDate, weekPicker: /// " + error + " \\\\\\"
+      );
+    });
 }
 
 class Calendar extends React.Component {
@@ -113,8 +111,6 @@ class Calendar extends React.Component {
         })
         .format("YYYY-MM-DD hh:mm:ss");
 
-      // console.log(time_begin);
-      // console.log(time_end);
 
       fetch('http://localhost:9000/meeting', {
         method: 'POST',
@@ -145,10 +141,10 @@ class Calendar extends React.Component {
 
   componentDidMount() {
     let url = "http://localhost:9000/eventByDate";
-    url = url + "/" + moment().hour(0).minute(0).second(0).day("Wednesday").week(moment().week()).utc(true).unix() + "/" + moment().hour(23).minute(59).second(59).day("Thuesday").week(moment().week()).utc(true).unix();
+    url = url + "/" + moment().hour(0).minute(0).second(0).day("Wednesday").week(moment().week()).utc(true).unix() + "/" + moment().hour(0).minute(0).second(0).day("Wednesday").week(moment().week()+1).utc(true).unix();
 
     console.log(url);
-    console.log(moment("1529020799", "X").format("dddd Do MMMM YYYY"));
+
 
     fetch(url, {
       method: "GET",
@@ -157,7 +153,7 @@ class Calendar extends React.Component {
       .then(data => this.setState({meetings: data}))
       .catch(function (error) {
         console.log(
-          "There was an error Fetching data: /// " + error + " \\\\\\"
+          "There was an error GET eventByDate, componentDidMount: /// " + error + " \\\\\\"
         );
       });
   }
@@ -171,9 +167,9 @@ class Calendar extends React.Component {
             <div className="div-left">
               <ul className="footer">
                 <Button.Group>
-                  <Button onClick={previousWeek} icon="left"/>
-                  <WeekPicker id="weekpicker" onChange={weekPickerChange} placeholder={moment().day("Wednesday").utc(true).format("Do MMM YY")}/>
-                  <Button onClick={nextWeek} icon="right"/>
+                  <Button onClick={previousWeek.bind(this)} icon="left"/>
+                  <WeekPicker id="weekpicker" onChange={weekPickerChange.bind(this)} placeholder={moment().day("Wednesday").utc(true).format("Do MMM YY")}/>
+                  <Button onClick={nextWeek.bind(this)} icon="right"/>
                 </Button.Group>
               </ul>
             </div>
@@ -221,16 +217,23 @@ class Calendar extends React.Component {
                 }
               >
                 <List.Item.Meta
-                  avatar={<Avatar src={item.avatar} />}
-                  title={<a href={item.href}>{item.name}</a>}
-                  description={item.description}
+                  avatar={<Avatar src={item.avatar}/>}
+                  title={<a href={item.href}>{item.name} - {moment(item.meeting.time_begin, "X").format("dddd Do MMMM YYYY hh:mm")}</a>}
+                  description={<div>{item.raid.name} - {item.raid.difficulty}</div>}
                 />
 
-                <List.Item.Content
-                  {moment(item.meeting.time_begin, "X").format("dddd Do MMMM YYYY")}
-                />
                 <div>
-                  "HEllllllooo"
+                  <p>{item.description}</p>
+
+                  <p><b>Roster :</b> {item.roster.name}</p>
+
+                  {/*<List
+                    size="small"
+                    header={<div>Rosters</div>}
+                    dataSource={item.roster}
+                    renderItem={rosterList => (<List.Item>{rosterList.name}</List.Item>)}
+                  />*/}
+
                 </div>
               </List.Item>
             )}

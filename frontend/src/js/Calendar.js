@@ -1,22 +1,13 @@
 import React from "react";
 import "../css/Calendar.css";
 import EventForm from "./FormEvent";
-
-import {Avatar, Button, Card, DatePicker, Icon, Layout, List, Menu} from "antd";
+import {Avatar, Button, DatePicker, Layout, List} from "antd";
 import moment from "moment";
+import * as conf from './config.js'
 
-const RangePicker = DatePicker.RangePicker;
+
 const WeekPicker = DatePicker.WeekPicker;
-
-const {Meta} = Card;
-const {Header, Content, Footer, Sider} = Layout;
-const SubMenu = Menu.SubMenu;
-const IconText = ({type, text}) => (
-  <span>
-    <Icon type={type} style={{marginRight: 8}}/>
-    {text}
-  </span>
-);
+const {Content} = Layout;
 
 moment.locale("en-wow-settings", {
   week: {
@@ -24,38 +15,27 @@ moment.locale("en-wow-settings", {
   }
 });
 
-const listData = [];
-for (let i = 0; i < 4; i++) {
-  listData.push({
-    href: "http://ant.design",
-    title: `RAID bla bla ${i}`,
-    avatar: "https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png",
-    description:
-      "Ant Design, a design language for background applications, is refined by Ant UED Team.",
-    content:
-      "We supply a series of design principles, practical patterns and high quality design resources (Sketch and Axure), to help people create their product prototypes beautifully and efficiently."
-  });
-}
-
 var displaytWeek = moment();
 
 function nextWeek() {
   console.log("Next Week called");
-  weekPickerChange.call(this, displaytWeek.add(7, "days"))
+  weekPickerChange.call(this, displaytWeek.add(7, "days"));
 }
 
 function previousWeek() {
   console.log("Previous Week called");
-  weekPickerChange.call(this, displaytWeek.subtract(7, "days"))
+  weekPickerChange.call(this, displaytWeek.subtract(7, "days"));
 }
 
-function weekPickerChange(date, dateString) {
+function weekPickerChange(date) {
   displaytWeek = moment().hour(0).minute(0).second(0).day("Wednesday").week(date.week()).utc(true);
 
-  let url = "http://localhost:9000/eventByDate";
+  let url = conf.baseURL + "/eventByDate";
   url = url + "/" + moment().hour(0).minute(0).second(0).day("Wednesday").week(date.week()).utc(true).unix() + "/" + moment().hour(0).minute(0).second(0).day("Wednesday").week(date.week()+1).utc(true).unix();
 
   console.log(url);
+
+
 
   fetch(url, {
     method: "GET",
@@ -100,7 +80,7 @@ class Calendar extends React.Component {
           minute: values["time-begin"].get("minute"),
           second: 0
         })
-        .format("YYYY-MM-DD HH:mm:ss");
+        .unix();
 
       let time_end = values["date-picker"]
         .utc()
@@ -109,21 +89,32 @@ class Calendar extends React.Component {
           minute: values["time-end"].get("minute"),
           second: 0
         })
-        .format("YYYY-MM-DD hh:mm:ss");
+        .unix();
 
 
-      fetch('http://localhost:9000/meeting', {
+      fetch(conf.baseURL + '/event', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          time_begin: time_begin,
-          time_end: time_end
+          name: values.title,
+          description: values.description,
+          meeting: {
+            time_begin: time_begin + "",
+            time_end: time_end + ""
+          },
+          raid: {
+            name: values.raid,
+            nb_boss: 0,
+            difficulty: values.difficulty
+          },
+          roster: {
+            name: "Derp Roster"
+          }
         })
       })
         .then(results => results.json())
-        .then(data => (this.setState({meeting_id: data.id})))
         .catch(function (error) {
           console.log(
             "There was an error POST meeting: /// " + error + " \\\\\\"
@@ -132,6 +123,8 @@ class Calendar extends React.Component {
 
       form.resetFields();
       this.setState({formVisible: false});
+      weekPickerChange.call(this, displaytWeek);
+
     });
   };
   saveFormRef = formRef => {
@@ -140,11 +133,10 @@ class Calendar extends React.Component {
 
 
   componentDidMount() {
-    let url = "http://localhost:9000/eventByDate";
+    let url = conf.baseURL + "/eventByDate";
     url = url + "/" + moment().hour(0).minute(0).second(0).day("Wednesday").week(moment().week()).utc(true).unix() + "/" + moment().hour(0).minute(0).second(0).day("Wednesday").week(moment().week()+1).utc(true).unix();
 
     console.log(url);
-
 
     fetch(url, {
       method: "GET",
@@ -168,7 +160,7 @@ class Calendar extends React.Component {
               <ul className="footer">
                 <Button.Group>
                   <Button onClick={previousWeek.bind(this)} icon="left"/>
-                  <WeekPicker id="weekpicker" onChange={weekPickerChange.bind(this)} placeholder={moment().day("Wednesday").utc(true).format("Do MMM YY")}/>
+                  <WeekPicker id="weekpicker" onChange={weekPickerChange.bind(this)} format={"wo-YYYY"} value={displaytWeek}/>
                   <Button onClick={nextWeek.bind(this)} icon="right"/>
                 </Button.Group>
               </ul>
@@ -182,13 +174,11 @@ class Calendar extends React.Component {
                   wrappedComponentRef={this.saveFormRef}
                   visible={this.state.formVisible}
                   onCancel={this.handleCancel}
-                  onCreate={this.handleCreate}
+                  onCreate={this.handleCreate.bind(this)}
                 />
               </ul>
             </div>
           </div>
-
-
 
           <List
             itemLayout="vertical"

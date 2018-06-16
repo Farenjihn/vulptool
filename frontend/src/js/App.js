@@ -3,6 +3,7 @@ import '../css/App.css';
 import Calendar from './Calendar';
 import Welcome from './Welcome';
 import Roster from './Roster';
+import EventEdit from './EventEdit';
 
 
 import {BrowserRouter as Router, Link, Route} from 'react-router-dom';
@@ -86,12 +87,18 @@ class SiderDemo extends React.Component {
                   <Icon type="team"/>
                   <span>Roster</span>
                 </Menu.Item>
+                <Menu.Item key="event">
+                    <Link to={"/eventEdit"}/>
+                    <Icon type="form"/>
+                    <span>Event</span>
+                </Menu.Item>
               </Menu>
             </Sider>
             <Route exact path="/" component={Welcome}/>
             <Route path="/welcome" component={Welcome}/>
             <Route path="/calendar" component={Calendar}/>
             <Route path="/roster" component={Roster}/>
+            <Route path="/eventEdit" component={EventEdit}/>
           </Layout>
           <Footer style={{height: '48px', textAlign: 'center'}}>
             Ant Design ©2016 Created by Ant UED

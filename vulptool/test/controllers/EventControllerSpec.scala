@@ -1,6 +1,8 @@
 package controllers
 
-import models.Event
+import java.sql.Timestamp
+
+import models._
 import org.scalatestplus.play._
 import org.scalatestplus.play.guice._
 import play.api.libs.json.Json
@@ -29,10 +31,13 @@ class EventControllerSpec extends PlaySpec with GuiceOneAppPerTest with Injectin
   }
 
   "EventController POST" should {
-    val event = Event(None, "added event", "", 1, 1, 1)
+    val meeting = Meeting(None, Timestamp.valueOf("2018-06-07 08:33:26"), Timestamp.valueOf("2018-06-07 08:45:26"))
+    val raid = Raid(None, "added raid", 99, RaidDifficulty.Mythic)
+    val roster = Roster(None, "added roster")
+    val eventFull = EventFull(None, "added eventFull", "", meeting, raid, roster)
 
-    "create a new event from the router" in {
-      val request = FakeRequest(POST, "/event").withJsonBody(eventToJson.writes(event))
+    "create a new eventFull from the router" in {
+      val request = FakeRequest(POST, "/event").withJsonBody(eventFullToJson.writes(eventFull))
       val ret = route(app, request).get
 
       status(ret) mustBe OK

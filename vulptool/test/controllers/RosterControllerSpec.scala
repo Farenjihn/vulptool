@@ -1,6 +1,6 @@
 package controllers
 
-import models.Roster
+import models.{Roster, RosterWithFigures}
 import org.scalatestplus.play._
 import org.scalatestplus.play.guice._
 import play.api.libs.json.Json
@@ -29,10 +29,10 @@ class RosterControllerSpec extends PlaySpec with GuiceOneAppPerTest with Injecti
   }
 
   "RosterController POST" should {
-    val roster = Roster(None, "added roster")
+    val roster = RosterWithFigures(None, "added roster", List(1, 2))
 
     "create a new roster from the router" in {
-      val request = FakeRequest(POST, "/roster").withJsonBody(rosterToJson.writes(roster))
+      val request = FakeRequest(POST, "/roster").withJsonBody(rosterWithFiguresToJson.writes(roster))
       val ret = route(app, request).get
 
       status(ret) mustBe OK

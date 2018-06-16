@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import '../css/RosterCreate.css';
 
-
+import {BrowserRouter as Router, Link, Route} from 'react-router-dom';
 import {Button, Divider, Form, Icon, Layout, Table, Tabs} from "antd";
 import {Input, AutoComplete } from 'antd';
 import { Row, Col } from 'antd';
@@ -11,6 +11,7 @@ import { Transfer } from 'antd';
 import { Tag } from 'antd';
 
 import * as conf from "./config.js";
+import Redirect from "react-router-dom/es/Redirect";
 
 
 const FormItem = Form.Item;
@@ -68,8 +69,7 @@ class DynamicFieldSet extends React.Component {
         });
 
       this.setState({figuresID: []});
-      form.resetFields();
-    });
+      });
   }
 
   componentDidMount() {

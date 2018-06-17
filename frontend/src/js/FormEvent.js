@@ -8,7 +8,6 @@ const formatTime = 'HH:mm';
 const FormItem = Form.Item;
 const Option = Select.Option;
 const RadioButton = Radio.Button;
-const RadioGroup = Radio.Group;
 
 const FormEvent = Form.create()(
   class extends React.Component {

@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React from 'react';
 import '../css/RosterCreate.css';
 
 import {Button, Form, Icon, Layout, Table, Input, Row, Col, Tag, Avatar} from "antd";

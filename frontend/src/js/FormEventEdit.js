@@ -1,7 +1,7 @@
-import React, { Component } from 'react';
+import React from 'react';
 import '../css/RosterCreate.css';
 
-import { Button, DatePicker, Form, Input, Radio, Select, TimePicker, Layout, Tabs } from 'antd';
+import { Button, DatePicker, Form, Input, Radio, Select, TimePicker, Layout } from 'antd';
 import moment from 'moment';
 
 import * as conf from "./config.js";

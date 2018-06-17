@@ -2,10 +2,9 @@ import React from "react";
 import '../css/App.css';
 
 import { Link, } from 'react-router-dom';
-import {Button, Divider, Form, Icon, Layout, Table, Tabs, Tag, Avatar} from "antd";
+import {Button, Divider, Icon, Layout, Table, Tabs, Tag, Avatar} from "antd";
 import * as conf from "./config.js";
 
-const FormItem = Form.Item;
 const TabPane = Tabs.TabPane;
 const { Content } = Layout;
 
@@ -40,21 +39,22 @@ const columns = [
     key: 'player',
     sorter: (a, b) => a.player_id - b.player_id,
   },
-  {
-    title: 'Action',
-    key: 'action',
-    render: (text, record) => (
-      <span>
-      <a href="javascript:;">Action 一 {record.name}</a>
-      <Divider type="vertical" />
-      <a href="javascript:;">Delete</a>
-      <Divider type="vertical" />
-      <a href="javascript:;" className="ant-dropdown-link">
-        More actions <Icon type="down" />
-      </a>
-    </span>
-    ),
-  }];
+  // {
+  //   title: 'Action',
+  //   key: 'action',
+  //   render: (text, record) => (
+  //     <span>
+  //     <a href="javascript:;">Action 一 {record.name}</a>
+  //     <Divider type="vertical" />
+  //     <a href="javascript:;">Delete</a>
+  //     <Divider type="vertical" />
+  //     <a href="javascript:;" className="ant-dropdown-link">
+  //       More actions <Icon type="down" />
+  //     </a>
+  //   </span>
+  //   ),
+  // }
+  ];
 
 class Roster extends React.Component {
   constructor() {

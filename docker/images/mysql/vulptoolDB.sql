@@ -176,15 +176,15 @@ INSERT INTO roster (name) VALUES ("Main team");
 INSERT INTO roster (name) VALUES ("Rescue team");
 INSERT INTO roster (name) VALUES ("Test team");
 
-INSERT INTO meeting (time_begin, time_end) VALUES ('2018-06-21 07:00:00', DATE_ADD('2018-06-21 07:00:00', INTERVAL 3 HOUR));
-INSERT INTO meeting (time_begin, time_end) VALUES ('2018-06-17 08:00:00', DATE_ADD('2018-06-17 08:00:00', INTERVAL 5 HOUR));
-INSERT INTO meeting (time_begin, time_end) VALUES ('2018-06-05 18:00:00', DATE_ADD('2018-06-05 18:00:00', INTERVAL 3 HOUR));
-INSERT INTO meeting (time_begin, time_end) VALUES ('2018-06-29 07:00:00', DATE_ADD('2018-06-29 07:00:00', INTERVAL 7 HOUR));
+INSERT INTO meeting (time_begin, time_end) VALUES ('2018-06-21 20:30:00', DATE_ADD('2018-06-21 20:55:00', INTERVAL 3 HOUR));
+INSERT INTO meeting (time_begin, time_end) VALUES ('2018-06-24 20:30:00', DATE_ADD('2018-06-24 20:55:00', INTERVAL 3 HOUR));
+INSERT INTO meeting (time_begin, time_end) VALUES ('2018-06-22 20:30:00', DATE_ADD('2018-06-22 20:55:00', INTERVAL 3 HOUR));
+INSERT INTO meeting (time_begin, time_end) VALUES ('2018-06-29 20:30:00', DATE_ADD('2018-06-29 20:55:00', INTERVAL 3 HOUR));
 
-INSERT INTO event (name, description, raid_id, meeting_id, roster_id) VALUES ("Antorus", "Full Antorus", 1, 1, 1);
-INSERT INTO event (name, description, raid_id, meeting_id, roster_id) VALUES ("Sacrenuit", "Get the semperardent s equipment", 2, 2, 1);
-INSERT INTO event (name, description, raid_id, meeting_id, roster_id) VALUES ("Cauchemar", "Revenge on Cenarius", 3, 3, 3);
-INSERT INTO event (name, description, raid_id, meeting_id, roster_id) VALUES ("Sargeras", "Upgrading equipment", 4, 4, 2);
+INSERT INTO event (name, description, raid_id, meeting_id, roster_id) VALUES ("Antorus", "Full Antorus reclean noobs", 1, 1, 1);
+INSERT INTO event (name, description, raid_id, meeting_id, roster_id) VALUES ("Sacrenuit", "Monture Guldan pour ducon", 2, 2, 1);
+INSERT INTO event (name, description, raid_id, meeting_id, roster_id) VALUES ("Antorus", "Apparently Argus is too strong ?", 1, 3, 3);
+INSERT INTO event (name, description, raid_id, meeting_id, roster_id) VALUES ("Sargeras", "We fucking love soaking shit", 4, 4, 2);
 
 INSERT INTO event_child (parent_id, roster_id) VALUES (3, 1);
 INSERT INTO event_child (parent_id, roster_id) VALUES (3, 1);

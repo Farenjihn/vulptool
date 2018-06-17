@@ -9,6 +9,8 @@ import { Checkbox } from 'antd';
 import { List } from 'antd';
 import { Transfer } from 'antd';
 import { Tag } from 'antd';
+import { Avatar } from 'antd';
+
 
 import * as conf from "./config.js";
 import Redirect from "react-router-dom/es/Redirect";
@@ -21,23 +23,59 @@ const TabPane = Tabs.TabPane;
 const {Header, Content, Footer, Sider} = Layout;
 
 
-function addToRoster(id, e) {
-  if (e.target.checked) {
-    this.setState({figuresID: this.state.figuresID.concat(id)});
-  } else {
-    let index = this.state.figuresID.indexOf(id);
-    if (index > -1) {
-      this.setState({figuresID: this.state.figuresID.splice(index, 1)});
-    }
+let figuresid = [];
+
+function getId(selectedRows) {
+  let output = [];
+  for (let f in selectedRows) {
+    output.push(selectedRows[f].id);
   }
+  return output;
 }
+
+const rowSelection = {
+  onChange: (selectedRowKeys, selectedRows) => {
+    figuresid = getId(selectedRows);
+  }
+};
+
+const columns = [
+  {
+    title: 'Class',
+    dataIndex: 'fclass',
+    key: 'class',
+    width: 80,
+    sorter: (a, b) => a.fclass - b.fclass,
+    render: (text, figure) => (
+      <Avatar src={conf.getImgForClass(figure.fclass)} />
+    ),
+  }, {
+    title: 'Name',
+    dataIndex: 'name',
+    key: 'name',
+    width: 200,
+    sorter: (a, b) => a.name.localeCompare(b.name),
+    render: (name, figure) => (
+      <Tag color={conf.getColorForClass(figure.fclass)} >{name}</Tag>
+    ),
+  }, {
+    title: 'ilvl',
+    dataIndex: 'ilvl',
+    key: 'ilvl',
+    sorter: (a, b) => a.ilvl - b.ilvl,
+  }, {
+    title: 'Player',
+    dataIndex: 'player',
+    key: 'player',
+    sorter: (a, b) => a.player_id - b.player_id,
+  },
+];
 
 class DynamicFieldSet extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       figures: [],
-      figuresID: [],
     };
   }
 
@@ -50,6 +88,7 @@ class DynamicFieldSet extends React.Component {
       }
 
       console.log('Received values of form: ', values);
+      console.log('Received values of form: ', figuresid);
 
       fetch(conf.baseURL + '/roster', {
         method: 'POST',
@@ -58,7 +97,7 @@ class DynamicFieldSet extends React.Component {
         },
         body: JSON.stringify({
           name: values.name,
-          figures: this.state.figuresID,
+          figures: figuresid,
         })
       })
         .then(results => results.json())
@@ -68,8 +107,7 @@ class DynamicFieldSet extends React.Component {
           );
         });
 
-      this.setState({figuresID: []});
-      });
+    });
   }
 
   componentDidMount() {
@@ -94,36 +132,31 @@ class DynamicFieldSet extends React.Component {
       <Content style={{margin: "16px 16px"}}>
         <div style={{padding: 24, background: "#fff", minHeight: 360}}>
           <Form layout="vertical" onSubmit={this.handleSubmit}>
-            <FormItem>
-              {getFieldDecorator('name', {
-                rules: [{ required: true, message: 'Please input the name of the roster!' }],
-              })(
-                <Input prefix={<Icon type="team" style={{ color: 'rgba(0,0,0,.25)' }} />} placeholder="Name" />
-              )}
-            </FormItem>
-            <FormItem>
-              <div className="gutter-example">
-                <Row gutter={16}>
-                  <Col className="gutter-row" span={6}>
-                    <List
-                      size="small"
-                      header={<div>Characters</div>}
-                      bordered
-                      dataSource={this.state.figures}
-                      renderItem={item => (<List.Item><Checkbox onChange={(e) => addToRoster.bind(this)(item.id, e)}>{item.name}</Checkbox></List.Item>)}
-                    />
-                  </Col>
-                </Row>
-              </div>
-            </FormItem>
-            <FormItem>
-              <Button
-                type="primary"
-                htmlType="submit"
-              >
-                Submit
-              </Button>
-            </FormItem>
+            <div className="gutter-example">
+              <Row gutter={16}>
+                <Col className="gutter-row" span={12}>
+                  <FormItem>
+                    {getFieldDecorator('name', {
+                      rules: [{ required: true, message: 'Please input the name of the roster!' }],
+                    })(
+                      <Input prefix={<Icon type="team" style={{ color: 'rgba(0,0,0,.25)' }} />} placeholder="Name" />
+                    )}
+                  </FormItem>
+                  <FormItem>
+                    <Table columns={columns} dataSource={this.state.figures} rowSelection={rowSelection} pagination={true} size="small"/>
+                  </FormItem>
+                  <FormItem>
+                    <Button
+                      type="primary"
+                      htmlType="submit"
+                    >
+                      Submit
+                    </Button>
+                  </FormItem>
+                </Col>
+
+              </Row>
+            </div>
           </Form>
         </div>
       </Content>

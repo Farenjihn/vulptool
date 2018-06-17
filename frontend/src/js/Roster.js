@@ -7,6 +7,7 @@ import {BrowserRouter as Router, Link, Route} from 'react-router-dom';
 import {Button, Divider, Form, Icon, Layout, Table, Tabs} from "antd";
 import {Input, AutoComplete } from 'antd';
 import { Tag } from 'antd';
+import { Avatar } from 'antd';
 
 import * as conf from "./config.js";
 
@@ -20,30 +21,35 @@ const {Header, Content, Footer, Sider} = Layout;
 const Option = AutoComplete.Option;
 const OptGroup = AutoComplete.OptGroup;
 
-
 const columns = [
   {
     title: 'Class',
     dataIndex: 'fclass',
     key: 'class',
+    width: 80,
     sorter: (a, b) => a.fclass - b.fclass,
-    render: text => <Tag color={conf.getColorForClass(text)} >{text}</Tag>,
+    render: (text, figure) => (
+      <Avatar src={conf.getImgForClass(figure.fclass)} />
+    ),
   }, {
     title: 'Name',
     dataIndex: 'name',
     key: 'name',
-    sorter: (a, b) => a.name - b.name,
-    // render: text => <Tag color={conf.} >{text}</Tag>,
+    width: 200,
+    sorter: (a, b) => a.name.localeCompare(b.name),
+    render: (name, figure) => (
+      <Tag color={conf.getColorForClass(figure.fclass)} >{name}</Tag>
+    ),
   }, {
     title: 'ilvl',
     dataIndex: 'ilvl',
     key: 'ilvl',
     sorter: (a, b) => a.ilvl - b.ilvl,
-    defaultSortOrder: 'descend',
   }, {
     title: 'Player',
     dataIndex: 'player',
-    key: 'player'
+    key: 'player',
+    sorter: (a, b) => a.player_id - b.player_id,
   },
   {
     title: 'Action',

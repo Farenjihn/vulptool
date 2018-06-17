@@ -1,27 +1,12 @@
 import React, {Component} from 'react';
 import '../css/RosterCreate.css';
 
-import {BrowserRouter as Router, Link, Route} from 'react-router-dom';
-import {Button, Divider, Form, Icon, Layout, Table, Tabs} from "antd";
-import {Input, AutoComplete } from 'antd';
-import { Row, Col } from 'antd';
-import { Checkbox } from 'antd';
-import { List } from 'antd';
-import { Transfer } from 'antd';
-import { Tag } from 'antd';
-import { Avatar } from 'antd';
-
+import {Button, Form, Icon, Layout, Table, Input, Row, Col, Tag, Avatar} from "antd";
 
 import * as conf from "./config.js";
-import Redirect from "react-router-dom/es/Redirect";
 
-
+const {Content} = Layout;
 const FormItem = Form.Item;
-
-const TabPane = Tabs.TabPane;
-
-const {Header, Content, Footer, Sider} = Layout;
-
 
 let figuresid = [];
 
@@ -154,7 +139,6 @@ class DynamicFieldSet extends React.Component {
                     </Button>
                   </FormItem>
                 </Col>
-
               </Row>
             </div>
           </Form>

@@ -3,22 +3,14 @@ import '../css/App.css';
 import Calendar from './Calendar';
 import Welcome from './Welcome';
 import Roster from './Roster';
+import FormEventEdit from './FormEventEdit.js'
 import RosterCreate from './RosterCreate.js';
 
-
 import {BrowserRouter as Router, Link, Route} from 'react-router-dom';
-import {Card, Icon, Layout, Menu} from 'antd';
+import { Icon, Layout, Menu} from 'antd';
 
-const {Meta} = Card;
-const {Header, Content, Footer, Sider} = Layout;
-const SubMenu = Menu.SubMenu;
-const MenuItemGroup = Menu.ItemGroup;
-const IconText = ({type, text}) => (
-  <span>
-    <Icon type={type} style={{marginRight: 8}}/>
-    {text}
-  </span>
-);
+const {Header, Footer, Sider} = Layout;
+
 
 //Conservation of selected menu item when reload.
 let currentUrl = window.location.href;
@@ -96,6 +88,7 @@ class SiderDemo extends React.Component {
               <Route exact path="/" component={Welcome}/>
               <Route exact path="/welcome" component={Welcome}/>
               <Route exact path="/calendar" component={Calendar}/>
+              <Route exact path="/calendar/edit/:id" component={FormEventEdit}/>
               <Route exact path="/roster" component={Roster}/>
               <Route exact path="/roster/create" component={RosterCreate}/>
             </Layout>

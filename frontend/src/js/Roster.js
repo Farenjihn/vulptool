@@ -1,25 +1,14 @@
 import React from "react";
-import FormRoster from './RosterCreate'
 import '../css/App.css';
 
-import {BrowserRouter as Router, Link, Route} from 'react-router-dom';
-
-import {Button, Divider, Form, Icon, Layout, Table, Tabs} from "antd";
-import {Input, AutoComplete } from 'antd';
-import { Tag } from 'antd';
-import { Avatar } from 'antd';
-
+import { Link, } from 'react-router-dom';
+import {Button, Divider, Form, Icon, Layout, Table, Tabs, Tag, Avatar} from "antd";
 import * as conf from "./config.js";
 
-
 const FormItem = Form.Item;
-
 const TabPane = Tabs.TabPane;
+const { Content } = Layout;
 
-const {Header, Content, Footer, Sider} = Layout;
-
-const Option = AutoComplete.Option;
-const OptGroup = AutoComplete.OptGroup;
 
 const columns = [
   {
@@ -104,7 +93,7 @@ class Roster extends React.Component {
       }
     }
     return tabs
-  }
+  };
 
   componentDidMount() {}
 

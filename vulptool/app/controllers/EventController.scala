@@ -85,9 +85,9 @@ class EventController @Inject()(cc: ControllerComponents, eventDAO: EventDAO, me
   }
 
   def getFullEvent(event: Event): EventFull = {
-    val meeting = Await.result(eventDAO.getMeetingOfEvent(event.id.get), Duration.Inf).get
-    val raid = Await.result(eventDAO.getRaidOfEvent(event.id.get), Duration.Inf).get
-    val roster = Await.result(eventDAO.getRosterOfEvent(event.id.get), Duration.Inf).get
+    val meeting = Await.result(meetingDAO.findById(event.meetingId), Duration.Inf).get
+    val raid = Await.result(raidDAO.findById(event.raidId), Duration.Inf).get
+    val roster = Await.result(rosterDAO.findById(event.rosterId), Duration.Inf).get
 
     EventFull(event.id, event.name, event.description, meeting, raid, roster)
   }
@@ -124,6 +124,7 @@ class EventController @Inject()(cc: ControllerComponents, eventDAO: EventDAO, me
   //PUT
   def updateEvent(eventId: Int) = Action.async(validateJson[EventFull]) { request =>
     val newEventFull = request.body
+    println(newEventFull)
     eventDAO.update(eventId, EventFromFull(newEventFull)).map({
       case 1 =>
         meetingDAO.update(newEventFull.meeting.id.get, newEventFull.meeting)

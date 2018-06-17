@@ -26,11 +26,13 @@ const columns = [
     title: 'Class',
     dataIndex: 'fclass',
     key: 'class',
+    sorter: (a, b) => a.fclass - b.fclass,
     render: text => <Tag color={conf.getColorForClass(text)} >{text}</Tag>,
   }, {
     title: 'Name',
     dataIndex: 'name',
     key: 'name',
+    sorter: (a, b) => a.name - b.name,
     // render: text => <Tag color={conf.} >{text}</Tag>,
   }, {
     title: 'ilvl',

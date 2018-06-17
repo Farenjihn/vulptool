@@ -148,19 +148,27 @@ INSERT INTO player (main_pseudo, hashed_pw, auth_code, access_code) VALUES ("Byk
 INSERT INTO player (main_pseudo, hashed_pw, auth_code, access_code) VALUES ("Farenjihn", "sssssssssssssss", "423243543", "342343422");
 INSERT INTO player (main_pseudo, hashed_pw, auth_code, access_code) VALUES ("Ardgevald", "sssssssssssssss", "234511289", "712323123");
 INSERT INTO player (main_pseudo, hashed_pw, auth_code, access_code) VALUES ("Stelmaria", "sssssssssssssss", "567523423", "565767567");
+INSERT INTO player (main_pseudo, hashed_pw, auth_code, access_code) VALUES ("Crazy", "sssssssssssssss", "567233423", "5651217567");
+INSERT INTO player (main_pseudo, hashed_pw, auth_code, access_code) VALUES ("Fatcream", "sssssssssssssss", "2091380982", "5612127567");
+INSERT INTO player (main_pseudo, hashed_pw, auth_code, access_code) VALUES ("Intox", "sssssssssssssss", "209131180982", "561222127567");
 
 INSERT INTO figure (name, fclass, lvl, ilvl, player_id) VALUES ("Asmodian", "DemonHunter", 10, 8, 1);
 INSERT INTO figure (name, fclass, lvl, ilvl, player_id) VALUES ("Kaendas", "Warrior", 55, 53, 1);
 INSERT INTO figure (name, fclass, lvl, ilvl, player_id) VALUES ("Aeran", "Paladin", 23, 20, 2);
 INSERT INTO figure (name, fclass, lvl, ilvl, player_id) VALUES ("Brohat", "Mage", 51, 51, 2);
-INSERT INTO figure (name, fclass, lvl, ilvl, player_id) VALUES ("Zmeï", "DeathKnight", 18, 16, 3);
+INSERT INTO figure (name, fclass, lvl, ilvl, player_id) VALUES ("Zmei", "DeathKnight", 18, 16, 3);
 INSERT INTO figure (name, fclass, lvl, ilvl, player_id) VALUES ("Apalala", "Druid", 53, 50, 3);
 INSERT INTO figure (name, fclass, lvl, ilvl, player_id) VALUES ("Earalith", "Hunter", 19, 16, 4);
 INSERT INTO figure (name, fclass, lvl, ilvl, player_id) VALUES ("Hyniel", "Shaman", 50, 45, 4);
+INSERT INTO figure (name, fclass, lvl, ilvl, player_id) VALUES ("Bykowpal", "Paladin", 110, 980, 1);
+INSERT INTO figure (name, fclass, lvl, ilvl, player_id) VALUES ("Crazydiamond", "Paladin", 110, 981, 5);
+INSERT INTO figure (name, fclass, lvl, ilvl, player_id) VALUES ("Fatcream", "Warlock", 110, 980, 6);
+INSERT INTO figure (name, fclass, lvl, ilvl, player_id) VALUES ("Intoxity", "Warlock", 110, 950, 7);
 
-INSERT INTO raid (name, nb_boss, difficulty ) VALUES ("Antorus, le Trône ardent", 11, "Mythic");
+
+INSERT INTO raid (name, nb_boss, difficulty ) VALUES ("Antorus, le Trone ardent", 11, "Mythic");
 INSERT INTO raid (name, nb_boss, difficulty ) VALUES ("Palais Sacrenuit", 11, "Heroic");
-INSERT INTO raid (name, nb_boss, difficulty ) VALUES ("Le Cauchemar d’émeraude", 7, "Mythic");
+INSERT INTO raid (name, nb_boss, difficulty ) VALUES ("Le Cauchemar d emeraude", 7, "Mythic");
 INSERT INTO raid (name, nb_boss, difficulty ) VALUES ("Tombe de Sargeras", 9, "Normal");
 
 
@@ -174,8 +182,8 @@ INSERT INTO meeting (time_begin, time_end) VALUES ('2018-06-05 18:00:00', DATE_A
 INSERT INTO meeting (time_begin, time_end) VALUES ('2018-06-29 07:00:00', DATE_ADD('2018-06-29 07:00:00', INTERVAL 7 HOUR));
 
 INSERT INTO event (name, description, raid_id, meeting_id, roster_id) VALUES ("Antorus", "Full Antorus", 1, 1, 1);
-INSERT INTO event (name, description, raid_id, meeting_id, roster_id) VALUES ("Sacrenuit", "Get the semperardent's equipment", 2, 2, 1);
-INSERT INTO event (name, description, raid_id, meeting_id, roster_id) VALUES ("Cauchemar", "Revenge on Cénarius", 3, 3, 3);
+INSERT INTO event (name, description, raid_id, meeting_id, roster_id) VALUES ("Sacrenuit", "Get the semperardent s equipment", 2, 2, 1);
+INSERT INTO event (name, description, raid_id, meeting_id, roster_id) VALUES ("Cauchemar", "Revenge on Cenarius", 3, 3, 3);
 INSERT INTO event (name, description, raid_id, meeting_id, roster_id) VALUES ("Sargeras", "Upgrading equipment", 4, 4, 2);
 
 INSERT INTO event_child (parent_id, roster_id) VALUES (3, 1);
@@ -201,3 +209,7 @@ INSERT INTO figure_roster (figure_id, roster_id) VALUES (7, 2);
 INSERT INTO figure_roster (figure_id, roster_id) VALUES (1, 3);
 INSERT INTO figure_roster (figure_id, roster_id) VALUES (5, 3);
 INSERT INTO figure_roster (figure_id, roster_id) VALUES (8, 3);
+INSERT INTO figure_roster (figure_id, roster_id) VALUES (9, 3);
+INSERT INTO figure_roster (figure_id, roster_id) VALUES (10, 3);
+INSERT INTO figure_roster (figure_id, roster_id) VALUES (11, 3);
+INSERT INTO figure_roster (figure_id, roster_id) VALUES (12, 3);

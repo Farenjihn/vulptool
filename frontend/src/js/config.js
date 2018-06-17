@@ -15,7 +15,6 @@ export const Warrior 	    =	"#C79C6E";
 
 export function getColorForClass(fclass) {
   let color;
-
   switch (fclass) {
     case "DeathKnight":
       color = DeathKnight;
@@ -56,8 +55,6 @@ export function getColorForClass(fclass) {
     default:
       color = "#000000";
   }
-
-  console.log(color);
   return color;
 }
 

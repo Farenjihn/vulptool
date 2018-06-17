@@ -2,7 +2,7 @@ package controllers
 
 import java.sql.Timestamp
 
-import dao.{EventDAO, MeetingDAO, RaidDAO, RosterDAO}
+import dao._
 import javax.inject.{Inject, Singleton}
 import models._
 import play.api.libs.functional.syntax._
@@ -58,22 +58,14 @@ trait EventSerialization extends MeetingSerialization with RaidSerialization wit
 }
 
 @Singleton
-class EventController @Inject()(cc: ControllerComponents, eventDAO: EventDAO, meetingDAO: MeetingDAO, raidDAO: RaidDAO, rosterDAO: RosterDAO)
-  extends BaseController(cc) with EventSerialization {
+class EventController @Inject()(cc: ControllerComponents, eventDAO: EventDAO, meetingDAO: MeetingDAO, raidDAO: RaidDAO, rosterDAO: RosterDAO, apiTokenDAO: APITokenDAO)
+  extends BaseController(cc, apiTokenDAO) with EventSerialization {
 
   //GET
   def getEvents = Action.async {
     val eventList = eventDAO.list()
     eventList.map(_.map(getFullEvent).sortBy(_.meeting.timeBegin.getTime()))
       .map(event => Ok(Json.toJson(event)))
-  }
-
-  def getFullEvent(event: Event): EventFull = {
-    val meeting = Await.result(eventDAO.getMeetingOfEvent(event.id.get), Duration.Inf).get
-    val raid = Await.result(eventDAO.getRaidOfEvent(event.id.get), Duration.Inf).get
-    val roster = Await.result(eventDAO.getRosterOfEvent(event.id.get), Duration.Inf).get
-
-    EventFull(event.id, event.name, event.description, meeting, raid, roster)
   }
 
   //GET with id
@@ -90,6 +82,14 @@ class EventController @Inject()(cc: ControllerComponents, eventDAO: EventDAO, me
           "message" -> ("Event #" + eventId + " not found.")
         ))
     })
+  }
+
+  def getFullEvent(event: Event): EventFull = {
+    val meeting = Await.result(eventDAO.getMeetingOfEvent(event.id.get), Duration.Inf).get
+    val raid = Await.result(eventDAO.getRaidOfEvent(event.id.get), Duration.Inf).get
+    val roster = Await.result(eventDAO.getRosterOfEvent(event.id.get), Duration.Inf).get
+
+    EventFull(event.id, event.name, event.description, meeting, raid, roster)
   }
 
   // GET with dates

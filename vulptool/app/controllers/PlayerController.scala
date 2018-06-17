@@ -40,7 +40,7 @@ trait PlayerSerialization {
 }
 
 @Singleton
-class PlayerController @Inject()(cc: ControllerComponents, playerDAO: PlayerDAO, apiTokenDAO: APITokenDAO) extends BaseController(cc) with PlayerSerialization {
+class PlayerController @Inject()(cc: ControllerComponents, playerDAO: PlayerDAO, apiTokenDAO: APITokenDAO) extends BaseController(cc, apiTokenDAO) with PlayerSerialization {
 
   //GET
   def getPlayers = Action.async {
@@ -115,7 +115,7 @@ class PlayerController @Inject()(cc: ControllerComponents, playerDAO: PlayerDAO,
   }
 
   //DELETE
-  def deletePlayer(playerId: Int) = Action.async {
+  def deletePlayer(playerId: Int) = withAPIToken { token => { request =>
     playerDAO.delete(playerId).map({
       case 1 => Ok(
         Json.obj(
@@ -129,4 +129,6 @@ class PlayerController @Inject()(cc: ControllerComponents, playerDAO: PlayerDAO,
       ))
     })
   }
+  }
+
 }

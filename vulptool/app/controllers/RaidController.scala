@@ -1,6 +1,6 @@
 package controllers
 
-import dao.RaidDAO
+import dao.{APITokenDAO, RaidDAO}
 import javax.inject.{Inject, Singleton}
 import models.{Raid, RaidDifficulty}
 import play.api.libs.functional.syntax._
@@ -30,7 +30,7 @@ trait RaidSerialization {
 }
 
 @Singleton
-class RaidController @Inject()(cc: ControllerComponents, raidDAO: RaidDAO) extends BaseController(cc) with RaidSerialization {
+class RaidController @Inject()(cc: ControllerComponents, raidDAO: RaidDAO, apiTokenDAO: APITokenDAO) extends BaseController(cc, apiTokenDAO) with RaidSerialization {
 
   //GET
   def getRaids = Action.async {

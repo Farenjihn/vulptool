@@ -2,7 +2,7 @@ package controllers
 
 import java.sql.Timestamp
 
-import dao.MeetingDAO
+import dao.{APITokenDAO, MeetingDAO}
 import javax.inject.{Inject, Singleton}
 import models.Meeting
 import play.api.libs.functional.syntax._
@@ -30,7 +30,7 @@ trait MeetingSerialization {
 }
 
 @Singleton
-class MeetingController @Inject()(cc: ControllerComponents, meetingDAO: MeetingDAO) extends BaseController(cc) with MeetingSerialization {
+class MeetingController @Inject()(cc: ControllerComponents, meetingDAO: MeetingDAO, apiTokenDAO: APITokenDAO) extends BaseController(cc, apiTokenDAO) with MeetingSerialization {
 
   //GET
   def getMeetings = Action.async {

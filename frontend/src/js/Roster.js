@@ -6,6 +6,7 @@ import {BrowserRouter as Router, Link, Route} from 'react-router-dom';
 
 import {Button, Divider, Form, Icon, Layout, Table, Tabs} from "antd";
 import {Input, AutoComplete } from 'antd';
+import { Tag } from 'antd';
 
 import * as conf from "./config.js";
 
@@ -24,11 +25,16 @@ const columns = [{
   title: 'Name',
   dataIndex: 'name',
   key: 'name',
-  render: text => <a href="javascript:;">{text}</a>,
+  // render: text => <Tag color={conf.} >{text}</Tag>,
 }, {
   title: 'ilvl',
   dataIndex: 'ilvl',
   key: 'ilvl',
+}, {
+  title: 'Class',
+  dataIndex: 'fclass',
+  key: 'class',
+  render: text => <Tag color={getColorForClass(text)} >{text}</Tag>,
 },
 //   {
 //   title: 'Player',
@@ -50,6 +56,54 @@ const columns = [{
     </span>
     ),
   }];
+
+function getColorForClass(fclass) {
+  let color;
+
+  switch (fclass) {
+    case "DeathKnight":
+      color = "#C41F3B";
+      break;
+    case "DemonHunter":
+      color = "#A330C9";
+      break;
+    case "Druid":
+      color = "#FF7D0A";
+      break;
+    case "Hunter":
+      color = "#ABD473";
+      break;
+    case "Mage":
+      color = "#69CCF0";
+      break;
+    case "Monk":
+      color = "#00FF96";
+      break;
+    case "Paladin":
+      color = "#F58CBA";
+      break;
+    case "Priest":
+      color = "#FFFFFF";
+      break;
+    case "Rogue":
+      color = "#FFF569";
+    break;
+    case "Shaman":
+      color = "#0070DE";
+      break;
+    case "Warlock":
+      color = "#9482C9";
+      break;
+    case "Warrior":
+      color = "#C79C6E";
+    break;
+    default:
+      color = "#000000";
+  }
+
+  console.log(color);
+  return color;
+}
 
 
 class Roster extends React.Component {

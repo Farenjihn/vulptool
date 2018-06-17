@@ -18,13 +18,13 @@ trait MeetingsComponent {
 
     def id = column[Int]("id", O.PrimaryKey, O.AutoInc)
 
-    def time_begin = column[Timestamp]("time_begin")
+    def timeBegin = column[Timestamp]("time_begin")
 
-    def time_end = column[Timestamp]("time_end")
+    def timeEnd = column[Timestamp]("time_end")
 
     def isDeleted = column[Boolean]("is_deleted")
 
-    def * = (id.?, time_begin, time_end) <> (Meeting.tupled, Meeting.unapply)
+    def * = (id.?, timeBegin, timeEnd) <> (Meeting.tupled, Meeting.unapply)
   }
 
 }
@@ -39,7 +39,7 @@ class MeetingDAO @Inject()(protected val dbConfigProvider: DatabaseConfigProvide
   val events = TableQuery[EventsTable]
 
   def list(): Future[Seq[Meeting]] = {
-    val query = meetings.filter(!_.isDeleted).sortBy(_.time_begin)
+    val query = meetings.filter(!_.isDeleted).sortBy(_.timeBegin)
     db.run(query.result)
   }
 
@@ -51,7 +51,7 @@ class MeetingDAO @Inject()(protected val dbConfigProvider: DatabaseConfigProvide
 
   def listFromDates(start: Timestamp, end: Timestamp): Future[Seq[Meeting]] = {
     val query = for {
-      m <- meetings if m.time_begin > start && m.time_end < end
+      m <- meetings if m.timeBegin > start && m.timeEnd < end
     } yield m
 
     db.run(query.result)

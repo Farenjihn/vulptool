@@ -11,9 +11,6 @@ GET     /assets/*file              controllers.Assets.versioned(path="/public", 
 # Figure
 GET     /figure                    controllers.FigureController.getFigures
 GET     /figure/:id                controllers.FigureController.getFigure(id: Int)
-POST    /figure                    controllers.FigureController.postFigure
-DELETE  /figure/:id                controllers.FigureController.deleteFigure(id: Int)
-PUT     /figure/:id                controllers.FigureController.updateFigure(id: Int)
 
 # Meetings
 GET     /meeting                   controllers.MeetingController.getMeetings
@@ -26,8 +23,9 @@ PUT     /meeting/:id               controllers.MeetingController.updateMeeting(i
 GET     /player                    controllers.PlayerController.getPlayers
 GET     /player/:id                controllers.PlayerController.getPlayer(id: Int)
 POST    /player                    controllers.PlayerController.postPlayer
+POST    /player/login              controllers.PlayerController.postPlayerLogin
 DELETE  /player/:id                controllers.PlayerController.deletePlayer(id: Int)
-PUT     /player/:id                controllers.PlayerController.updatePlayer(id: Int)
+# PUT     /player/:id                controllers.PlayerController.updatePlayer(id: Int)
 
 # Roster
 GET     /roster                    controllers.RosterController.getRosters
@@ -57,6 +55,9 @@ GET     /raid/:id                  controllers.RaidController.getRaid(id: Int)
 POST    /raid                      controllers.RaidController.postRaid
 DELETE  /raid/:id                  controllers.RaidController.deleteRaid(id: Int)
 PUT     /raid/:id                  controllers.RaidController.updateRaid(id: Int)
+
+# Oauth
+GET     /oauth/callback            controllers.OauthController.oauthCallback(code: String)
 
 
 

@@ -14,13 +14,13 @@ trait FiguresRosterComponent {
 
   class FiguresRosterTable(tag: Tag) extends Table[FigureRoster](tag, "figure_roster") {
 
-    def figure_id = column[Int]("figure_id")
+    def figureId = column[Int]("figure_id")
 
-    def roster_id = column[Int]("roster_id")
+    def rosterId = column[Int]("roster_id")
 
     def isDeleted = column[Boolean]("is_deleted")
 
-    def * = (figure_id, roster_id) <> (FigureRoster.tupled, FigureRoster.unapply)
+    def * = (figureId, rosterId) <> (FigureRoster.tupled, FigureRoster.unapply)
   }
 
 }

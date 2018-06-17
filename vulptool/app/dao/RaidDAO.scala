@@ -57,7 +57,7 @@ class RaidDAO @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)(
         .filter(_.name === raid.name)
         .filter(_.difficulty === raid.difficulty)
         .result.headOption.flatMap {
-        case (Some(raid)) =>
+        case Some(raid) =>
           DBIO.successful(raid) // no-op
         case None =>
           val raidId =

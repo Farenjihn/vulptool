@@ -1,6 +1,6 @@
 package controllers
 
-import models.Player
+import models.Login
 import org.scalatestplus.play._
 import org.scalatestplus.play.guice._
 import play.api.libs.json.Json
@@ -29,10 +29,10 @@ class PlayerControllerSpec extends PlaySpec with GuiceOneAppPerTest with Injecti
   }
 
   "PlayerController POST" should {
-    val player = Player(None, "added player", "TESTAUTH", "TESTACCESS")
+    val player = Login("added player", "password")
 
     "create a new player from the router" in {
-      val request = FakeRequest(POST, "/player").withJsonBody(playerToJson.writes(player))
+      val request = FakeRequest(POST, "/player").withJsonBody(playerInsertToJson.writes(player))
       val ret = route(app, request).get
 
       status(ret) mustBe OK

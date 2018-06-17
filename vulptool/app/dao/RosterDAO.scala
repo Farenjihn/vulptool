@@ -45,8 +45,8 @@ class RosterDAO @Inject()(protected val dbConfigProvider: DatabaseConfigProvider
   def getFiguresFromRoster(id: Int): Future[Seq[Figure]] = {
     val query = for {
       figureRoster <- figuresRosters
-      if figureRoster.roster_id === id
-      figure <- figures if figure.id === figureRoster.figure_id
+      if figureRoster.rosterId === id
+      figure <- figures if figure.id === figureRoster.figureId
     } yield figure
 
     db.run(query.result)

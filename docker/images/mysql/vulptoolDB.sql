@@ -191,12 +191,13 @@ INSERT INTO saved_template (saved_event_id, roster_id) VALUES (2, 1);
 	
 /*INSERT INTO record (time, event_id, roster_id, raid_id) VALUES (CURDATE(), 1, 1);*/
 
-INSERT INTO figure_roster (figure_id, roster_id) VALUES (1, 1);
-INSERT INTO figure_roster (figure_id, roster_id) VALUES (1, 1);
-INSERT INTO figure_roster (figure_id, roster_id) VALUES (1, 1);
-INSERT INTO figure_roster (figure_id, roster_id) VALUES (1, 2);	
+INSERT INTO figure_roster (figure_id, roster_id) VALUES (2, 1);
+INSERT INTO figure_roster (figure_id, roster_id) VALUES (4, 1);
+INSERT INTO figure_roster (figure_id, roster_id) VALUES (6, 1);
+INSERT INTO figure_roster (figure_id, roster_id) VALUES (8, 1);
+INSERT INTO figure_roster (figure_id, roster_id) VALUES (3, 2);	
 INSERT INTO figure_roster (figure_id, roster_id) VALUES (1, 2);
-INSERT INTO figure_roster (figure_id, roster_id) VALUES (1, 2);
+INSERT INTO figure_roster (figure_id, roster_id) VALUES (7, 2);
 INSERT INTO figure_roster (figure_id, roster_id) VALUES (1, 3);
-INSERT INTO figure_roster (figure_id, roster_id) VALUES (1, 3);
-INSERT INTO figure_roster (figure_id, roster_id) VALUES (1, 3);
+INSERT INTO figure_roster (figure_id, roster_id) VALUES (5, 3);
+INSERT INTO figure_roster (figure_id, roster_id) VALUES (8, 3);

@@ -71,15 +71,6 @@ class EventDAO @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)
   def findById(id: Int): Future[Option[Event]] =
     db.run(events.filter(_.id === id).result.headOption)
 
-  def getRosterOfEvent(id: Int): Future[Option[Roster]] =
-    db.run(rosters.filter(_.id === id).result.headOption)
-
-  def getMeetingOfEvent(id: Int): Future[Option[Meeting]] =
-    db.run(meetings.filter(_.id === id).sortBy(_.timeBegin).result.headOption)
-
-  def getRaidOfEvent(id: Int): Future[Option[Raid]] =
-    db.run(raids.filter(_.id === id).result.headOption)
-
   def insert(event: Event): Future[Event] = {
     val insertQuery = events returning events.map(_.id) into ((event, id) => event.copy(Some(id)))
     db.run(insertQuery += event)

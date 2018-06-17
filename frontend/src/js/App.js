@@ -3,6 +3,7 @@ import '../css/App.css';
 import Calendar from './Calendar';
 import Welcome from './Welcome';
 import Roster from './Roster';
+import FormEventEdit from './FormEventEdit.js'
 import RosterCreate from './RosterCreate.js';
 
 
@@ -92,6 +93,7 @@ class SiderDemo extends React.Component {
             <Route exact path="/" component={Welcome}/>
             <Route exact path="/welcome" component={Welcome}/>
             <Route exact path="/calendar" component={Calendar}/>
+            <Route exact path="/calendar/edit/:id" component={FormEventEdit}/>
             <Route exact path="/roster" component={Roster}/>
             <Route exact path="/roster/create" component={RosterCreate}/>
           </Layout>

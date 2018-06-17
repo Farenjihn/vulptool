@@ -1,13 +1,14 @@
 import React from "react";
 import "../css/Calendar.css";
 import EventForm from "./FormEvent";
-import {Avatar, Button, DatePicker, Layout, List} from "antd";
+import { Avatar, Button, DatePicker, Layout, List } from "antd";
+import {Link} from 'react-router-dom';
 import moment from "moment";
 import * as conf from './config.js'
 
 
 const WeekPicker = DatePicker.WeekPicker;
-const {Content} = Layout;
+const { Content } = Layout;
 
 moment.locale("en-wow-settings", {
   week: {
@@ -31,7 +32,7 @@ function weekPickerChange(date) {
   displaytWeek = moment().hour(0).minute(0).second(0).day("Wednesday").week(date.week()).utc(true);
 
   let url = conf.baseURL + "/eventByDate";
-  url = url + "/" + moment().hour(0).minute(0).second(0).day("Wednesday").week(date.week()).utc(true).unix() + "/" + moment().hour(0).minute(0).second(0).day("Wednesday").week(date.week()+1).utc(true).unix();
+  url = url + "/" + moment().hour(0).minute(0).second(0).day("Wednesday").week(date.week()).utc(true).unix() + "/" + moment().hour(0).minute(0).second(0).day("Wednesday").week(date.week() + 1).utc(true).unix();
 
   console.log(url);
 
@@ -39,7 +40,7 @@ function weekPickerChange(date) {
     method: "GET",
   })
     .then(results => results.json())
-    .then(data => this.setState({meetings: data}))
+    .then(data => this.setState({ meetings: data }))
     .catch(function (error) {
       console.log(
         "There was an error GET eventByDate, weekPicker: /// " + error + " \\\\\\"
@@ -57,10 +58,10 @@ class Calendar extends React.Component {
   }
 
   showModal = () => {
-    this.setState({formVisible: true});
+    this.setState({ formVisible: true });
   };
   handleCancel = () => {
-    this.setState({formVisible: false});
+    this.setState({ formVisible: false });
   };
   handleCreate = () => {
     const form = this.formRef.props.form;
@@ -120,7 +121,7 @@ class Calendar extends React.Component {
         });
 
       form.resetFields();
-      this.setState({formVisible: false});
+      this.setState({ formVisible: false });
       weekPickerChange.call(this, displaytWeek);
 
     });
@@ -132,7 +133,7 @@ class Calendar extends React.Component {
 
   componentDidMount() {
     let url = conf.baseURL + "/eventByDate";
-    url = url + "/" + moment().hour(0).minute(0).second(0).day("Wednesday").week(moment().week()).utc(true).unix() + "/" + moment().hour(0).minute(0).second(0).day("Wednesday").week(moment().week()+1).utc(true).unix();
+    url = url + "/" + moment().hour(0).minute(0).second(0).day("Wednesday").week(moment().week()).utc(true).unix() + "/" + moment().hour(0).minute(0).second(0).day("Wednesday").week(moment().week() + 1).utc(true).unix();
 
     console.log(url);
 
@@ -140,7 +141,7 @@ class Calendar extends React.Component {
       method: "GET",
     })
       .then(results => results.json())
-      .then(data => this.setState({meetings: data}))
+      .then(data => this.setState({ meetings: data }))
       .catch(function (error) {
         console.log(
           "There was an error GET eventByDate, componentDidMount: /// " + error + " \\\\\\"
@@ -150,16 +151,16 @@ class Calendar extends React.Component {
 
   render() {
     return (
-      <Content style={{margin: "16px 16px"}}>
-        <div style={{padding: 24, background: "#fff", minHeight: 360}}>
+      <Content style={{ margin: "16px 16px" }}>
+        <div style={{ padding: 24, background: "#fff", minHeight: 360 }}>
 
           <div className="footer-container">
             <div className="div-left">
               <ul className="footer">
                 <Button.Group>
-                  <Button onClick={previousWeek.bind(this)} icon="left"/>
-                  <WeekPicker id="weekpicker" onChange={weekPickerChange.bind(this)} format={"wo-YYYY"} value={displaytWeek}/>
-                  <Button onClick={nextWeek.bind(this)} icon="right"/>
+                  <Button onClick={previousWeek.bind(this)} icon="left" />
+                  <WeekPicker id="weekpicker" onChange={weekPickerChange.bind(this)} format={"wo-YYYY"} value={displaytWeek} />
+                  <Button onClick={nextWeek.bind(this)} icon="right" />
                 </Button.Group>
               </ul>
             </div>
@@ -205,7 +206,7 @@ class Calendar extends React.Component {
                 }
               >
                 <List.Item.Meta
-                  avatar={<Avatar src={item.avatar}/>}
+                  avatar={<Avatar src={item.avatar} />}
                   title={<a href={item.href}>{item.name} - {moment(item.meeting.time_begin, "X").format("dddd Do MMMM YYYY hh:mm")}</a>}
                   description={<div>{item.raid.name} - {item.raid.difficulty}</div>}
                 />
@@ -222,6 +223,13 @@ class Calendar extends React.Component {
                     renderItem={rosterList => (<List.Item>{rosterList.name}</List.Item>)}
                   />*/}
 
+                  <div className="add-button">
+                    <Link to={"/calendar/edit/" + item.id}>
+                      <Button type="primary">
+                        <span>Edit Roster</span>
+                      </Button>
+                    </Link>
+                  </div>
                 </div>
               </List.Item>
             )}

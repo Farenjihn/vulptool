@@ -1,40 +1,46 @@
 package controllers
 
-import dao.PlayerDAO
+import java.sql.Timestamp
+import java.time.Instant
+import java.util.UUID
+
+import com.github.t3hnar.bcrypt._
+import dao.{APITokenDAO, PlayerDAO}
 import javax.inject.{Inject, Singleton}
-import models.Player
+import models.{APIToken, Login, Player}
 import play.api.libs.functional.syntax._
 import play.api.libs.json.Reads._
 import play.api.libs.json._
-import play.api.mvc.{AbstractController, ControllerComponents}
+import play.api.mvc.ControllerComponents
 
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.duration.Duration
+import scala.concurrent.{Await, Future}
 
 trait PlayerSerialization {
 
   implicit val playerToJson: Writes[Player] = { player =>
     Json.obj(
       "id" -> player.id,
-      "main_pseudo" -> player.mainPseudo,
-      "auth_code" -> player.authCode,
-      "access_code" -> player.accessCode
+      "main_pseudo" -> player.mainPseudo
     )
   }
 
-  implicit val jsonToMeeting: Reads[Player] = (
-    (JsPath \ "id").readNullable[Int] and
-      (JsPath \ "main_pseudo").read[String] and
-      (JsPath \ "auth_code").read[String] and
-      (JsPath \ "access_code").read[String]
-  ) (Player.apply _)
+  implicit val playerInsertToJson: Writes[Login] = { playerInsert =>
+    Json.obj(
+      "main_pseudo" -> playerInsert.mainPseudo,
+      "password" -> playerInsert.password
+    )
+  }
+
+  implicit val jsonToPlayerInsert: Reads[Login] = (
+    (JsPath \ "main_pseudo").read[String] and
+      (JsPath \ "password").read[String]
+    ) (Login.apply _)
 }
 
 @Singleton
-class PlayerController @Inject()(cc: ControllerComponents, playerDAO: PlayerDAO) extends AbstractController(cc) with PlayerSerialization {
-
-  def validateJson[A: Reads] = parse.json.validate(
-    _.validate[A].asEither.left.map(e => BadRequest(JsError.toJson(e)))
-  )
+class PlayerController @Inject()(cc: ControllerComponents, playerDAO: PlayerDAO, apiTokenDAO: APITokenDAO) extends BaseController(cc) with PlayerSerialization {
 
   //GET
   def getPlayers = Action.async {
@@ -58,9 +64,9 @@ class PlayerController @Inject()(cc: ControllerComponents, playerDAO: PlayerDAO)
   }
 
   //POST
-  def postPlayer = Action.async(validateJson[Player]) { request =>
-    val player = request.body
-    val createdPlayer = playerDAO.insert(player)
+  def postPlayer = Action.async(validateJson[Login]) { request =>
+    val login = request.body
+    val createdPlayer = playerDAO.insert(Player(None, login.mainPseudo, login.password.bcrypt, None, None))
 
     createdPlayer.map(player =>
       Ok(
@@ -73,23 +79,39 @@ class PlayerController @Inject()(cc: ControllerComponents, playerDAO: PlayerDAO)
     )
   }
 
-  //PUT
-  def updatePlayer(playerId: Int) = Action.async(validateJson[Player]) { request =>
-    val newPlayer = request.body
+  //POST
+  def postPlayerLogin = Action.async(validateJson[Login]) { request =>
+    val login = request.body
+    val players = Await.result(playerDAO.findByPseudo(login.mainPseudo), Duration.Inf)
 
-    // Try to edit the student, then return a 200 OK HTTP status to the client if everything worked.
-    playerDAO.update(playerId, newPlayer).map({
-      case 1 => Ok(
-        Json.obj(
-          "status" -> "OK",
-          "message" -> ("Player '" + newPlayer.id + " " + newPlayer.mainPseudo + "' updated.")
+    val playerId = players.map(player => (player.id, player.hashedPassword.isBcrypted(login.password)))
+      .filter(tuple => tuple._2)
+      .map(_._1).head
+
+    playerId match {
+      case Some(id) =>
+        val apiToken = Await.result(apiTokenDAO.findByPlayerId(id).map {
+          case Some(token) => token
+          case None =>
+            val uuid = UUID.randomUUID().toString
+            Await.result(apiTokenDAO.insert(APIToken(None, id, uuid, Timestamp.from(Instant.now()))), Duration.Inf)
+        }, Duration.Inf)
+
+        Future {
+          Ok(
+            Json.obj(
+              "token" -> apiToken.value
+            )
+          )
+        }
+      case None => Future {
+        Unauthorized(
+          Json.obj(
+            "reason" -> "Username or password incorrect"
+          )
         )
-      )
-      case 0 => NotFound(Json.obj(
-        "status" -> "Not Found",
-        "message" -> ("Player #" + playerId + " not found.")
-      ))
-    })
+      }
+    }
   }
 
   //DELETE

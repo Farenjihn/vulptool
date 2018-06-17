@@ -6,7 +6,7 @@ import play.api.mvc.{AbstractController, ControllerComponents}
 @Singleton
 class TemplateController @Inject()(cc: ControllerComponents) extends AbstractController(cc) {
 
-  def getTemplates() = play.mvc.Results.TODO
+  def getTemplates = play.mvc.Results.TODO
 
   def getTemplate(id: Int) = play.mvc.Results.TODO
 

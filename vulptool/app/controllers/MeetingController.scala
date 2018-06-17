@@ -8,7 +8,7 @@ import models.Meeting
 import play.api.libs.functional.syntax._
 import play.api.libs.json.Reads._
 import play.api.libs.json._
-import play.api.mvc.{AbstractController, ControllerComponents}
+import play.api.mvc.ControllerComponents
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
@@ -17,8 +17,8 @@ trait MeetingSerialization {
   implicit val meetingToJson: Writes[Meeting] = { meeting =>
     Json.obj(
       "id" -> meeting.id,
-      "time_begin" -> ((meeting.timeBegin.getTime)/1000L).toString,
-      "time_end" -> ((meeting.timeEnd.getTime)/1000L).toString
+      "time_begin" -> (meeting.timeBegin.getTime / 1000L).toString,
+      "time_end" -> (meeting.timeEnd.getTime / 1000L).toString
     )
   }
 
@@ -30,11 +30,7 @@ trait MeetingSerialization {
 }
 
 @Singleton
-class MeetingController @Inject()(cc: ControllerComponents, meetingDAO: MeetingDAO) extends AbstractController(cc) with MeetingSerialization {
-
-  def validateJson[A: Reads] = parse.json.validate(
-    _.validate[A].asEither.left.map(e => BadRequest(JsError.toJson(e)))
-  )
+class MeetingController @Inject()(cc: ControllerComponents, meetingDAO: MeetingDAO) extends BaseController(cc) with MeetingSerialization {
 
   //GET
   def getMeetings = Action.async {

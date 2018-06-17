@@ -8,13 +8,13 @@ import models._
 import play.api.libs.functional.syntax._
 import play.api.libs.json.Reads._
 import play.api.libs.json._
-import play.api.mvc.{AbstractController, ControllerComponents}
+import play.api.mvc.ControllerComponents
 
 import scala.concurrent.Await
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration.Duration
 
-trait EventSerialization extends MeetingSerialization with RaidSerialization with RosterSerialization{
+trait EventSerialization extends MeetingSerialization with RaidSerialization with RosterSerialization {
 
   implicit val eventToJson: Writes[Event] = { event =>
     Json.obj(
@@ -59,15 +59,7 @@ trait EventSerialization extends MeetingSerialization with RaidSerialization wit
 
 @Singleton
 class EventController @Inject()(cc: ControllerComponents, eventDAO: EventDAO, meetingDAO: MeetingDAO, raidDAO: RaidDAO, rosterDAO: RosterDAO)
-  extends AbstractController(cc) with EventSerialization {
-
-  def EventFromFull(e: EventFull) =
-    Event(e.id, e.name, e.description, e.meeting.id.get, e.raid.id.get, e.roster.id.get)
-
-
-  def validateJson[A: Reads] = parse.json.validate(
-    _.validate[A].asEither.left.map(e => BadRequest(JsError.toJson(e)))
-  )
+  extends BaseController(cc) with EventSerialization {
 
   //GET
   def getEvents = Action.async {
@@ -76,14 +68,21 @@ class EventController @Inject()(cc: ControllerComponents, eventDAO: EventDAO, me
       .map(event => Ok(Json.toJson(event)))
   }
 
+  def getFullEvent(event: Event): EventFull = {
+    val meeting = Await.result(eventDAO.getMeetingOfEvent(event.id.get), Duration.Inf).get
+    val raid = Await.result(eventDAO.getRaidOfEvent(event.id.get), Duration.Inf).get
+    val roster = Await.result(eventDAO.getRosterOfEvent(event.id.get), Duration.Inf).get
+
+    EventFull(event.id, event.name, event.description, meeting, raid, roster)
+  }
+
   //GET with id
   def getEvent(eventId: Int) = Action.async {
     val optionalEvent = eventDAO.findById(eventId)
 
     optionalEvent.map({
-      case Some(event) => {
+      case Some(event) =>
         Ok(Json.toJson(getFullEvent(event)))
-      }
       case None =>
         // Send back a 404 Not Found HTTP status to the client if the event does not exist.
         NotFound(Json.obj(
@@ -99,14 +98,6 @@ class EventController @Inject()(cc: ControllerComponents, eventDAO: EventDAO, me
 
     optionalEvents.map(_.map(getFullEvent).sortBy(_.meeting.timeBegin.getTime()))
       .map(eventFull => Ok(Json.toJson(eventFull)))
-  }
-
-  def getFullEvent(event: Event): EventFull = {
-    val meeting = Await.result(eventDAO.getMeetingOfEvent(event.id.get), Duration.Inf).get
-    val raid = Await.result(eventDAO.getRaidOfEvent(event.id.get), Duration.Inf).get
-    val roster = Await.result(eventDAO.getRosterOfEvent(event.id.get), Duration.Inf).get
-
-    EventFull(event.id, event.name, event.description, meeting, raid, roster)
   }
 
   //POST
@@ -134,7 +125,7 @@ class EventController @Inject()(cc: ControllerComponents, eventDAO: EventDAO, me
   def updateEvent(eventId: Int) = Action.async(validateJson[EventFull]) { request =>
     val newEventFull = request.body
     eventDAO.update(eventId, EventFromFull(newEventFull)).map({
-      case 1 => {
+      case 1 =>
         meetingDAO.update(newEventFull.meeting.id.get, newEventFull.meeting)
         raidDAO.update(newEventFull.raid.id.get, newEventFull.raid)
         rosterDAO.update(newEventFull.roster.id.get, newEventFull.roster)
@@ -145,13 +136,15 @@ class EventController @Inject()(cc: ControllerComponents, eventDAO: EventDAO, me
             "message" -> ("Event '" + eventId + " " + newEventFull.name + "' updated.")
           )
         )
-      }
       case 0 => NotFound(Json.obj(
         "status" -> "Not Found",
         "message" -> ("Event #" + eventId + " not found.")
       ))
     })
   }
+
+  def EventFromFull(e: EventFull) =
+    Event(e.id, e.name, e.description, e.meeting.id.get, e.raid.id.get, e.roster.id.get)
 
   //DELETE
   def deleteEvent(eventId: Int) = Action.async {

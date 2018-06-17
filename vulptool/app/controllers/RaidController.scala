@@ -6,7 +6,7 @@ import models.{Raid, RaidDifficulty}
 import play.api.libs.functional.syntax._
 import play.api.libs.json.Reads._
 import play.api.libs.json._
-import play.api.mvc.{AbstractController, ControllerComponents}
+import play.api.mvc.ControllerComponents
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
@@ -30,11 +30,7 @@ trait RaidSerialization {
 }
 
 @Singleton
-class RaidController @Inject()(cc: ControllerComponents, raidDAO: RaidDAO) extends AbstractController(cc) with RaidSerialization {
-
-  def validateJson[A: Reads] = parse.json.validate(
-    _.validate[A].asEither.left.map(e => BadRequest(JsError.toJson(e)))
-  )
+class RaidController @Inject()(cc: ControllerComponents, raidDAO: RaidDAO) extends BaseController(cc) with RaidSerialization {
 
   //GET
   def getRaids = Action.async {

@@ -6,7 +6,7 @@ import models._
 import play.api.libs.functional.syntax._
 import play.api.libs.json.Reads._
 import play.api.libs.json._
-import play.api.mvc.{AbstractController, ControllerComponents}
+import play.api.mvc.ControllerComponents
 
 import scala.concurrent.Await
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -57,11 +57,7 @@ trait RosterSerialization extends FigureSerialization {
 }
 
 @Singleton
-class RosterController @Inject()(cc: ControllerComponents, rosterDAO: RosterDAO, figureRosterDAO: FigureRosterDAO) extends AbstractController(cc) with RosterSerialization {
-
-  def validateJson[A: Reads] = parse.json.validate(
-    _.validate[A].asEither.left.map(e => BadRequest(JsError.toJson(e)))
-  )
+class RosterController @Inject()(cc: ControllerComponents, rosterDAO: RosterDAO, figureRosterDAO: FigureRosterDAO) extends BaseController(cc) with RosterSerialization {
 
   //GET
   def getRosters = Action.async {
@@ -74,9 +70,8 @@ class RosterController @Inject()(cc: ControllerComponents, rosterDAO: RosterDAO,
     val optionalRoster = rosterDAO.findById(rosterId)
 
     optionalRoster.map {
-      case Some(roster) => {
+      case Some(roster) =>
         Ok(Json.toJson(getRosterWithFigures(roster)))
-      }
       case None =>
         // Send back a 404 Not Found HTTP status to the client if the roster does not exist.
         NotFound(Json.obj(
@@ -93,11 +88,11 @@ class RosterController @Inject()(cc: ControllerComponents, rosterDAO: RosterDAO,
 
   //POST
   def postRoster = Action.async(validateJson[RosterWithFigures]) { request =>
-    val rosterInsert = request.body
-    val createdRoster = Await.result(rosterDAO.insert(Roster(None, rosterInsert.name)), Duration.Inf)
-    val result = figureRosterDAO.insertFiguresWithRoster(rosterInsert.figures.map(f => FigureRoster(f, createdRoster.id.get)))
+    val rosterWithFigures = request.body
+    val createdRoster = Await.result(rosterDAO.insert(Roster(None, rosterWithFigures.name)), Duration.Inf)
+    val result = figureRosterDAO.insertFiguresWithRoster(rosterWithFigures.figures.map(f => FigureRoster(f, createdRoster.id.get)))
 
-    result.map(figures =>
+    result.map(_ =>
       Ok(
         Json.obj(
           "status" -> "OK",

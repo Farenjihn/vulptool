@@ -15,21 +15,29 @@ object RaidDifficulty extends Enumeration {
   val RaidFinder, Normal, Heroic, Mythic = Value
 }
 
+
+case class APIToken(id: Option[Int], playerId: Int, value: String, timeCreated: Timestamp)
+
 case class Event(id: Option[Int], name: String, description: String, meetingId: Int, raidId: Int, rosterId: Int)
+
 case class EventFull(id: Option[Int], name: String, description: String, meeting: Meeting, raid: Raid, roster: Roster)
 
 case class Figure(id: Option[Int], name: String, fclass: WoWClass, lvl: Int, ilvl: Double, playerId: Int)
 
 case class FigureRoster(figureId: Int, rosterId: Int)
 
+case class Login(mainPseudo: String, password: String)
+
 case class Meeting(id: Option[Int], timeBegin: Timestamp, timeEnd: Timestamp)
 
-case class Player(id: Option[Int], mainPseudo: String, authCode: String, accessCode: String)
+case class Player(id: Option[Int], mainPseudo: String, hashedPassword: String, authCode: Option[String], accessCode: Option[String])
 
 case class Raid(id: Option[Int], name: String, nbBoss: Int, difficulty: RaidDifficulty)
 
 case class Roster(id: Option[Int], name: String)
+
 case class RosterFull(id: Option[Int], name: String, figures: List[Figure])
+
 case class RosterWithFigures(id: Option[Int], name: String, figures: List[Int])
 
 case class Template(id: Option[Int], eventId: Int, rosterId: Int)

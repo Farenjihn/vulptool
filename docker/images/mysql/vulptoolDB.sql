@@ -1,6 +1,7 @@
 USE vulptool;
 
 SET FOREIGN_KEY_CHECKS = 0;
+DROP TABLE IF EXISTS apitoken;
 DROP TABLE IF EXISTS event_child;
 DROP TABLE IF EXISTS event;
 DROP TABLE IF EXISTS figure_roster;
@@ -11,6 +12,7 @@ DROP TABLE IF EXISTS raid;
 DROP TABLE IF EXISTS record;
 DROP TABLE IF EXISTS roster;
 DROP TABLE IF EXISTS saved_template;
+DROP EVENT IF EXISTS apitoken_cleanup;
 SET FOREIGN_KEY_CHECKS = 1;
 
 CREATE TABLE raid(
@@ -42,12 +44,23 @@ CREATE TABLE roster(
 
 CREATE TABLE player(
     id INT NOT NULL AUTO_INCREMENT,
-    main_pseudo VARCHAR(255),
-    auth_code VARCHAR(255) NOT NULL,
-    access_code VARCHAR(255) NOT NULL,
+    main_pseudo VARCHAR(255) NOT NULL,
+    hashed_pw VARCHAR(255) NOT NULL,
+    auth_code VARCHAR(255),
+    access_code VARCHAR(255),
     is_deleted BOOLEAN NOT NULL DEFAULT false,
 
     PRIMARY KEY (id)
+);
+
+CREATE TABLE apitoken(
+    id INT NOT NULL AUTO_INCREMENT,
+    player_id INT NOT NULL,
+    value VARCHAR(255) NOT NULL,
+    time_created TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    PRIMARY KEY (id),
+    FOREIGN KEY (player_id) REFERENCES player (id)
 );
 
 CREATE TABLE event(
@@ -124,8 +137,14 @@ CREATE TABLE record(
     FOREIGN KEY (raid_id) REFERENCES raid (id)
 );
 
-INSERT INTO player (main_pseudo, auth_code, access_code) VALUES ("test player", "AUTHCODE", "ACCESSCODE");
+CREATE EVENT apitoken_cleanup ON SCHEDULE EVERY 1 HOUR
+DO DELETE FROM apitoken WHERE id IN (
+    SELECT id FROM apitoken WHERE time_created < UNIX_TIMESTAMP(DATE_SUB(NOW(), INTERVAL 5 DAY))
+);
+
+INSERT INTO player (main_pseudo, hashed_pw, auth_code, access_code) VALUES ("test player", "password", "AUTHCODE", "ACCESSCODE");
 INSERT INTO figure (name, fclass, lvl, ilvl, player_id) VALUES ("test figure", "DeathKnight", 0, 0, 1);
+INSERT INTO figure (name, fclass, lvl, ilvl, player_id) VALUES ("another test figure", "DeathKnight", 0, 0, 1);
 INSERT INTO raid (name, nb_boss, difficulty ) VALUES ("test raid", 0, "Mythic");
 INSERT INTO roster (name) VALUES ("test roster");
 INSERT INTO meeting (time_begin, time_end) VALUES (NOW(), DATE_ADD(NOW(), INTERVAL 3 HOUR));

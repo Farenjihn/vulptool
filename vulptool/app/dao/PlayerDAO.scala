@@ -1,7 +1,7 @@
 package dao
 
 import javax.inject.{Inject, Singleton}
-import models.Player
+import models.{Login, Player}
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
 import slick.jdbc.JdbcProfile
 
@@ -16,7 +16,9 @@ trait PlayersComponent {
 
     def id = column[Int]("id", O.PrimaryKey, O.AutoInc)
 
-    def main_pseudo = column[String]("main_pseudo")
+    def mainPseudo = column[String]("main_pseudo")
+
+    def hashedPassword = column[String]("hashed_pw")
 
     def authCode = column[String]("auth_code")
 
@@ -24,7 +26,7 @@ trait PlayersComponent {
 
     def isDeleted = column[Boolean]("is_deleted")
 
-    def * = (id.?, main_pseudo, authCode, accessCode) <> (Player.tupled, Player.unapply)
+    def * = (id.?, mainPseudo, hashedPassword, authCode.?, accessCode.?) <> (Player.tupled, Player.unapply)
   }
 
 }
@@ -38,12 +40,15 @@ class PlayerDAO @Inject()(protected val dbConfigProvider: DatabaseConfigProvider
   val players = TableQuery[PlayersTable]
 
   def list(): Future[Seq[Player]] = {
-    val query = players.filter(!_.isDeleted).sortBy(_.main_pseudo)
+    val query = players.filter(!_.isDeleted).sortBy(_.mainPseudo)
     db.run(query.result)
   }
 
   def findById(id: Int): Future[Option[Player]] =
     db.run(players.filter(_.id === id).result.headOption)
+
+  def findByPseudo(pseudo: String): Future[Seq[Player]] =
+    db.run(players.filter(_.mainPseudo === pseudo).result)
 
   def insert(player: Player): Future[Player] = {
     val insertQuery = players returning players.map(_.id) into ((player, id) => player.copy(Some(id)))

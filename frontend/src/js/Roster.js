@@ -21,26 +21,28 @@ const Option = AutoComplete.Option;
 const OptGroup = AutoComplete.OptGroup;
 
 
-const columns = [{
-  title: 'Name',
-  dataIndex: 'name',
-  key: 'name',
-  // render: text => <Tag color={conf.} >{text}</Tag>,
-}, {
-  title: 'ilvl',
-  dataIndex: 'ilvl',
-  key: 'ilvl',
-}, {
-  title: 'Class',
-  dataIndex: 'fclass',
-  key: 'class',
-  render: text => <Tag color={getColorForClass(text)} >{text}</Tag>,
-},
-//   {
-//   title: 'Player',
-//   dataIndex: 'player',
-//   key: 'player'
-// },
+const columns = [
+  {
+    title: 'Class',
+    dataIndex: 'fclass',
+    key: 'class',
+    render: text => <Tag color={conf.getColorForClass(text)} >{text}</Tag>,
+  }, {
+    title: 'Name',
+    dataIndex: 'name',
+    key: 'name',
+    // render: text => <Tag color={conf.} >{text}</Tag>,
+  }, {
+    title: 'ilvl',
+    dataIndex: 'ilvl',
+    key: 'ilvl',
+    sorter: (a, b) => a.ilvl - b.ilvl,
+    defaultSortOrder: 'descend',
+  }, {
+    title: 'Player',
+    dataIndex: 'player',
+    key: 'player'
+  },
   {
     title: 'Action',
     key: 'action',
@@ -56,55 +58,6 @@ const columns = [{
     </span>
     ),
   }];
-
-function getColorForClass(fclass) {
-  let color;
-
-  switch (fclass) {
-    case "DeathKnight":
-      color = "#C41F3B";
-      break;
-    case "DemonHunter":
-      color = "#A330C9";
-      break;
-    case "Druid":
-      color = "#FF7D0A";
-      break;
-    case "Hunter":
-      color = "#ABD473";
-      break;
-    case "Mage":
-      color = "#69CCF0";
-      break;
-    case "Monk":
-      color = "#00FF96";
-      break;
-    case "Paladin":
-      color = "#F58CBA";
-      break;
-    case "Priest":
-      color = "#FFFFFF";
-      break;
-    case "Rogue":
-      color = "#FFF569";
-    break;
-    case "Shaman":
-      color = "#0070DE";
-      break;
-    case "Warlock":
-      color = "#9482C9";
-      break;
-    case "Warrior":
-      color = "#C79C6E";
-    break;
-    default:
-      color = "#000000";
-  }
-
-  console.log(color);
-  return color;
-}
-
 
 class Roster extends React.Component {
   constructor() {
@@ -137,7 +90,7 @@ class Roster extends React.Component {
       if (this.state.rosters[i].figures.length > 0) {
         tabs.push(
           <TabPane tab={this.state.rosters[i].name} key={this.state.rosters[i].id}>
-            <Table columns={columns} dataSource={this.state.rosters[i].figures} pagination={false}/>
+            <Table columns={columns} dataSource={this.state.rosters[i].figures} pagination={false} size="small"/>
           </TabPane>
         )
       }
@@ -149,6 +102,7 @@ class Roster extends React.Component {
 
   render() {
     const { mode } = this.state;
+
     return (
       <Content style={{margin: "16px 16px"}}>
         <div style={{padding: 24, background: "#fff", minHeight: 360}}>

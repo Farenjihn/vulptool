@@ -14,7 +14,7 @@ trait APITokenComponent {
 
   import profile.api._
 
-  class APITokenTable(tag: Tag) extends Table[APIToken](tag, "apitoken") {
+  class APITokensTable(tag: Tag) extends Table[APIToken](tag, "apitoken") {
 
     def id = column[Int]("id", O.PrimaryKey, O.AutoInc)
 
@@ -31,14 +31,18 @@ trait APITokenComponent {
 
 @Singleton
 class APITokenDAO @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)(implicit executionContext: ExecutionContext)
-  extends APITokenComponent with HasDatabaseConfigProvider[JdbcProfile] {
+  extends APITokenComponent with PlayersComponent with HasDatabaseConfigProvider[JdbcProfile] {
 
   import profile.api._
 
-  val apitokens = TableQuery[APITokenTable]
+  val apitokens = TableQuery[APITokensTable]
+  val players = TableQuery[PlayersTable]
 
   def findByPlayerId(id: Int): Future[Option[APIToken]] =
     db.run(apitokens.filter(_.playerId === id).result.headOption)
+
+  def findByValue(value: String) : Future[Option[APIToken]] =
+    db.run(apitokens.filter(_.value === value).result.headOption)
 
   def insert(token: APIToken): Future[APIToken] = {
     val insertQuery = apitokens returning apitokens.map(_.id) into ((token, id) => token.copy(Some(id)))

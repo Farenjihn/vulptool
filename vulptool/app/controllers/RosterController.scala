@@ -1,6 +1,6 @@
 package controllers
 
-import dao.{FigureRosterDAO, RosterDAO}
+import dao.{APITokenDAO, FigureRosterDAO, RosterDAO}
 import javax.inject.{Inject, Singleton}
 import models._
 import play.api.libs.functional.syntax._
@@ -57,7 +57,7 @@ trait RosterSerialization extends FigureSerialization {
 }
 
 @Singleton
-class RosterController @Inject()(cc: ControllerComponents, rosterDAO: RosterDAO, figureRosterDAO: FigureRosterDAO) extends BaseController(cc) with RosterSerialization {
+class RosterController @Inject()(cc: ControllerComponents, rosterDAO: RosterDAO, figureRosterDAO: FigureRosterDAO, apiTokenDAO: APITokenDAO) extends BaseController(cc, apiTokenDAO) with RosterSerialization {
 
   //GET
   def getRosters = Action.async {

@@ -95,7 +95,7 @@ class SiderDemo extends React.Component {
             <Route exact path="/roster" component={Roster}/>
             <Route exact path="/roster/create" component={RosterCreate}/>
           </Layout>
-          <Footer style={{height: '48px', textAlign: 'center'}}>
+          <Footer style={{height: '48px', textAlign: 'center', backgroundColor: 'black', color:'white'}}>
             Ant Design ©2016 Created by Ant UED
           </Footer>
         </div>

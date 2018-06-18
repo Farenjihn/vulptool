@@ -16,10 +16,10 @@ Pour réaliser ce projet nous avons utilisé :
 2. lancer la commande `docker-compose -f docker-compose-dev.yml up`. Attention, cela peut prendre un certain temps...
 3. Ouvrir le projet nommé ***vulptool*** et lancer l'application avec Play (fichier ***build.sbt***).
 ### Frontend
-0. Démarrer le Backend.
-1. Se placer au niveau du fichier ***package.json***.
-2. Lancer les commandes `npm install` puis `npm start`.
-3. La page d'accueil de l'application devrait s'ouvrir automatiquement dans votre browser.
+1. Démarrer le Backend.
+2. Se placer au niveau du fichier ***package.json***.
+3. Lancer les commandes `npm install` puis `npm start`.
+4. La page d'accueil de l'application devrait s'ouvrir automatiquement dans votre browser.
 
 ## Auteurs
 Les auteurs sont: [Aurélie Lévy](https://github.com/AurelieLevy), [Valentin Finini](https://github.com/Farenjihn), [Miguel Pombo Dias](https://github.com/Ardgevald) et [Lawrence Stadler](https://github.com/Bykow)

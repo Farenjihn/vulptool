@@ -16,6 +16,7 @@ trait TokenAuthentication {
 
   var tokenDAO: APITokenDAO = _
 
+  // Allows to check it the token is passed in the request for authentication
   def withAPIToken(f: => APIToken => Request[AnyContent] => Future[Result]) = Action.async { request =>
     request.headers.get("X-Vulptool-Token").flatMap { authHeader =>
       Logger.error(authHeader)

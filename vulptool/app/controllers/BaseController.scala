@@ -29,7 +29,7 @@ trait TokenAuthentication {
 
 
   def extractToken(authHeader: String) = {
-    authHeader.split("Bearer ") match {
+    authHeader.split(" ") match {
       case Array(_, token) => Some(token)
       case _ => None
     }

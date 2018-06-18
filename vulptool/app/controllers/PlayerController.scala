@@ -84,7 +84,7 @@ class PlayerController @Inject()(cc: ControllerComponents, playerDAO: PlayerDAO,
     val login = request.body
     val players = Await.result(playerDAO.findByPseudo(login.mainPseudo), Duration.Inf)
 
-    val playerId = players.map(player => (player.id, player.hashedPassword.isBcrypted(login.password)))
+    val playerId = players.map(player => (player.id, login.password.isBcrypted(player.hashedPassword)))
       .filter(tuple => tuple._2)
       .map(_._1).head
 

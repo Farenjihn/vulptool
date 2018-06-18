@@ -116,6 +116,8 @@ class PlayerController @Inject()(cc: ControllerComponents, playerDAO: PlayerDAO,
 
   //DELETE
   def deletePlayer(playerId: Int) = withAPIToken { token => { request =>
+    // Deletion logic not currently adapter to the withAPIToken filter, serves as a
+    // proof of concept
     playerDAO.delete(playerId).map({
       case 1 => Ok(
         Json.obj(

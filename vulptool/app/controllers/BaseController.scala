@@ -3,6 +3,7 @@ package controllers
 import dao.APITokenDAO
 import javax.inject.{Inject, Singleton}
 import models.APIToken
+import play.api.Logger
 import play.api.libs.json.{JsError, Reads}
 import play.api.mvc._
 
@@ -16,23 +17,14 @@ trait TokenAuthentication {
   var tokenDAO: APITokenDAO = _
 
   def withAPIToken(f: => APIToken => Request[AnyContent] => Future[Result]) = Action.async { request =>
-    request.headers.get("Authorization").flatMap { authHeader =>
-      extractToken(authHeader).flatMap { bearer =>
-        Await.result(tokenDAO.findByValue(bearer), Duration.Inf).map { token =>
-          f(token)(request)
-        }
+    request.headers.get("X-Vulptool-Token").flatMap { authHeader =>
+      Logger.error(authHeader)
+      Await.result(tokenDAO.findByValue(authHeader), Duration.Inf).map { token =>
+        f(token)(request)
       }
     }.getOrElse(Future {
       Unauthorized("Invalid token")
     })
-  }
-
-
-  def extractToken(authHeader: String) = {
-    authHeader.split(" ") match {
-      case Array(_, token) => Some(token)
-      case _ => None
-    }
   }
 }
 

@@ -48,7 +48,7 @@ class PlayerDAO @Inject()(protected val dbConfigProvider: DatabaseConfigProvider
     db.run(players.filter(_.id === id).result.headOption)
 
   def findByPseudo(pseudo: String): Future[Seq[Player]] =
-    db.run(players.filter(_.mainPseudo === pseudo).result)
+    db.run(players.filter(!_.isDeleted).filter(_.mainPseudo === pseudo).result)
 
   def insert(player: Player): Future[Player] = {
     val insertQuery = players returning players.map(_.id) into ((player, id) => player.copy(Some(id)))

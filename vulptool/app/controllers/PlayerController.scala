@@ -86,10 +86,10 @@ class PlayerController @Inject()(cc: ControllerComponents, playerDAO: PlayerDAO,
 
     val playerId = players.map(player => (player.id, login.password.isBcrypted(player.hashedPassword)))
       .filter(tuple => tuple._2)
-      .map(_._1).head
+      .map(_._1).headOption
 
     playerId match {
-      case Some(id) =>
+      case Some(Some(id)) =>
         val apiToken = Await.result(apiTokenDAO.findByPlayerId(id).map {
           case Some(token) => token
           case None =>

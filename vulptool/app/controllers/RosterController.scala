@@ -81,6 +81,7 @@ class RosterController @Inject()(cc: ControllerComponents, rosterDAO: RosterDAO,
     }
   }
 
+  // get a full roster from a simple roster
   def getRosterWithFigures(roster: Roster): RosterFull = {
     val figuresActual = Await.result(rosterDAO.getFiguresFromRoster(roster.id.get), Duration.Inf)
     RosterFull(roster.id, roster.name, figuresActual.toList)

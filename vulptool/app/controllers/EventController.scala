@@ -84,6 +84,7 @@ class EventController @Inject()(cc: ControllerComponents, eventDAO: EventDAO, me
     })
   }
 
+  // function for getting a full event from an event
   def getFullEvent(event: Event): EventFull = {
     val meeting = Await.result(meetingDAO.findById(event.meetingId), Duration.Inf).get
     val raid = Await.result(raidDAO.findById(event.raidId), Duration.Inf).get
@@ -92,7 +93,7 @@ class EventController @Inject()(cc: ControllerComponents, eventDAO: EventDAO, me
     EventFull(event.id, event.name, event.description, meeting, raid, roster)
   }
 
-  // GET with dates
+  // GET with dates (get every event in between)
   def getEventsByMeetingDate(begin: Long, end: Long) = Action.async {
     val optionalEvents = eventDAO.listFromDates(new Timestamp(begin * 1000L), new Timestamp(end * 1000L))
 
@@ -104,6 +105,7 @@ class EventController @Inject()(cc: ControllerComponents, eventDAO: EventDAO, me
   def postEvent = Action.async(validateJson[EventFull]) { request =>
     val eventFull = request.body
 
+    // put all the child objects before creating the event
     val meeting = Await.result(meetingDAO.insert(eventFull.meeting), Duration.Inf)
     val raid = Await.result(raidDAO.insertIfNotExists(eventFull.raid), Duration.Inf)
     val roster = Await.result(rosterDAO.insert(eventFull.roster), Duration.Inf)
@@ -124,9 +126,9 @@ class EventController @Inject()(cc: ControllerComponents, eventDAO: EventDAO, me
   //PUT
   def updateEvent(eventId: Int) = Action.async(validateJson[EventFull]) { request =>
     val newEventFull = request.body
-    println(newEventFull)
     eventDAO.update(eventId, EventFromFull(newEventFull)).map({
       case 1 =>
+        // asynchronous update of dependant tables
         meetingDAO.update(newEventFull.meeting.id.get, newEventFull.meeting)
         raidDAO.update(newEventFull.raid.id.get, newEventFull.raid)
         rosterDAO.update(newEventFull.roster.id.get, newEventFull.roster)
@@ -144,6 +146,7 @@ class EventController @Inject()(cc: ControllerComponents, eventDAO: EventDAO, me
     })
   }
 
+  // get a simple event from a full one
   def EventFromFull(e: EventFull) =
     Event(e.id, e.name, e.description, e.meeting.id.get, e.raid.id.get, e.roster.id.get)
 

@@ -51,6 +51,7 @@ class RaidDAO @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)(
   def findById(id: Int): Future[Option[Raid]] =
     db.run(raids.filter(_.id === id).result.headOption)
 
+  // if a similar raid exists, use the one found
   def insertIfNotExists(raid: Raid): Future[Raid] = {
     val a = {
       raids.filter(_.nbBoss === raid.nbBoss)

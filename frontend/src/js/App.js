@@ -3,6 +3,8 @@ import '../css/App.css';
 import Calendar from './Calendar';
 import Welcome from './Welcome';
 import Roster from './Roster';
+import Login from './Login';
+
 import FormEventEdit from './FormEventEdit.js'
 import RosterCreate from './RosterCreate.js';
 
@@ -41,7 +43,8 @@ class SiderDemo extends React.Component {
               <div className="add-button">
                 <Menu theme="dark" mode="horizontal">
                   <Menu.Item key="login">
-                    Login
+                    <Link to={"/login"}/>
+                    <span>Login</span>
                   </Menu.Item>
                   {/*<SubMenu title={<span><Icon type="setting" />Account</span>}>
                                 <MenuItemGroup title="Item 1">
@@ -91,6 +94,8 @@ class SiderDemo extends React.Component {
               <Route exact path="/calendar/edit/:id" component={FormEventEdit}/>
               <Route exact path="/roster" component={Roster}/>
               <Route exact path="/roster/create" component={RosterCreate}/>
+              <Route exact path="/login" component={Login}/>
+
             </Layout>
             <Footer style={{height: '48px', textAlign: 'center'}}>
               Ant Design ©2016 Created by Ant UED

@@ -78,7 +78,8 @@ class DynamicFieldSet extends React.Component {
       fetch(conf.baseURL + '/roster', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
         },
         body: JSON.stringify({
           name: values.name,

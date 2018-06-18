@@ -1,36 +1,12 @@
 import React from "react";
-import { Form, Input, Tooltip, Icon, Cascader, Select, Row, Col, Checkbox, Button, AutoComplete } from 'antd';
+import { Form, Input, Tooltip, Icon, Row, Col, Button } from 'antd';
 import {Layout} from "antd/lib/index";
+import * as conf from "./config";
 
 const FormItem = Form.Item;
-const Option = Select.Option;
-const AutoCompleteOption = AutoComplete.Option;
+
 const {Content} = Layout;
 
-
-const residences = [{
-  value: 'zhejiang',
-  label: 'Zhejiang',
-  children: [{
-    value: 'hangzhou',
-    label: 'Hangzhou',
-    children: [{
-      value: 'xihu',
-      label: 'West Lake',
-    }],
-  }],
-}, {
-  value: 'jiangsu',
-  label: 'Jiangsu',
-  children: [{
-    value: 'nanjing',
-    label: 'Nanjing',
-    children: [{
-      value: 'zhonghuamen',
-      label: 'Zhong Hua Men',
-    }],
-  }],
-}];
 
 class RegistrationForm extends React.Component {
   state = {
@@ -42,13 +18,31 @@ class RegistrationForm extends React.Component {
     this.props.form.validateFieldsAndScroll((err, values) => {
       if (!err) {
         console.log('Received values of form: ', values);
+
+        fetch(conf.baseURL + '/player', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+          },
+          body: JSON.stringify({
+            main_pseudo: values.username,
+            password: values.password,
+          })
+        })
+          .then(results => results.json())
+          .catch(function (error) {
+            console.log(
+              "There was an error POST Player: /// " + error + " \\\\\\"
+            );
+          });
       }
     });
-  }
+  };
   handleConfirmBlur = (e) => {
     const value = e.target.value;
     this.setState({ confirmDirty: this.state.confirmDirty || !!value });
-  }
+  };
   compareToFirstPassword = (rule, value, callback) => {
     const form = this.props.form;
     if (value && value !== form.getFieldValue('password')) {
@@ -56,26 +50,17 @@ class RegistrationForm extends React.Component {
     } else {
       callback();
     }
-  }
+  };
   validateToNextPassword = (rule, value, callback) => {
     const form = this.props.form;
     if (value && this.state.confirmDirty) {
       form.validateFields(['confirm'], { force: true });
     }
     callback();
-  }
-  handleWebsiteChange = (value) => {
-    let autoCompleteResult;
-    if (!value) {
-      autoCompleteResult = [];
-    } else {
-      autoCompleteResult = ['.com', '.org', '.net'].map(domain => `${value}${domain}`);
-    }
-    this.setState({ autoCompleteResult });
-  }
+  };
+
   render() {
     const { getFieldDecorator } = this.props.form;
-    const { autoCompleteResult } = this.state;
 
     const formItemLayout = {
       labelCol: {
@@ -99,40 +84,28 @@ class RegistrationForm extends React.Component {
         },
       },
     };
-    const prefixSelector = getFieldDecorator('prefix', {
-      initialValue: '86',
-    })(
-      <Select style={{ width: 70 }}>
-        <Option value="86">+86</Option>
-        <Option value="87">+87</Option>
-      </Select>
-    );
-
-    const websiteOptions = autoCompleteResult.map(website => (
-      <AutoCompleteOption key={website}>{website}</AutoCompleteOption>
-    ));
 
     return (
       <Content style={{margin: "16px 16px"}}>
         <div style={{padding: 24, background: "#fff", minHeight: 360}}>
           <Row gutter={16}>
-            <Col className="gutter-row" span={12}>
+            <Col className="gutter-row" span={8}>
               <Form onSubmit={this.handleSubmit}>
                 <FormItem
                   {...formItemLayout}
                   label={(
                     <span>
-              Nickname&nbsp;
+              Username&nbsp;
                       <Tooltip title="What do you want others to call you?">
                 <Icon type="question-circle-o" />
               </Tooltip>
             </span>
                   )}
                 >
-                  {getFieldDecorator('nickname', {
+                  {getFieldDecorator('username', {
                     rules: [{ required: true, message: 'Please input your nickname!', whitespace: true }],
                   })(
-                    <Input />
+                    <Input prefix={<Icon type="user" style={{ color: 'rgba(0,0,0,.25)' }} />}  />
                   )}
                 </FormItem>
                 <FormItem
@@ -146,7 +119,7 @@ class RegistrationForm extends React.Component {
                       validator: this.validateToNextPassword,
                     }],
                   })(
-                    <Input type="password" />
+                    <Input prefix={<Icon type="lock" style={{ color: 'rgba(0,0,0,.25)' }} />} type="password"  />
                   )}
                 </FormItem>
                 <FormItem
@@ -160,7 +133,7 @@ class RegistrationForm extends React.Component {
                       validator: this.compareToFirstPassword,
                     }],
                   })(
-                    <Input type="password" onBlur={this.handleConfirmBlur} />
+                    <Input prefix={<Icon type="lock" style={{ color: 'rgba(0,0,0,.25)' }} />} type="password" onBlur={this.handleConfirmBlur} />
                   )}
                 </FormItem>
 
@@ -171,38 +144,7 @@ class RegistrationForm extends React.Component {
                   {getFieldDecorator('discord', {
                     rules: [{ required: true, message: 'Please input your Discord ID!' }],
                   })(
-                    <AutoComplete
-                      dataSource={websiteOptions}
-                      onChange={this.handleWebsiteChange}
-                      placeholder="website"
-                    >
-                      <Input />
-                    </AutoComplete>
-                  )}
-                </FormItem>
-                <FormItem
-                  {...formItemLayout}
-                  label="Captcha"
-                  extra="We must make sure that your are a human."
-                >
-                  <Row gutter={8}>
-                    <Col span={12}>
-                      {getFieldDecorator('captcha', {
-                        rules: [{ required: true, message: 'Please input the captcha you got!' }],
-                      })(
-                        <Input />
-                      )}
-                    </Col>
-                    <Col span={12}>
-                      <Button>Get captcha</Button>
-                    </Col>
-                  </Row>
-                </FormItem>
-                <FormItem {...tailFormItemLayout}>
-                  {getFieldDecorator('agreement', {
-                    valuePropName: 'checked',
-                  })(
-                    <Checkbox>I have read the <a href="">agreement</a></Checkbox>
+                      <Input placeholder="User#0000"/>
                   )}
                 </FormItem>
                 <FormItem {...tailFormItemLayout}>

@@ -2,6 +2,7 @@ import React from "react";
 import '../css/Login.css';
 
 import { Form, Icon, Input, Button, Checkbox, Layout, Row, Col } from 'antd';
+import * as conf from "./config";
 
 const FormItem = Form.Item;
 const {Content} = Layout;
@@ -14,6 +15,24 @@ class NormalLoginForm extends React.Component {
     this.props.form.validateFields((err, values) => {
       if (!err) {
         console.log('Received values of form: ', values);
+
+        fetch(conf.baseURL + '/player/login', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+          },
+          body: JSON.stringify({
+            main_pseudo: values.username,
+            password: values.password,
+          })
+        })
+          .then(results => results.json())
+          .catch(function (error) {
+            console.log(
+              "There was an error POST Player/login: /// " + error + " \\\\\\"
+            );
+          });
       }
     });
   }

@@ -20,3 +20,6 @@ Pour réaliser ce projet nous avons utilisé :
 1. Se placer au niveau du fichier ***package.json***.
 2. Lancer les commandes `npm install` puis `npm start`.
 3. La page d'accueil de l'application devrait s'ouvrir automatiquement dans votre browser.
+
+## Auteurs
+Les auteurs sont: [Aurélie Lévy](https://github.com/AurelieLevy), [Valentin Finini](https://github.com/Farenjihn), [Miguel Pombo Dias](https://github.com/Ardgevald) et [Lawrence Stadler](https://github.com/Bykow)

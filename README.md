@@ -2,6 +2,9 @@
 ## Description
 Vulptool is a Raider Planner Tool to assist a World of Warcraft guild in its raid planning. It allows an administrator to create and manage events and rosters to share a calendar to the member of the guild.
 
+## Trello
+To see what is "left" to do, checkout our [Trello](https://trello.com/b/zlPaDtdk/vulptool). 
+
 ## Deployment
 
 ### Data Base
